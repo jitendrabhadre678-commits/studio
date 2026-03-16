@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -93,12 +93,12 @@ export function RewardUnlockModal({
             </div>
           </motion.div>
 
-          <h2 className="font-headline text-3xl font-black mb-2 text-white uppercase tracking-tight">
+          <DialogTitle className="font-headline text-3xl font-black mb-2 text-white uppercase tracking-tight text-center">
             Verification Session
-          </h2>
-          <p className="text-muted-foreground text-sm mb-8 leading-relaxed max-w-[280px]">
+          </DialogTitle>
+          <DialogDescription className="text-muted-foreground text-sm mb-8 leading-relaxed max-w-[280px] text-center">
             Please wait while we prepare your reward verification.
-          </p>
+          </DialogDescription>
 
           <div className="w-full space-y-6">
             {/* Timer Circle/Box */}
