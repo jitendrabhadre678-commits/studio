@@ -1,19 +1,44 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, Zap } from 'lucide-react';
+import { Search, Zap, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { giftCards } from '@/lib/gift-cards';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export function Hero() {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const suggestions = giftCards.filter(c => 
-    c.brand.toLowerCase().includes(searchValue.toLowerCase())
-  ).slice(0, 5);
+    c.brand.toLowerCase().includes(searchValue.toLowerCase()) ||
+    c.category.toLowerCase().includes(searchValue.toLowerCase())
+  ).slice(0, 6);
+
+  const handleScrollToCard = (slug: string) => {
+    const element = document.getElementById(slug);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setSearchValue('');
+      setIsFocused(false);
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
@@ -37,10 +62,13 @@ export function Hero() {
           Complete tasks, watch clips, and unlock the rewards you deserve instantly.
         </p>
 
-        <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms]">
+        <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms]" ref={dropdownRef}>
           <div className="relative group">
-            <div className="absolute inset-0 bg-primary/20 blur-xl group-focus-within:bg-primary/40 transition-all rounded-2xl" />
-            <div className="relative glass-card flex items-center px-4 rounded-2xl border-white/20">
+            <div className={cn(
+              "absolute inset-0 bg-primary/20 blur-xl transition-all rounded-2xl",
+              isFocused ? "bg-primary/40 opacity-100" : "opacity-0"
+            )} />
+            <div className="relative glass-card flex items-center px-4 rounded-2xl border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
               <Search className="text-muted-foreground w-6 h-6 mr-3" />
               <Input 
                 placeholder="Search rewards (Steam, Amazon, Roblox...)" 
@@ -48,40 +76,58 @@ export function Hero() {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => setTimeout(() => setIsFocused(false), 200)}
               />
-              <Button className="hidden md:flex bg-primary hover:bg-primary/90 text-white font-bold h-10 px-8">
+              <Button className="hidden md:flex bg-primary hover:bg-primary/90 text-white font-bold h-10 px-8 rounded-xl shadow-lg">
                 Search
               </Button>
             </div>
           </div>
 
-          {/* Search Suggestions */}
+          {/* Search Suggestions Dropdown */}
           {isFocused && searchValue.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-4 glass-card rounded-2xl p-4 z-50 animate-in fade-in zoom-in duration-200">
-              <div className="text-xs font-bold text-muted-foreground uppercase mb-3 px-2">Top Results</div>
-              <div className="flex flex-col gap-1">
-                {suggestions.map(card => (
-                  <button 
-                    key={card.id}
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-left text-white transition-colors"
-                  >
-                    <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-bold">{card.brand}</div>
-                      <div className="text-xs text-muted-foreground">{card.category} Reward</div>
-                    </div>
-                  </button>
-                ))}
+            <div className="absolute top-full left-0 right-0 mt-3 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-[12px] p-2 z-[9999] shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200">
+              <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 px-3 pt-2">Live Results</div>
+              <div className="flex flex-col gap-1 max-h-[400px] overflow-y-auto pr-1 scrollbar-hide">
+                {suggestions.length > 0 ? (
+                  suggestions.map(card => {
+                    const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
+                    return (
+                      <button 
+                        key={card.id}
+                        onClick={() => handleScrollToCard(card.slug)}
+                        className="flex items-center gap-4 p-2 rounded-lg hover:bg-white/5 text-left text-white transition-all group"
+                      >
+                        <div className="relative w-24 aspect-[16/9] rounded-md overflow-hidden shrink-0 border border-white/10">
+                          <Image 
+                            src={imageData.imageUrl} 
+                            alt={card.brand}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="font-bold truncate text-sm flex items-center gap-2">
+                            {card.brand}
+                            {card.trending && <span className="text-[8px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">Hot</span>}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground truncate">{card.description}</div>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all mr-2" />
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="p-8 text-center">
+                    <p className="text-sm text-muted-foreground">No rewards found for "{searchValue}"</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
         </div>
 
         <div className="mt-12 flex flex-wrap justify-center gap-6 animate-fade-in-up [animation-delay:800ms]">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-black px-12 h-14 rounded-xl text-lg group">
+          <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-black px-12 h-14 rounded-xl text-lg group shadow-xl shadow-primary/20">
             Unlock Now
             <Zap className="ml-2 w-5 h-5 group-hover:scale-125 transition-transform" />
           </Button>

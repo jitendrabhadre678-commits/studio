@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -63,10 +64,11 @@ export function TrendingRewards() {
             return (
               <motion.div
                 key={card.id}
+                id={card.slug}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: (idx % 4) * 0.05 }}
-                className="group"
+                className="group scroll-mt-32"
               >
                 <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 overflow-hidden rounded-[16px] h-full flex flex-col group/card shadow-2xl">
                   <CardContent className="p-0 flex flex-col h-full">
