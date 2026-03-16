@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -7,19 +6,15 @@ import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { doc } from 'firebase/firestore';
-import { Zap, Gift, Trophy, Clock, ArrowRight, ChevronRight, Image as ImageIcon, Loader2, DollarSign, CheckCircle } from 'lucide-react';
+import { Gift, Trophy, Clock, ArrowRight, ChevronRight, DollarSign, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ImageUpload } from '@/components/ui/image-upload';
-import { useToast } from '@/hooks/use-toast';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -33,17 +28,6 @@ export default function Dashboard() {
   }, [firestore, user]);
 
   const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
-
-  const handleSubmitMockup = () => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast({
-        title: "Submission Successful",
-        description: "Your gift card visual has been sent for owner review.",
-      });
-    }, 1500);
-  };
 
   if (isUserLoading || !user) return null;
 
@@ -133,41 +117,9 @@ export default function Dashboard() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Main Content Area */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Creator Submission Tool */}
-              <div className="glass-card rounded-[2.5rem] p-8 border-primary/20 bg-primary/5 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <ImageIcon className="w-32 h-32" />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                      <ImageIcon className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Submit Reward Visual</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-8 max-w-lg">
-                    Design a custom gift card visual for your brand and submit it to our team. Drag and drop your mockup below. Only you can edit your submissions.
-                  </p>
-                  <ImageUpload 
-                    label="Drop Gift Card Mockup" 
-                    onUpload={(file) => toast({ title: "Visual Loaded", description: "Your file is ready for submission." })}
-                  />
-                  <div className="mt-6 flex justify-end">
-                    <Button 
-                      onClick={handleSubmitMockup}
-                      disabled={isSubmitting}
-                      className="bg-primary hover:bg-primary/90 text-white font-black px-8 rounded-xl h-12 shadow-lg shadow-primary/20 min-w-[160px]"
-                    >
-                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Mockup"}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
               {/* Progress Section */}
-              <div className="glass-card rounded-3xl p-8 border-white/10">
+              <div className="glass-card rounded-[2.5rem] p-8 border-white/10">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
                   <Clock className="w-5 h-5 text-primary" /> Daily Task Progress
                 </h3>
@@ -184,10 +136,7 @@ export default function Dashboard() {
                   </Button>
                 </div>
               </div>
-            </div>
 
-            {/* Sidebar area */}
-            <div className="space-y-8">
               <div className="glass-card rounded-3xl p-8 border-white/10">
                 <h3 className="text-lg font-black text-white mb-4 uppercase tracking-widest">Earn Bonus Points</h3>
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed">Refer your friends to GameFlashX and earn $0.50 for every successful sign up!</p>
@@ -195,12 +144,14 @@ export default function Dashboard() {
                   Get Referral Link
                 </Button>
               </div>
+            </div>
 
+            <div className="space-y-8">
               <div className="glass-card rounded-3xl p-8 border-white/10">
                 <h3 className="text-lg font-black text-white mb-6 uppercase tracking-tight">Quick Links</h3>
                 <div className="space-y-2">
-                  {['Browse All Cards', 'Leaderboard', 'Creator Portal', 'Help Center'].map((link) => (
-                    <button key={link} className="w-full flex items-center justify-between p-4 hover:bg-white/5 rounded-xl text-sm font-bold text-white/60 hover:text-white transition-all group">
+                  {['Browse All Cards', 'Leaderboard', 'Help Center'].map((link) => (
+                    <button key={link} className="w-full flex items-center justify-between p-4 hover:bg-white/5 rounded-xl text-sm font-bold text-white/60 hover:text-white transition-all group text-left">
                       {link}
                       <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-primary transition-all" />
                     </button>
