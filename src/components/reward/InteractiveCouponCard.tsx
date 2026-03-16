@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -6,6 +7,10 @@ import { Gift, Lock, CheckCircle2, Copy, Zap, ArrowRight, Loader2, Unlock } from
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, collection, addDoc, serverTimestamp, increment } from 'firebase/firestore';
+import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useToast } from '@/hooks/use-toast';
 
 interface InteractiveCouponCardProps {
   brand: string;
@@ -16,8 +21,17 @@ interface InteractiveCouponCardProps {
 export function InteractiveCouponCard({ brand, value, description }: InteractiveCouponCardProps) {
   const [view, setView] = useState<'initial' | 'locked' | 'revealed'>('initial');
   const [isCopied, setIsCopied] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const { user, firestore } = useUser();
+  const { toast } = useToast();
 
   const couponCode = `${brand.toUpperCase().replace(/\s+/g, '')}-${value.replace('$', '')}-REWARD`;
+
+  const userRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(couponCode);
@@ -27,6 +41,56 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
 
   const handleOpenOffer = () => {
     window.open("https://gameflashx.space/cl/i/277ood", "_blank");
+  };
+
+  const handleManualVerification = async () => {
+    if (!user || !firestore || !userRef) {
+      toast({
+        variant: "destructive",
+        title: "Login Required",
+        description: "Please sign in to earn rewards from offers.",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const rewardAmount = 0.10;
+      const transactionId = `${user.uid}-${Date.now()}`;
+
+      // 1. Create a transaction record
+      addDocumentNonBlocking(collection(firestore, 'transactions'), {
+        userId: user.uid,
+        offerId: "ogads-offer-277ood",
+        rewardAmount: rewardAmount,
+        status: 'completed',
+        createdAt: serverTimestamp()
+      });
+
+      // 2. Update user balance and stats
+      updateDocumentNonBlocking(userRef, {
+        balance: increment(rewardAmount),
+        offersCompleted: increment(1),
+        rewardsUnlocked: increment(1),
+        lastOfferAt: serverTimestamp()
+      });
+
+      toast({
+        title: "Verification Successful!",
+        description: `You earned $${rewardAmount.toFixed(2)} for completing the offer.`,
+      });
+
+      setView('revealed');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Verification Error",
+        description: "There was a problem processing your reward.",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -56,7 +120,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-3 mb-1">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Verified Reward</span>
+                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Verified Reward + $0.10 EARNINGS</span>
                   <Badge variant="outline" className={cn(
                     "text-[8px] uppercase tracking-widest px-2 py-0 h-4 border-white/10",
                     view === 'revealed' ? "text-green-500 bg-green-500/10 border-green-500/20" : "text-primary bg-primary/10 border-primary/20"
@@ -120,9 +184,9 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
                       <Lock className="w-3 h-3 text-primary" />
                       <span className="text-[10px] font-black uppercase text-primary tracking-widest">Verification Required</span>
                     </div>
-                    <h4 className="text-xl font-black text-white mb-2">Complete 1 offer to unlock your gift card code.</h4>
+                    <h4 className="text-xl font-black text-white mb-2">Complete 1 offer to earn $0.10 and unlock your gift card code.</h4>
                     <p className="text-sm text-muted-foreground mb-6">
-                      To prevent fraud and ensure availability, our system requires a quick verification. Complete any offer below to instantly release your unique code.
+                      To prevent fraud and ensure availability, our system requires a quick verification. Complete any offer below to instantly release your unique code and receive your $0.10 reward.
                     </p>
                     
                     <Button 
@@ -155,10 +219,15 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
                     </div>
                     
                     <button 
-                      onClick={() => setView('revealed')}
-                      className="text-white/20 hover:text-primary/80 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 group transition-colors"
+                      onClick={handleManualVerification}
+                      disabled={isProcessing}
+                      className="text-white/20 hover:text-primary/80 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 group transition-colors disabled:opacity-50"
                     >
-                      Already completed? Click to manually check <Unlock className="w-3 h-3 group-hover:scale-110 transition-transform" />
+                      {isProcessing ? (
+                        <><Loader2 className="w-3 h-3 animate-spin" /> Processing...</>
+                      ) : (
+                        <>Already completed? Click to manually check <Unlock className="w-3 h-3 group-hover:scale-110 transition-transform" /></>
+                      )}
                     </button>
                   </div>
                 </div>
