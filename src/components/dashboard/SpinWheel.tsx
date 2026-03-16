@@ -51,19 +51,19 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
   const today = new Date();
   const isAvailable = !lastSpin || lastSpin.toDateString() !== today.toDateString();
 
-  // Weighted Probability Logic
+  // Weighted Probability Logic (strictly following requirements)
   const getTargetIndex = () => {
     const p = Math.random() * 100;
     if (p < 70) {
       const badIndices = [0, 2, 4, 6, 8];
       return badIndices[Math.floor(Math.random() * badIndices.length)];
-    } else if (p < 80) return 10; // $0
-    else if (p < 87) return 1;  // $0.05
-    else if (p < 92) return 3;  // $0.10
-    else if (p < 96) return 5;  // $0.25
-    else if (p < 98) return 7;  // $0.50
-    else if (p < 99) return 9;  // $0.75
-    else return 11;             // $1.00
+    } else if (p < 80) return 10; // $0 (10%)
+    else if (p < 87) return 1;  // $0.05 (7%)
+    else if (p < 92) return 3;  // $0.10 (5%)
+    else if (p < 96) return 5;  // $0.25 (4%)
+    else if (p < 98) return 7;  // $0.50 (2%)
+    else if (p < 99) return 9;  // $0.75 (1%)
+    else return 11;             // $1.00 (1%)
   };
 
   const handleSpin = async () => {
@@ -182,15 +182,13 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
             {SEGMENTS.map((prize, idx) => (
                <div 
                  key={idx}
-                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-[8px] text-white uppercase tracking-tighter"
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-headline font-black text-[10px] text-white uppercase tracking-tighter"
                  style={{ 
-                   transform: `rotate(${idx * (360/SEGMENTS.length) + (360/SEGMENTS.length/2)}deg) translateY(-100px)`,
-                   textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+                   transform: `rotate(${idx * (360/SEGMENTS.length) + (360/SEGMENTS.length/2)}deg) translateY(-112px)`,
+                   textShadow: '0 2px 4px rgba(0,0,0,0.9)'
                  }}
                >
-                 <span className={cn(prize.type === 'jackpot' && 'text-lg text-yellow-200')}>
-                   {prize.label}
-                 </span>
+                 {prize.label}
                </div>
             ))}
           </motion.div>
