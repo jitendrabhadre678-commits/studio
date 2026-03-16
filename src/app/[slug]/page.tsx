@@ -21,11 +21,11 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
   if (!card) return <div className="min-h-screen flex items-center justify-center text-white font-black text-4xl">404 - REWARD NOT FOUND</div>;
 
   const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
+  const displayImageUrl = card.imageUrl || imageData.imageUrl;
   
   // Use the AI flow to generate a description for the specific card with a safety fallback
   let displayDescription = card.description;
   try {
-    // Calling the AI flow directly. generateGiftCardDescription now handles its own internal catch.
     const aiDescription = await generateGiftCardDescription({
       brandName: card.brand,
       value: card.values[card.values.length - 1],
@@ -37,7 +37,6 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
       displayDescription = aiDescription.description;
     }
   } catch (error) {
-    // Extra insurance against any bubbling issues
     displayDescription = card.description;
   }
 
@@ -51,17 +50,18 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
             <div className="relative animate-fade-in-up">
               <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
-              <div className="relative glass-card aspect-video rounded-3xl overflow-hidden border-white/20 shadow-2xl group">
+              <div className="relative glass-card aspect-video rounded-3xl overflow-hidden border-white/20 shadow-2xl group bg-black/40">
                 <Image 
-                  src={imageData.imageUrl}
+                  src={displayImageUrl}
                   alt={card.brand}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                   priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <div className="bg-primary/90 backdrop-blur-md px-8 py-4 rounded-2xl shadow-2xl border border-white/20 animate-float">
-                    <span className="text-4xl font-headline font-black text-white uppercase tracking-tighter">
+                    <span className="text-2xl md:text-4xl font-headline font-black text-white uppercase tracking-tighter">
                       {card.brand} Rewards
                     </span>
                   </div>

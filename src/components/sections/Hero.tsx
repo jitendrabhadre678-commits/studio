@@ -110,24 +110,27 @@ export function Hero() {
 
           {/* Search Results Dropdown */}
           {isFocused && searchValue.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-3 bg-black/90 backdrop-blur-[10px] border border-white/10 rounded-[12px] p-2 z-[9999] shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute top-full left-0 right-0 mt-3 bg-black/95 backdrop-blur-[20px] border border-white/10 rounded-[12px] p-2 z-[9999] shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200">
               <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 px-3 pt-2">Live Results</div>
               <div className="flex flex-col gap-1 max-h-[400px] overflow-y-auto pr-1 scrollbar-hide">
                 {suggestions.length > 0 ? (
                   suggestions.map(card => {
                     const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
+                    const displayImageUrl = card.imageUrl || imageData.imageUrl;
+
                     return (
                       <button 
                         key={card.id}
                         onClick={() => handleScrollToCard(card.slug)}
                         className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/[0.08] text-left text-white transition-all group"
                       >
-                        <div className="relative w-20 aspect-[16/10] rounded-md overflow-hidden shrink-0 border border-white/10">
+                        <div className="relative w-24 aspect-video rounded-md overflow-hidden shrink-0 border border-white/10 bg-black/40">
                           <Image 
-                            src={imageData.imageUrl} 
+                            src={displayImageUrl} 
                             alt={card.brand}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-500"
+                            sizes="96px"
                           />
                         </div>
                         <div className="flex-grow min-w-0">

@@ -6,6 +6,7 @@ export type GiftCard = {
   description: string;
   values: string[];
   image: string;
+  imageUrl?: string; // Support for direct image URLs
   trending?: boolean;
   featured?: boolean;
 };
@@ -43,7 +44,7 @@ export const giftCards: GiftCard[] = [
   // Food
   { id: '8', brand: 'Starbucks', slug: 'starbucks-gift-card', category: 'Food', description: 'Treat yourself to premium coffee and snacks.', values: ['$10', '$25', '$50'], image: 'starbucks', featured: true },
   { id: '21', brand: 'McDonald\'s', slug: 'mcdonalds-gift-card', category: 'Food', description: 'Enjoy your favorite fast food rewards.', values: ['$10', '$25', '$50'], image: 'mcdonalds' },
-  { id: '22', brand: 'DoorDash', slug: 'doordash-gift-card', category: 'Food', description: 'Delicious meals delivered to your door.', values: ['$25', '$50', '$100'], image: 'doordash' },
+  { id: '22', brand: 'DoorDash', slug: 'door-dash-gift-card', category: 'Food', description: 'Delicious meals delivered to your door.', values: ['$25', '$50', '$100'], image: 'doordash' },
 
   // Transport
   { id: '23', brand: 'Uber', slug: 'uber-gift-card', category: 'Transport', description: 'Rides and meals with Uber and Uber Eats.', values: ['$25', '$50', '$100'], image: 'uber' },

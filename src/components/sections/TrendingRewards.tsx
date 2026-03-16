@@ -59,6 +59,8 @@ export function TrendingRewards() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredCards.map((card, idx) => {
             const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
+            const displayImageUrl = card.imageUrl || imageData.imageUrl;
+
             return (
               <motion.div
                 key={card.id}
@@ -70,12 +72,13 @@ export function TrendingRewards() {
               >
                 <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 overflow-hidden rounded-[16px] h-full flex flex-col group/card shadow-2xl">
                   <CardContent className="p-0 flex flex-col h-full">
-                    <div className="relative aspect-[16/9] overflow-hidden">
+                    <div className="relative aspect-video w-full overflow-hidden bg-black/40">
                       <Image 
-                        src={imageData.imageUrl}
+                        src={displayImageUrl}
                         alt={card.brand}
                         fill
                         className="object-cover group-hover/card:scale-110 transition-transform duration-700"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60" />
                       {card.trending && (
@@ -114,7 +117,7 @@ export function TrendingRewards() {
                           className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-lg transition-all active:scale-[0.98]"
                         >
                           <Link href={`/${card.slug}`} prefetch={true}>
-                            Unlock Reward <ChevronRight className="w-4 h-4" />
+                            Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
                           </Link>
                         </Button>
                       </div>

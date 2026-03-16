@@ -1,4 +1,3 @@
-
 {
   "placeholderImages": [
     {
@@ -9,51 +8,81 @@
     },
     {
       "id": "amazon",
-      "description": "Premium Amazon gift card visual",
-      "imageUrl": "https://picsum.photos/seed/amazon-premium/400/250",
-      "imageHint": "amazon purple"
+      "description": "Amazon shopping interface",
+      "imageUrl": "https://picsum.photos/seed/amazon/1280/720",
+      "imageHint": "amazon shopping"
     },
     {
       "id": "steam",
-      "description": "Steam gift card visual",
-      "imageUrl": "https://picsum.photos/seed/steam/400/250",
-      "imageHint": "gaming platform"
+      "description": "Steam gaming library",
+      "imageUrl": "https://picsum.photos/seed/steam/1280/720",
+      "imageHint": "gaming library"
     },
     {
       "id": "roblox",
-      "description": "Roblox gift card visual",
-      "imageUrl": "https://picsum.photos/seed/roblox/400/250",
-      "imageHint": "roblox game"
+      "description": "Roblox game environment",
+      "imageUrl": "https://picsum.photos/seed/roblox/1280/720",
+      "imageHint": "roblox world"
     },
     {
       "id": "netflix",
-      "description": "Netflix gift card visual",
-      "imageUrl": "https://picsum.photos/seed/netflix/400/250",
-      "imageHint": "movie streaming"
+      "description": "Netflix movie interface",
+      "imageUrl": "https://picsum.photos/seed/netflix/1280/720",
+      "imageHint": "streaming movies"
     },
     {
       "id": "google-play",
-      "description": "Google Play gift card visual",
-      "imageUrl": "https://picsum.photos/seed/google/400/250",
-      "imageHint": "google play"
+      "description": "Google Play app store",
+      "imageUrl": "https://picsum.photos/seed/google/1280/720",
+      "imageHint": "app store"
     },
     {
       "id": "paypal",
-      "description": "PayPal reward visual",
-      "imageUrl": "https://picsum.photos/seed/paypal/400/250",
-      "imageHint": "paypal money"
+      "description": "PayPal transaction dashboard",
+      "imageUrl": "https://picsum.photos/seed/paypal/1280/720",
+      "imageHint": "payment wallet"
     },
     {
       "id": "fortnite",
-      "description": "Fortnite gift card visual",
-      "imageUrl": "https://picsum.photos/seed/fortnite/400/250",
-      "imageHint": "fortnite game"
+      "description": "Fortnite gameplay battle royale",
+      "imageUrl": "https://picsum.photos/seed/fortnite/1280/720",
+      "imageHint": "fortnite gaming"
     },
     {
       "id": "apple",
-      "description": "Apple gift card visual",
-      "imageUrl": "https://picsum.photos/seed/apple/400/250",
-      "imageHint": "apple brand"
+      "description": "Apple app store interface",
+      "imageUrl": "https://picsum.photos/seed/apple/1280/720",
+      "imageHint": "apple interface"
+    },
+    {
+      "id": "xbox",
+      "description": "Xbox dashboard console",
+      "imageUrl": "https://picsum.photos/seed/xbox/1280/720",
+      "imageHint": "xbox gaming"
+    },
+    {
+      "id": "playstation",
+      "description": "PlayStation store interface",
+      "imageUrl": "https://picsum.photos/seed/playstation/1280/720",
+      "imageHint": "playstation library"
+    },
+    {
+      "id": "walmart",
+      "description": "Walmart store shopping",
+      "imageUrl": "https://picsum.photos/seed/walmart/1280/720",
+      "imageHint": "supermarket shopping"
+    },
+    {
+      "id": "target",
+      "description": "Target retail store interface",
+      "imageUrl": "https://picsum.photos/seed/target/1280/720",
+      "imageHint": "retail store"
+    },
+    {
+      "id": "best-buy",
+      "description": "Best Buy electronics store",
+      "imageUrl": "https://picsum.photos/seed/bestbuy/1280/720",
+      "imageHint": "electronics store"
     }
   ]
 }
