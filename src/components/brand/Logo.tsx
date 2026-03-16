@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  */
 export function Logo({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center gap-2 md:gap-3 select-none group h-full", className)}>
+    <div className={cn("flex items-center gap-2.5 md:gap-3 select-none group h-full", className)}>
       {/* Coupon Icon Badge */}
       <div className="relative h-full aspect-square flex items-center justify-center shrink-0">
         <div className="absolute inset-0 bg-primary rounded-[20%] shadow-[0_0_15px_rgba(223,16,78,0.4)] transition-all group-hover:shadow-[0_0_25px_rgba(223,16,78,0.6)]" />
