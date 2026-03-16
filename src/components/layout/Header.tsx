@@ -1,8 +1,9 @@
+
 "use client";
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Menu, X, User as UserIcon, LogOut, LayoutDashboard, Gift, Settings } from 'lucide-react';
+import { Menu, X, User as UserIcon, LogOut, LayoutDashboard, Gift, Settings, Trophy } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
@@ -35,9 +36,7 @@ export function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Rewards', href: '/#trending' },
-    { name: 'Tasks', href: '#' },
-    { name: 'Giveaways', href: '#' },
-    { name: 'Leaderboard', href: '#' },
+    { name: 'Leaderboard', href: '/leaderboard' },
     { name: 'Blog', href: '/blog' },
   ];
 
@@ -106,6 +105,9 @@ export function Header() {
                         <DropdownMenuSeparator className="bg-white/5" />
                         <DropdownMenuItem onClick={() => router.push('/dashboard')} className="hover:bg-white/5 rounded-xl cursor-pointer">
                           <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push('/leaderboard')} className="hover:bg-white/5 rounded-xl cursor-pointer">
+                          <Trophy className="mr-2 h-4 w-4" /> Leaderboard
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => router.push('/my-rewards')} className="hover:bg-white/5 rounded-xl cursor-pointer">
                           <Gift className="mr-2 h-4 w-4" /> My Rewards

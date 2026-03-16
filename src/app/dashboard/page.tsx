@@ -1,20 +1,33 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUser, useDoc, useMemoFirebase } from '@/firebase';
+import { useUser, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { doc } from 'firebase/firestore';
-import { Gift, Trophy, Clock, ArrowRight, ChevronRight, DollarSign, CheckCircle } from 'lucide-react';
+import { doc, collection, query, where, orderBy, limit } from 'firebase/firestore';
+import { 
+  Gift, Trophy, Clock, ArrowRight, ChevronRight, 
+  DollarSign, CheckCircle, Users, Sparkles, 
+  History, Wallet, Share2, Copy, Check 
+} from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DailyBonus } from '@/components/dashboard/DailyBonus';
+import { SpinWheel } from '@/components/dashboard/SpinWheel';
+import { WithdrawalModal } from '@/components/dashboard/WithdrawalModal';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
+  const { toast } = useToast();
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -27,13 +40,35 @@ export default function Dashboard() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
+  const transactionsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(
+      collection(firestore, 'transactions'),
+      where('userId', '==', user.uid),
+      orderBy('createdAt', 'desc'),
+      limit(10)
+    );
+  }, [firestore, user]);
+
   const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
+  const { data: transactions } = useCollection(transactionsQuery);
+
+  const handleCopyRef = () => {
+    const refLink = `${window.location.origin}/signup?ref=${userData?.referralCode || user?.uid}`;
+    navigator.clipboard.writeText(refLink);
+    setIsCopied(true);
+    toast({ title: "Referral Link Copied!", description: "Share this with friends to earn $0.10 per offer they complete." });
+    setTimeout(() => setIsCopied(false), 2000);
+  };
 
   if (isUserLoading || !user) return null;
 
   const balance = userData?.balance || 0;
+  const totalEarnings = userData?.totalEarnings || 0;
   const offersCompleted = userData?.offersCompleted || 0;
   const rewardsUnlocked = userData?.rewardsUnlocked || 0;
+  const referralsCount = userData?.referralsCount || 0;
+  const referralEarnings = userData?.referralEarnings || 0;
 
   return (
     <main className="min-h-screen">
@@ -42,124 +77,207 @@ export default function Dashboard() {
       <div className="pt-32 pb-20 px-4">
         <div className="container mx-auto">
           {/* Welcome Header */}
-          <div className="mb-12">
-            <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
-              Player <span className="text-primary">Dashboard</span>
-            </h1>
-            <p className="text-muted-foreground">Welcome back, {user.displayName || user.email?.split('@')[0]}! Track your rewards and progress here.</p>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+            <div>
+              <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
+                Player <span className="text-primary">Dashboard</span>
+              </h1>
+              <p className="text-muted-foreground italic">
+                Rank: <span className="text-primary font-bold">{offersCompleted > 50 ? 'Gamer Legend' : offersCompleted > 10 ? 'Elite Pro' : 'Level 1 Rookie'}</span>
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <DailyBonus userRef={userRef} userData={userData} />
+              <WithdrawalModal balance={balance} userRef={userRef} />
+            </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <Card className="glass-card border-white/10 overflow-hidden relative group">
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
-                    <DollarSign className="w-6 h-6 text-primary" />
-                  </div>
-                  <span className="text-xs font-black text-primary uppercase tracking-widest">Total Earnings</span>
-                </div>
-                <div className="text-4xl font-black text-white mb-1">
-                  ${isUserDataLoading ? '...' : balance.toFixed(2)}
-                </div>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest">Available to withdraw</p>
-              </CardContent>
-            </Card>
+          <Tabs defaultValue="overview" className="space-y-8">
+            <TabsList className="bg-white/5 border border-white/10 p-1 h-14 rounded-2xl">
+              <TabsTrigger value="overview" className="rounded-xl px-8 font-bold data-[state=active]:bg-primary">Overview</TabsTrigger>
+              <TabsTrigger value="rewards" className="rounded-xl px-8 font-bold data-[state=active]:bg-primary">Activity</TabsTrigger>
+              <TabsTrigger value="referrals" className="rounded-xl px-8 font-bold data-[state=active]:bg-primary">Referrals</TabsTrigger>
+            </TabsList>
 
-            <Card className="glass-card border-white/10 overflow-hidden relative group">
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
-                    <CheckCircle className="w-6 h-6 text-primary" />
-                  </div>
-                  <span className="text-xs font-black text-primary uppercase tracking-widest">Offers Done</span>
-                </div>
-                <div className="text-4xl font-black text-white mb-1">
-                  {isUserDataLoading ? '...' : offersCompleted}
-                </div>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest">Tasks successfully verified</p>
-              </CardContent>
-            </Card>
+            <TabsContent value="overview" className="space-y-8">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { label: 'Current Balance', val: `$${balance.toFixed(2)}`, icon: <Wallet className="text-primary" />, sub: 'Available to withdraw' },
+                  { label: 'Lifetime Earnings', val: `$${totalEarnings.toFixed(2)}`, icon: <DollarSign className="text-primary" />, sub: 'Total cash earned' },
+                  { label: 'Offers Done', val: offersCompleted, icon: <CheckCircle className="text-primary" />, sub: 'Verified tasks' },
+                  { label: 'Referral Credits', val: `$${referralEarnings.toFixed(2)}`, icon: <Users className="text-primary" />, sub: `${referralsCount} friends joined` },
+                ].map((stat, i) => (
+                  <Card key={i} className="glass-card border-white/10 overflow-hidden relative group">
+                    <CardContent className="p-8">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
+                          {stat.icon}
+                        </div>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">{stat.label}</span>
+                      </div>
+                      <div className="text-4xl font-black text-white mb-1">
+                        {isUserDataLoading ? '...' : stat.val}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{stat.sub}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
 
-            <Card className="glass-card border-white/10 overflow-hidden relative group">
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
-                    <Gift className="w-6 h-6 text-primary" />
-                  </div>
-                  <span className="text-xs font-black text-primary uppercase tracking-widest">Rewards Unlocked</span>
-                </div>
-                <div className="text-4xl font-black text-white mb-1">
-                  {isUserDataLoading ? '...' : rewardsUnlocked}
-                </div>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest">Total digital keys claimed</p>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card border-white/10 overflow-hidden relative group">
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardContent className="p-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
-                    <Trophy className="w-6 h-6 text-primary" />
-                  </div>
-                  <span className="text-xs font-black text-primary uppercase tracking-widest">Player Rank</span>
-                </div>
-                <div className="text-3xl font-black text-white mb-1 uppercase tracking-tighter italic text-glow">
-                  {offersCompleted > 10 ? 'ELITE' : 'NOVICE'}
-                </div>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest">Next rank at 10 offers</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
-              {/* Progress Section */}
-              <div className="glass-card rounded-[2.5rem] p-8 border-white/10">
-                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-primary" /> Daily Task Progress
-                </h3>
-                <div className="space-y-6">
-                  <div>
-                    <div className="flex justify-between text-sm font-bold mb-2">
-                      <span className="text-white/60">Offers Completed Today</span>
-                      <span className="text-primary">{offersCompleted} / 3</span>
+              <div className="grid lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
+                  {/* Games & Activities */}
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <SpinWheel userRef={userRef} userData={userData} />
+                    
+                    <div className="glass-card rounded-[2.5rem] p-8 border-white/10 flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                          <Sparkles className="w-5 h-5 text-primary" /> Daily Goal
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-6">Complete 5 offers today to unlock a bonus $0.50 reward!</p>
+                        <div className="space-y-2 mb-8">
+                          <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
+                            <span className="text-white/60">Progress</span>
+                            <span className="text-primary">{offersCompleted % 5} / 5</span>
+                          </div>
+                          <Progress value={((offersCompleted % 5) / 5) * 100} className="h-2 bg-white/5" />
+                        </div>
+                      </div>
+                      <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
+                        <Link href="/#trending">Start New Tasks <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                      </Button>
                     </div>
-                    <Progress value={(offersCompleted / 3) * 100} className="h-2 bg-white/5" />
                   </div>
-                  <Button asChild className="w-full bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl h-12 border border-white/10">
-                    <Link href="/#trending">Find More Tasks <ArrowRight className="ml-2 w-4 h-4" /></Link>
-                  </Button>
+
+                  {/* Recent Activity */}
+                  <div className="glass-card rounded-[2.5rem] p-8 border-white/10">
+                    <div className="flex items-center justify-between mb-8">
+                      <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                        <History className="w-5 h-5 text-primary" /> Recent History
+                      </h3>
+                      <Link href="/dashboard/transactions" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">View All</Link>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {transactions && transactions.length > 0 ? (
+                        transactions.map((tx) => (
+                          <div key={tx.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 group hover:border-primary/20 transition-all">
+                            <div className="flex items-center gap-4">
+                              <div className={cn(
+                                "p-2 rounded-lg",
+                                tx.type === 'withdrawal' ? "bg-red-500/10" : "bg-green-500/10"
+                              )}>
+                                {tx.type === 'offer' && <CheckCircle className="w-4 h-4 text-green-500" />}
+                                {tx.type === 'referral' && <Users className="w-4 h-4 text-green-500" />}
+                                {tx.type === 'daily_bonus' && <Sparkles className="w-4 h-4 text-green-500" />}
+                                {tx.type === 'withdrawal' && <Wallet className="w-4 h-4 text-red-500" />}
+                                {tx.type === 'spin' && <Sparkles className="w-4 h-4 text-yellow-500" />}
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-white uppercase tracking-tight">
+                                  {tx.type === 'offer' ? `Offer: ${tx.rewardName || 'OGAds'}` : tx.type.replace('_', ' ')}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground">{new Date(tx.createdAt).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                            <span className={cn(
+                              "font-black",
+                              tx.type === 'withdrawal' ? "text-red-500" : "text-green-500"
+                            )}>
+                              {tx.type === 'withdrawal' ? '-' : '+'}${tx.amount.toFixed(2)}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-10">
+                          <p className="text-muted-foreground italic">No transactions found.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="glass-card rounded-[2.5rem] p-8 border-white/10">
+                    <h3 className="text-lg font-black text-white mb-6 uppercase tracking-tight flex items-center gap-2">
+                      <Share2 className="w-5 h-5 text-primary" /> Invite Friends
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+                      Earn $0.10 for every $1.00 your friends earn on GameFlashX. There is no limit to how much you can earn!
+                    </p>
+                    <div className="relative mb-6">
+                      <div className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-mono text-white/40 truncate">
+                        {userData?.referralCode || user?.uid}
+                      </div>
+                      <button 
+                        onClick={handleCopyRef}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:text-primary transition-colors"
+                      >
+                        {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <Button onClick={handleCopyRef} className="w-full bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl h-12 border border-white/10">
+                      Copy Link
+                    </Button>
+                  </div>
+
+                  <div className="glass-card rounded-[2.5rem] p-8 border-white/10 bg-primary/5">
+                    <h3 className="text-lg font-black text-white mb-4 uppercase tracking-tight">Need Support?</h3>
+                    <p className="text-xs text-muted-foreground mb-6 leading-relaxed">Our 24/7 automated support system handles reward inquiries instantly.</p>
+                    <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/10 text-primary font-bold rounded-xl h-11">
+                      Open Help Desk
+                    </Button>
+                  </div>
                 </div>
               </div>
+            </TabsContent>
 
-              <div className="glass-card rounded-3xl p-8 border-white/10">
-                <h3 className="text-lg font-black text-white mb-4 uppercase tracking-widest">Earn Bonus Points</h3>
-                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">Refer your friends to GameFlashX and earn $0.50 for every successful sign up!</p>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-black rounded-xl h-12">
-                  Get Referral Link
-                </Button>
-              </div>
-            </div>
+            <TabsContent value="rewards">
+               <div className="glass-card rounded-[2.5rem] p-12 text-center border-white/5 min-h-[400px] flex flex-col items-center justify-center">
+                  <History className="w-16 h-16 text-primary/20 mb-6" />
+                  <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Full Transaction Log</h2>
+                  <p className="text-muted-foreground max-w-md mx-auto">Detailed reporting of your account activity is coming soon to this view.</p>
+               </div>
+            </TabsContent>
 
-            <div className="space-y-8">
-              <div className="glass-card rounded-3xl p-8 border-white/10">
-                <h3 className="text-lg font-black text-white mb-6 uppercase tracking-tight">Quick Links</h3>
-                <div className="space-y-2">
-                  {['Browse All Cards', 'Leaderboard', 'Help Center'].map((link) => (
-                    <button key={link} className="w-full flex items-center justify-between p-4 hover:bg-white/5 rounded-xl text-sm font-bold text-white/60 hover:text-white transition-all group text-left">
-                      {link}
-                      <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-primary transition-all" />
-                    </button>
-                  ))}
+            <TabsContent value="referrals">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="glass-card rounded-[2.5rem] p-10 border-white/10">
+                  <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Your Stats</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+                      <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Friends Invited</p>
+                      <p className="text-3xl font-black text-white">{referralsCount}</p>
+                    </div>
+                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
+                      <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Total Earned</p>
+                      <p className="text-3xl font-black text-white">${referralEarnings.toFixed(2)}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="glass-card rounded-[2.5rem] p-10 border-white/10 flex flex-col justify-center">
+                  <h3 className="text-xl font-bold text-white mb-4">How it works?</h3>
+                  <ul className="space-y-4">
+                    <li className="flex gap-4 items-start">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">1</div>
+                      <p className="text-sm text-muted-foreground">Share your unique referral link with friends or on social media.</p>
+                    </li>
+                    <li className="flex gap-4 items-start">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">2</div>
+                      <p className="text-sm text-muted-foreground">Friends sign up and start completing tasks in the Reward Gallery.</p>
+                    </li>
+                    <li className="flex gap-4 items-start">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">3</div>
+                      <p className="text-sm text-muted-foreground">You automatically receive a 10% lifetime commission on their earnings.</p>
+                    </li>
+                  </ul>
                 </div>
               </div>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 

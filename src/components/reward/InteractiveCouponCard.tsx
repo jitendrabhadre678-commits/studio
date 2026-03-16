@@ -1,8 +1,9 @@
-"use client";
 
-import { useState } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gift, Lock, CheckCircle2, Copy, Zap, ArrowRight, Loader2, Unlock } from 'lucide-react';
+import { Gift, Lock, CheckCircle2, Copy, Zap, ArrowRight, Loader2, Unlock, Search, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,8 @@ interface InteractiveCouponCardProps {
 
 export function InteractiveCouponCard({ brand, value, description }: InteractiveCouponCardProps) {
   const [view, setView] = useState<'initial' | 'locked' | 'revealed'>('initial');
+  const [progressStep, setProgressStep] = useState(1);
+  const [loadingText, setLoadingText] = useState('');
   const [isCopied, setIsCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -32,6 +35,25 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
+  const loadingMessages = [
+    "Checking availability...",
+    "Verifying user location...",
+    "Preparing secure reward portal...",
+    "Connecting to reward server...",
+    "Reward ready for release!"
+  ];
+
+  useEffect(() => {
+    if (view === 'locked' && !isProcessing) {
+      let msgIdx = 0;
+      const interval = setInterval(() => {
+        setLoadingText(loadingMessages[msgIdx]);
+        msgIdx = (msgIdx + 1) % loadingMessages.length;
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [view, isProcessing]);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(couponCode);
     setIsCopied(true);
@@ -39,6 +61,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
   };
 
   const handleOpenOffer = () => {
+    setProgressStep(2);
     window.open("https://gameflashx.space/cl/i/277ood", "_blank");
   };
 
@@ -53,6 +76,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
     }
 
     setIsProcessing(true);
+    setLoadingText("Finalizing verification...");
 
     try {
       const rewardAmount = 0.10;
@@ -60,8 +84,9 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
       // 1. Create a transaction record
       addDocumentNonBlocking(collection(firestore, 'transactions'), {
         userId: user.uid,
-        offerId: "ogads-offer-277ood",
-        rewardAmount: rewardAmount,
+        type: 'offer',
+        amount: rewardAmount,
+        rewardName: `${value} ${brand} Gift Card`,
         status: 'completed',
         createdAt: serverTimestamp()
       });
@@ -69,16 +94,18 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
       // 2. Update user balance and stats
       updateDocumentNonBlocking(userRef, {
         balance: increment(rewardAmount),
+        totalEarnings: increment(rewardAmount),
         offersCompleted: increment(1),
         rewardsUnlocked: increment(1),
         lastOfferAt: serverTimestamp()
       });
 
       toast({
-        title: "Verification Successful!",
-        description: `You earned $${rewardAmount.toFixed(2)} for completing the offer.`,
+        title: "Reward Unlocked!",
+        description: `You earned $${rewardAmount.toFixed(2)} and your digital code is ready.`,
       });
 
+      setProgressStep(3);
       setView('revealed');
     } catch (error) {
       toast({
@@ -93,6 +120,32 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
 
   return (
     <div className="relative group mb-6">
+      {/* Step Progress Bar */}
+      <div className="flex items-center justify-between mb-4 px-2">
+        {[
+          { step: 1, label: 'Select Reward', icon: <Search className="w-3 h-3" /> },
+          { step: 2, label: 'Complete Offer', icon: <Zap className="w-3 h-3" /> },
+          { step: 3, label: 'Reveal Code', icon: <Gift className="w-3 h-3" /> }
+        ].map((item) => (
+          <div key={item.step} className="flex flex-col items-center gap-2 group/step">
+            <div className={cn(
+              "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500",
+              progressStep >= item.step ? "bg-primary border-primary text-white shadow-[0_0_15px_rgba(223,16,78,0.5)]" : "bg-white/5 border-white/10 text-white/20"
+            )}>
+              {progressStep > item.step ? <CheckCircle2 className="w-4 h-4" /> : item.icon}
+            </div>
+            <span className={cn(
+              "text-[8px] font-black uppercase tracking-widest",
+              progressStep >= item.step ? "text-white" : "text-white/20"
+            )}>{item.label}</span>
+          </div>
+        ))}
+        {/* Connector Lines */}
+        <div className="absolute top-[1.2rem] left-[20%] right-[20%] h-px bg-white/5 -z-10">
+           <div className="h-full bg-primary transition-all duration-700" style={{ width: `${(progressStep-1) * 50}%` }} />
+        </div>
+      </div>
+
       <div className={cn(
         "glass-card rounded-2xl transition-all duration-500",
         view !== 'initial' ? "border-primary/40 shadow-[0_0_50px_rgba(223,16,78,0.15)]" : "hover:border-white/20"
@@ -139,7 +192,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
             {view === 'initial' && (
               <div className="md:w-64 shrink-0">
                 <Button 
-                  onClick={() => setView('locked')}
+                  onClick={() => { setView('locked'); setProgressStep(1); }}
                   className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-[0_10px_20px_rgba(223,16,78,0.3)] group/btn"
                 >
                   Reveal Gift Card Code <Zap className="ml-2 w-4 h-4 group-hover/btn:scale-125 transition-transform" />
@@ -212,7 +265,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                       <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
-                        Waiting for completion status...
+                        {loadingText || "Waiting for completion status..."}
                       </p>
                     </div>
                     

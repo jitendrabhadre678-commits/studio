@@ -8,42 +8,62 @@
       "description": "Represents a user profile within the GameFlashX platform, storing essential information and reward-related metrics.",
       "properties": {
         "id": {
-          "type": "string",
-          "description": "Unique identifier for the User entity."
+          "type": "string"
         },
         "email": {
           "type": "string",
-          "description": "The email address associated with the user's account.",
           "format": "email"
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp indicating when the user's account was created.",
           "format": "date-time"
         },
         "points": {
-          "type": "number",
-          "description": "Total points accumulated."
+          "type": "number"
         },
         "balance": {
-          "type": "number",
-          "description": "Total earned currency balance (USD)."
+          "type": "number"
+        },
+        "totalEarnings": {
+          "type": "number"
         },
         "offersCompleted": {
-          "type": "number",
-          "description": "Total number of advertiser offers completed."
+          "type": "number"
         },
         "rewardsUnlocked": {
-          "type": "number",
-          "description": "Total count of rewards unlocked."
+          "type": "number"
+        },
+        "referralsCount": {
+          "type": "number"
+        },
+        "referralEarnings": {
+          "type": "number"
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "loginStreak": {
+          "type": "number"
+        },
+        "lastSpinAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "referralCode": {
+          "type": "string"
+        },
+        "accountStatus": {
+          "type": "string",
+          "enum": ["active", "suspended"]
         }
       },
       "required": [
         "id",
         "email",
         "createdAt",
-        "points",
         "balance",
+        "totalEarnings",
         "offersCompleted",
         "rewardsUnlocked"
       ]
@@ -52,7 +72,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Transaction",
       "type": "object",
-      "description": "Represents an individual earning event from an offer completion.",
+      "description": "Represents an individual earning or spending event.",
       "properties": {
         "id": {
           "type": "string"
@@ -60,22 +80,26 @@
         "userId": {
           "type": "string"
         },
-        "offerId": {
-          "type": "string"
+        "type": {
+          "type": "string",
+          "enum": ["offer", "referral", "daily_bonus", "spin", "withdrawal"]
         },
-        "rewardAmount": {
+        "amount": {
           "type": "number"
+        },
+        "rewardName": {
+          "type": "string"
         },
         "status": {
           "type": "string",
-          "enum": ["completed", "pending"]
+          "enum": ["completed", "pending", "failed"]
         },
         "createdAt": {
           "type": "string",
           "format": "date-time"
         }
       },
-      "required": ["id", "userId", "rewardAmount", "status", "createdAt"]
+      "required": ["id", "userId", "type", "amount", "status", "createdAt"]
     }
   },
   "auth": {
@@ -93,13 +117,7 @@
           "schema": {
             "$ref": "#/backend/entities/User"
           },
-          "description": "Stores individual user profile data.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            }
-          ]
+          "description": "Stores individual user profile data."
         }
       },
       {
@@ -109,13 +127,7 @@
           "schema": {
             "$ref": "#/backend/entities/Transaction"
           },
-          "description": "Stores user transactions for offer completions.",
-          "params": [
-            {
-              "name": "transactionId",
-              "description": "The unique identifier of the transaction."
-            }
-          ]
+          "description": "Stores all financial activity for users."
         }
       }
     ]
