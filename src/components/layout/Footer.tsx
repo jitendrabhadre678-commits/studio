@@ -1,7 +1,6 @@
-
 import Link from 'next/link';
-import Image from 'next/image';
 import { Instagram, Youtube, Twitter, Disc as Discord } from 'lucide-react';
+import { Logo } from '@/components/brand/Logo';
 
 export function Footer() {
   return (
@@ -10,15 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 mb-6 group">
-              <div className="relative h-8 w-8 flex-shrink-0">
-                <Image 
-                  src="/logo.png"
-                  alt="GameFlashX Logo"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <span className="font-headline text-2xl font-bold tracking-tight text-white">
+              <Logo className="h-8 w-8 shadow-lg shadow-primary/20" />
+              <span className="font-headline text-2xl font-black tracking-tighter text-white">
                 GAMEFLASH<span className="text-primary">X</span>
               </span>
             </Link>
