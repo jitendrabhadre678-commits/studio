@@ -1,10 +1,8 @@
-
 "use client";
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Zap, ArrowUpRight, ChevronRight } from 'lucide-react';
+import { ChevronRight, Zap } from 'lucide-react';
 import { giftCards, categories } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
@@ -72,7 +70,6 @@ export function TrendingRewards() {
               >
                 <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 overflow-hidden rounded-[16px] h-full flex flex-col group/card shadow-2xl">
                   <CardContent className="p-0 flex flex-col h-full">
-                    {/* 16:9 Thumbnail */}
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <Image 
                         src={imageData.imageUrl}

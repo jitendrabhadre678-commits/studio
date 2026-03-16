@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -9,7 +8,6 @@ import { giftCards } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 export function Hero() {
   const [searchValue, setSearchValue] = useState('');
@@ -37,7 +35,6 @@ export function Hero() {
     }
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -50,7 +47,6 @@ export function Hero() {
 
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-      {/* Background Decor */}
       <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
 
@@ -70,7 +66,6 @@ export function Hero() {
           Complete tasks, watch clips, and unlock the rewards you deserve instantly.
         </p>
 
-        {/* Action Buttons Above Search */}
         <div className="mb-10 flex flex-wrap justify-center gap-4 animate-fade-in-up [animation-delay:500ms]">
           <Button 
             onClick={() => handleScrollToSection('trending')}
@@ -91,7 +86,6 @@ export function Hero() {
           </Button>
         </div>
 
-        {/* Search Bar */}
         <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms]" ref={dropdownRef}>
           <div className="relative group">
             <div className={cn(
@@ -113,7 +107,6 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Search Suggestions Dropdown */}
           {isFocused && searchValue.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-3 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-[12px] p-2 z-[9999] shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200">
               <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 px-3 pt-2">Live Results</div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, ShieldCheck, Loader2, ArrowRight, Lock } from 'lucide-react';
@@ -47,7 +46,7 @@ export function RewardUnlockModal({
           setIsComplete(true);
           clearInterval(interval);
         }
-      }, 16); // ~60fps for smooth bar
+      }, 16);
 
       return () => clearInterval(interval);
     }
@@ -61,7 +60,6 @@ export function RewardUnlockModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
-      // Disable closing during the 6-second session unless complete
       if (isComplete || !open) onClose();
     }}>
       <DialogContent className="max-w-md bg-[#020617]/95 backdrop-blur-3xl border-white/10 p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] sm:rounded-[2.5rem]">
@@ -76,7 +74,6 @@ export function RewardUnlockModal({
             />
           </div>
 
-          {/* Reward Preview */}
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -101,7 +98,6 @@ export function RewardUnlockModal({
           </DialogDescription>
 
           <div className="w-full space-y-6">
-            {/* Timer Circle/Box */}
             <div className="flex flex-col items-center justify-center">
               <div className="relative w-20 h-20 flex items-center justify-center">
                 <AnimatePresence mode="wait">
@@ -125,15 +121,12 @@ export function RewardUnlockModal({
                     </motion.div>
                   )}
                 </AnimatePresence>
-                
-                {/* Spinning loader ring around the number */}
                 {!isComplete && (
                   <Loader2 className="absolute inset-0 w-20 h-20 text-primary/20 animate-spin" strokeWidth={1} />
                 )}
               </div>
             </div>
 
-            {/* Status Text */}
             <div className="flex flex-col gap-2">
                <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
                 <Lock className="w-3 h-3" /> Secure Connection Established
@@ -143,7 +136,6 @@ export function RewardUnlockModal({
               </div>
             </div>
 
-            {/* Action Button */}
             <div className="pt-4">
               <Button 
                 onClick={handleRedirect}
