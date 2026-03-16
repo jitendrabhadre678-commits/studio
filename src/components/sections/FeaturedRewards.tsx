@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -5,7 +6,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Zap, ChevronLeft, ChevronRight, Globe } from "lucide-react";
+import { Zap, ChevronRight, Globe } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -133,14 +134,10 @@ export function FeaturedRewards() {
 
                     <Button 
                       asChild
-                      className="relative w-full group/btn overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-rose-600 p-[1px] transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(223,16,78,0.3)] hover:shadow-[0_0_30px_rgba(223,16,78,0.5)]"
+                      className="relative w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(223,16,78,0.3)] transition-all active:scale-[0.98]"
                     >
-                      <Link href={`/${card.slug}`}>
-                        <div className="relative z-10 w-full h-full bg-[#020617] hover:bg-transparent rounded-[calc(1rem-1px)] py-4 transition-colors duration-300 flex items-center justify-center">
-                          <span className="text-sm font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
-                            Unlock Reward <ChevronRight className="w-4 h-4" />
-                          </span>
-                        </div>
+                      <Link href={`/${card.slug}`} prefetch={true}>
+                        Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
                       </Link>
                     </Button>
                   </motion.div>

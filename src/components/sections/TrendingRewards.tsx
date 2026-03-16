@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -111,13 +112,10 @@ export function TrendingRewards() {
                       <div className="mt-auto">
                         <Button 
                           asChild
-                          className="w-full relative group/btn overflow-hidden rounded-xl bg-primary h-12 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-primary/20"
+                          className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-lg transition-all active:scale-[0.98]"
                         >
-                          <Link href={`/${card.slug}`}>
-                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-                            <span className="relative z-10 text-xs font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
-                              Unlock Reward <ChevronRight className="w-4 h-4" />
-                            </span>
+                          <Link href={`/${card.slug}`} prefetch={true}>
+                            Unlock Reward <ChevronRight className="w-4 h-4" />
                           </Link>
                         </Button>
                       </div>
