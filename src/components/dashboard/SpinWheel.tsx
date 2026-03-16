@@ -49,7 +49,17 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
 
   const lastSpin = userData?.lastSpinAt ? new Date(userData.lastSpinAt) : null;
   const today = new Date();
-  const isAvailable = !lastSpin || lastSpin.toDateString() !== today.toDateString();
+  const isAvailable = !lastSpin || lastLoginDateString(lastSpin) !== today.toDateString();
+
+  // Helper to handle date strings safely
+  function lastLoginDateString(date: any) {
+    if (!date) return '';
+    try {
+      return typeof date === 'string' ? new Date(date).toDateString() : date.toDateString();
+    } catch (e) {
+      return '';
+    }
+  }
 
   // Weighted Probability Logic (strictly following requirements)
   const getTargetIndex = () => {
@@ -182,10 +192,10 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
             {SEGMENTS.map((prize, idx) => (
                <div 
                  key={idx}
-                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-headline font-black text-[10px] text-white uppercase tracking-tighter"
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-headline font-black text-xs text-white uppercase tracking-tighter origin-center whitespace-nowrap"
                  style={{ 
-                   transform: `rotate(${idx * (360/SEGMENTS.length) + (360/SEGMENTS.length/2)}deg) translateY(-112px)`,
-                   textShadow: '0 2px 4px rgba(0,0,0,0.9)'
+                   transform: `rotate(${idx * (360/SEGMENTS.length) + (360/SEGMENTS.length/2)}deg) translateY(-85px) rotate(90deg)`,
+                   textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.2)'
                  }}
                >
                  {prize.label}
