@@ -3,12 +3,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, Zap, ArrowRight } from 'lucide-react';
+import { Search, Zap, ArrowRight, PlayCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { giftCards } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export function Hero() {
   const [searchValue, setSearchValue] = useState('');
@@ -26,6 +27,13 @@ export function Hero() {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setSearchValue('');
       setIsFocused(false);
+    }
+  };
+
+  const handleScrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -62,6 +70,28 @@ export function Hero() {
           Complete tasks, watch clips, and unlock the rewards you deserve instantly.
         </p>
 
+        {/* Action Buttons Above Search */}
+        <div className="mb-10 flex flex-wrap justify-center gap-4 animate-fade-in-up [animation-delay:500ms]">
+          <Button 
+            onClick={() => handleScrollToSection('trending')}
+            size="lg" 
+            className="bg-primary hover:bg-primary/90 text-white font-black px-10 h-14 rounded-[12px] text-lg group shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95"
+          >
+            Unlock Now
+            <Zap className="ml-2 w-5 h-5 group-hover:scale-125 transition-transform" />
+          </Button>
+          <Button 
+            onClick={() => handleScrollToSection('how-it-works')}
+            size="lg" 
+            variant="outline" 
+            className="border-white/20 text-white hover:bg-white/10 px-10 h-14 rounded-[12px] text-lg backdrop-blur-md transition-all active:scale-95"
+          >
+            How it Works
+            <PlayCircle className="ml-2 w-5 h-5 opacity-60" />
+          </Button>
+        </div>
+
+        {/* Search Bar */}
         <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms]" ref={dropdownRef}>
           <div className="relative group">
             <div className={cn(
@@ -124,16 +154,6 @@ export function Hero() {
               </div>
             </div>
           )}
-        </div>
-
-        <div className="mt-12 flex flex-wrap justify-center gap-6 animate-fade-in-up [animation-delay:800ms]">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-white font-black px-12 h-14 rounded-xl text-lg group shadow-xl shadow-primary/20">
-            Unlock Now
-            <Zap className="ml-2 w-5 h-5 group-hover:scale-125 transition-transform" />
-          </Button>
-          <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/5 px-12 h-14 rounded-xl text-lg">
-            How it Works
-          </Button>
         </div>
       </div>
     </section>
