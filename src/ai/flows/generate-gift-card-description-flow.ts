@@ -24,15 +24,18 @@ const GenerateGiftCardDescriptionOutputSchema = z.object({
 export type GenerateGiftCardDescriptionOutput = z.infer<typeof GenerateGiftCardDescriptionOutputSchema>;
 
 export async function generateGiftCardDescription(input: GenerateGiftCardDescriptionInput): Promise<GenerateGiftCardDescriptionOutput | null> {
-  // Check for critical missing configuration before calling the flow
-  if (!process.env.GOOGLE_GENAI_API_KEY && process.env.NODE_ENV === 'production') {
-    return null;
-  }
-
+  // Silent guard against initialization errors or missing environment variables
   try {
-    return await generateGiftCardDescriptionFlow(input);
+    if (!process.env.GOOGLE_GENAI_API_KEY && process.env.NODE_ENV === 'production') {
+      return null;
+    }
+    
+    const { output } = await generateGiftCardDescriptionPrompt(input);
+    if (!output) return null;
+    
+    return output;
   } catch (error) {
-    // Silently fail and return null to avoid surfacing GenAI errors to the user console
+    // Catch-all to prevent bubbling up any AI service issues to the server component
     return null;
   }
 }
@@ -58,23 +61,3 @@ Key Features to Highlight:
 
 Generate a marketing description that is concise, impactful, and suitable for our website and social media. Focus on attracting users to unlock this reward now!`
 });
-
-const generateGiftCardDescriptionFlow = ai.defineFlow(
-  {
-    name: 'generateGiftCardDescriptionFlow',
-    inputSchema: GenerateGiftCardDescriptionInputSchema,
-    outputSchema: GenerateGiftCardDescriptionOutputSchema,
-  },
-  async (input) => {
-    try {
-      const { output } = await generateGiftCardDescriptionPrompt(input);
-      if (!output) {
-        throw new Error('No output from prompt');
-      }
-      return output;
-    } catch (e) {
-      // Re-throw to be caught by the external wrapper
-      throw e;
-    }
-  }
-);
