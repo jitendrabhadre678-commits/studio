@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI tool that generates unique, compelling marketing descriptions for new gift card offerings.
@@ -46,22 +47,26 @@ Generate a marketing description that is concise, impactful, and suitable for ou
 });
 
 export async function generateGiftCardDescription(input: GenerateGiftCardDescriptionInput): Promise<GenerateGiftCardDescriptionOutput | null> {
-  // Silent guard against initialization errors or missing environment variables
+  // Defensive check for environment variables and service availability
   try {
+    // If we're in a state where API keys might be missing or service unavailable,
+    // return null early to trigger the fallback in the UI.
     if (!process.env.GOOGLE_GENAI_API_KEY && process.env.NODE_ENV === 'production') {
       return null;
     }
-    
-    // Explicitly handle cases where the prompt might fail or the model is unavailable
+
     const result = await generateGiftCardDescriptionPrompt(input);
-    if (!result || !result.output) {
-      return null;
+    
+    // Check if the result and output exist safely
+    if (result && result.output) {
+      return result.output;
     }
     
-    return result.output;
+    return null;
   } catch (error) {
-    // Prevent the entire app from crashing if GenAI fails (prevents {} console errors)
-    console.error('AI Description Flow Error:', error);
+    // Catch-all to prevent the server-side action from crashing the page
+    // Returning null allows the calling component to use its default static content.
+    console.error('AI Description Flow Error Catch:', error);
     return null;
   }
 }
