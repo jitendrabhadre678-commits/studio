@@ -5,10 +5,11 @@ import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { Settings, User, Mail, Shield, Bell } from 'lucide-react';
+import { User, Mail, Shield, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 export default function AccountSettings() {
   const { user, isUserLoading } = useUser();
@@ -114,5 +115,3 @@ export default function AccountSettings() {
     </main>
   );
 }
-
-import { cn } from '@/lib/utils';

@@ -24,10 +24,15 @@ const GenerateGiftCardDescriptionOutputSchema = z.object({
 export type GenerateGiftCardDescriptionOutput = z.infer<typeof GenerateGiftCardDescriptionOutputSchema>;
 
 export async function generateGiftCardDescription(input: GenerateGiftCardDescriptionInput): Promise<GenerateGiftCardDescriptionOutput | null> {
+  // Check for critical missing configuration before calling the flow
+  if (!process.env.GOOGLE_GENAI_API_KEY && process.env.NODE_ENV === 'production') {
+    return null;
+  }
+
   try {
     return await generateGiftCardDescriptionFlow(input);
   } catch (error) {
-    // Silently fail and return null to allow the UI to use a fallback description
+    // Silently fail and return null to avoid surfacing GenAI errors to the user console
     return null;
   }
 }
@@ -61,10 +66,15 @@ const generateGiftCardDescriptionFlow = ai.defineFlow(
     outputSchema: GenerateGiftCardDescriptionOutputSchema,
   },
   async (input) => {
-    const { output } = await generateGiftCardDescriptionPrompt(input);
-    if (!output) {
-      throw new Error('Failed to generate gift card description.');
+    try {
+      const { output } = await generateGiftCardDescriptionPrompt(input);
+      if (!output) {
+        throw new Error('No output from prompt');
+      }
+      return output;
+    } catch (e) {
+      // Re-throw to be caught by the external wrapper
+      throw e;
     }
-    return output;
   }
 );
