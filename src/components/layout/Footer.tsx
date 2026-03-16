@@ -31,10 +31,10 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-white mb-6 uppercase tracking-widest text-sm">Platform</h4>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">How it Works</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Browse Rewards</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Categories</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Trending</Link></li>
+              <li><Link href="/#how-it-works" className="text-muted-foreground hover:text-primary transition-colors">How it Works</Link></li>
+              <li><Link href="/#trending" className="text-muted-foreground hover:text-primary transition-colors">Browse Rewards</Link></li>
+              <li><Link href="/#categories" className="text-muted-foreground hover:text-primary transition-colors">Categories</Link></li>
+              <li><Link href="/#trending" className="text-muted-foreground hover:text-primary transition-colors">Trending</Link></li>
             </ul>
           </div>
 
@@ -42,7 +42,7 @@ export function Footer() {
             <h4 className="font-bold text-white mb-6 uppercase tracking-widest text-sm">Community</h4>
             <ul className="space-y-4">
               <li><Link href="https://whop.com/gameflashx" className="text-muted-foreground hover:text-primary transition-colors">Creator Program</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Whop Community</Link></li>
+              <li><Link href="https://whop.com/gameflashx" className="text-muted-foreground hover:text-primary transition-colors">Whop Community</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Testimonials</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Help Center</Link></li>
             </ul>
@@ -51,10 +51,10 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-white mb-6 uppercase tracking-widest text-sm">Legal</h4>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Cookie Policy</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Disclaimer</Link></li>
+              <li><Link href="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
+              <li><Link href="/cookie-policy" className="text-muted-foreground hover:text-primary transition-colors">Cookie Policy</Link></li>
+              <li><Link href="/disclaimer" className="text-muted-foreground hover:text-primary transition-colors">Disclaimer</Link></li>
             </ul>
           </div>
         </div>
