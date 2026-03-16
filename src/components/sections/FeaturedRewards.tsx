@@ -84,10 +84,13 @@ export function FeaturedRewards() {
                     whileHover={{ y: -10 }}
                     className="glass-card rounded-[2.5rem] p-6 border-white/5 relative overflow-hidden h-full flex flex-col group/card"
                   >
-                    {/* Background card style */}
-                    <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] flex items-center justify-center p-4">
-                      <div className="absolute inset-0 bg-black/20" />
-                      <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_15px_rgba(255,255,255,0.4)]">
+                    {/* Unique Gradient Background Banner */}
+                    <div 
+                      className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-6 shadow-2xl border border-white/10 flex items-center justify-center p-4 transition-transform duration-500 group-hover/card:scale-[1.02]"
+                      style={{ background: card.gradient }}
+                    >
+                      <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
+                      <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.4)] px-4 leading-none">
                         {card.brand}
                       </span>
                       <div className="absolute bottom-3 left-3 flex gap-1 z-10">

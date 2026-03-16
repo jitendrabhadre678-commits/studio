@@ -119,9 +119,12 @@ export function Hero() {
                         onClick={() => handleScrollToCard(card.slug)}
                         className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/[0.08] text-left text-white transition-all group"
                       >
-                        {/* Styled Mini Card Visual */}
-                        <div className="relative w-24 aspect-[16/9] rounded-md overflow-hidden shrink-0 border border-white/10 bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] flex items-center justify-center p-2">
-                           <span className="relative z-10 font-headline font-black text-white text-[10px] uppercase tracking-tighter text-center [text-shadow:0_0_8px_rgba(255,255,255,0.3)]">
+                        {/* Unique Mini Card Visual */}
+                        <div 
+                          className="relative w-24 aspect-[16/9] rounded-md overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-2"
+                          style={{ background: card.gradient }}
+                        >
+                           <span className="relative z-10 font-headline font-black text-white text-[10px] uppercase tracking-tighter text-center [text-shadow:0_0_10px_rgba(255,255,255,0.4)] px-2 leading-none">
                             {card.brand}
                           </span>
                         </div>

@@ -67,10 +67,13 @@ export function TrendingRewards() {
               >
                 <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 overflow-hidden rounded-[16px] h-full flex flex-col group/card shadow-2xl">
                   <CardContent className="p-0 flex flex-col h-full">
-                    {/* Gradient Card Style Thumbnail */}
-                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] flex items-center justify-center p-4">
+                    {/* Unique Brand Gradient Banner */}
+                    <div 
+                      className="relative aspect-[16/9] w-full overflow-hidden flex items-center justify-center p-4 transition-transform duration-500 group-hover/card:scale-[1.02]"
+                      style={{ background: card.gradient }}
+                    >
                       <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
-                      <span className="relative z-10 font-headline font-black text-white text-xl md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_12px_rgba(255,255,255,0.3)]">
+                      <span className="relative z-10 font-headline font-black text-white text-xl md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_15px_rgba(255,255,255,0.4)] px-4 leading-none">
                         {card.brand}
                       </span>
                       {card.trending && (

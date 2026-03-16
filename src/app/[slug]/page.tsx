@@ -47,9 +47,12 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
               <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
               
               {/* Premium Gradient Card Visual */}
-              <div className="relative glass-card aspect-[16/9] rounded-3xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] group">
+              <div 
+                className="relative glass-card aspect-[16/9] rounded-3xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group"
+                style={{ background: card.gradient }}
+              >
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700" />
-                <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.4)] px-8">
+                <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_30px_rgba(255,255,255,0.4)] px-8 leading-none">
                   {card.brand}
                 </span>
                 
