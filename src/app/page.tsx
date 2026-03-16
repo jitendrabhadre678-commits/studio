@@ -9,6 +9,7 @@ import { FAQ } from '@/components/sections/FAQ';
 import { TrustBadges } from '@/components/sections/TrustBadges';
 import { Footer } from '@/components/layout/Footer';
 import { LiveActivity } from '@/components/sections/LiveActivity';
+import { CommunityHub } from '@/components/sections/CommunityHub';
 import { categories } from '@/lib/gift-cards';
 import { Zap } from 'lucide-react';
 import Link from 'next/link';
@@ -48,6 +49,8 @@ export default function Home() {
       <TrendingRewards />
 
       <Testimonials />
+
+      <CommunityHub />
 
       <FAQ />
 
