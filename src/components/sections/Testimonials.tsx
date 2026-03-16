@@ -37,32 +37,37 @@ const testimonials: Testimonial[] = [
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="w-[320px] shrink-0 mx-4 glass-card p-6 rounded-[1.5rem] border-white/5 hover:border-primary/40 transition-all duration-300 group">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-[340px] shrink-0 mx-4 bg-white/[0.05] backdrop-blur-[14px] p-7 rounded-[18px] border border-white/[0.12] hover:border-primary/40 transition-all duration-500 group hover:shadow-[0_0_40px_rgba(223,16,78,0.25)] relative overflow-hidden">
+      {/* Pink Highlight Glow */}
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/15 transition-colors duration-500" />
+      
+      <div className="flex items-center justify-between mb-5">
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-3 h-3 text-primary fill-primary" />
+            <Star key={i} className="w-3.5 h-3.5 text-primary fill-primary drop-shadow-[0_0_5px_rgba(223,16,78,0.5)]" />
           ))}
         </div>
-        <div className="flex items-center gap-1 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+        <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">
           <ShieldCheck className="w-3 h-3 text-green-500" />
-          <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified Claim</span>
+          <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">Verified</span>
         </div>
       </div>
       
-      <div className="relative">
-        <Quote className="absolute -top-2 -left-2 w-8 h-8 text-white/5 group-hover:text-primary/10 transition-colors" />
-        <p className="text-sm text-white/80 leading-relaxed italic mb-6 relative z-10">
+      <div className="relative mb-6">
+        <Quote className="absolute -top-3 -left-3 w-10 h-10 text-white/[0.03] group-hover:text-primary/[0.07] transition-colors duration-500" />
+        <p className="text-[15px] text-white/90 leading-relaxed italic relative z-10 font-medium">
           "{testimonial.text}"
         </p>
       </div>
 
-      <div className="flex flex-col">
-        <span className="text-sm font-black text-white uppercase tracking-tight">{testimonial.name}</span>
+      <div className="flex flex-col mt-auto pt-4 border-t border-white/5">
+        <span className="text-sm font-black text-white uppercase tracking-tight mb-0.5">{testimonial.name}</span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{testimonial.country}</span>
-          <span className="w-1 h-1 bg-white/20 rounded-full" />
-          <span className="text-[10px] text-primary uppercase tracking-widest font-black">{testimonial.reward}</span>
+          <span className="text-[11px] text-white/40 uppercase tracking-widest font-bold">{testimonial.country}</span>
+          <span className="w-1 h-1 bg-white/10 rounded-full" />
+          <span className="text-[11px] text-primary uppercase tracking-widest font-black [text-shadow:0_0_10px_rgba(223,16,78,0.3)]">
+            {testimonial.reward}
+          </span>
         </div>
       </div>
     </div>
@@ -70,42 +75,45 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 }
 
 export function Testimonials() {
-  const row1 = [...testimonials.slice(0, 10), ...testimonials.slice(0, 10)];
-  const row2 = [...testimonials.slice(10, 20), ...testimonials.slice(10, 20)];
+  // Triple the list for a truly seamless infinite scroll on very large screens
+  const row1 = [...testimonials, ...testimonials, ...testimonials];
+  const row2 = [...testimonials, ...testimonials, ...testimonials];
 
   return (
-    <section className="py-24 overflow-hidden bg-black/40 border-y border-white/5 relative">
-      <div className="absolute inset-0 bg-primary/5 blur-[120px] pointer-events-none" />
+    <section className="py-28 overflow-hidden bg-black/40 border-y border-white/5 relative">
+      {/* Background Ambient Ambient Glows */}
+      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2" />
       
-      <div className="container mx-auto px-4 mb-16 text-center relative z-10">
+      <div className="container mx-auto px-4 mb-20 text-center relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full mb-6"
+          viewport={{ once: true }}
+          className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-5 py-2 rounded-full mb-6"
         >
           <Star className="w-4 h-4 text-primary fill-primary" />
-          <span className="text-xs font-black uppercase tracking-widest text-primary">Global Community</span>
+          <span className="text-[11px] font-black uppercase tracking-widest text-primary">Global Success Stories</span>
         </motion.div>
-        <h2 className="font-headline text-4xl md:text-6xl font-black text-white mb-6">
-          Trusted by <span className="text-primary text-glow">Thousands</span> of Happy Users
+        <h2 className="font-headline text-4xl md:text-7xl font-black text-white mb-6 tracking-tight leading-none">
+          Trusted by <span className="text-primary text-glow">Thousands</span>
         </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Users around the world are unlocking rewards daily. Join the GameFlashX revolution and start earning today.
+        <p className="text-white/50 text-lg md:text-xl max-w-2xl mx-auto font-medium">
+          Gamers across the globe are unlocking premium rewards every minute. Read why they choose GameFlashX.
         </p>
       </div>
 
-      <div className="relative space-y-8 py-4">
-        {/* Row 1: Left to Right */}
-        <div className="flex w-max animate-marquee-right">
+      <div className="relative space-y-12 py-4">
+        {/* Row 1: Right to Left (Slower/Smoother) */}
+        <div className="flex w-max animate-marquee-left hover:[animation-play-state:paused] transition-all">
           {row1.map((t, idx) => (
-            <TestimonialCard key={`${t.id}-${idx}`} testimonial={t} />
+            <TestimonialCard key={`r1-${t.id}-${idx}`} testimonial={t} />
           ))}
         </div>
 
-        {/* Row 2: Right to Left */}
-        <div className="flex w-max animate-marquee-left">
+        {/* Row 2: Left to Right (Slower/Smoother) */}
+        <div className="flex w-max animate-marquee-right hover:[animation-play-state:paused] transition-all">
           {row2.map((t, idx) => (
-            <TestimonialCard key={`${t.id}-${idx}`} testimonial={t} />
+            <TestimonialCard key={`r2-${t.id}-${idx}`} testimonial={t} />
           ))}
         </div>
       </div>

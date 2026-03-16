@@ -108,11 +108,11 @@
 
 @keyframes marquee-left {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(-33.33%); }
 }
 
 @keyframes marquee-right {
-  from { transform: translateX(-50%); }
+  from { transform: translateX(-33.33%); }
   to { transform: translateX(0); }
 }
 
@@ -120,12 +120,13 @@
   animation: pulse-glow 2s infinite;
 }
 
+/* Slower speeds for better readability: 80s and 90s */
 .animate-marquee-left {
-  animation: marquee-left 60s linear infinite;
+  animation: marquee-left 90s linear infinite;
 }
 
 .animate-marquee-right {
-  animation: marquee-right 60s linear infinite;
+  animation: marquee-right 80s linear infinite;
 }
 
 @media (max-width: 768px) {
@@ -134,7 +135,10 @@
     opacity: 0.25;
     animation-duration: 30s;
   }
-  .animate-marquee-left, .animate-marquee-right {
+  .animate-marquee-left {
+    animation-duration: 45s;
+  }
+  .animate-marquee-right {
     animation-duration: 40s;
   }
 }
