@@ -2,8 +2,9 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Zap, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -22,10 +23,15 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card mx-4 mt-4 rounded-2xl">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform">
-            <Zap className="text-white fill-white w-6 h-6" />
-            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative h-8 w-8 md:h-9 md:w-9 lg:h-10 lg:w-10 flex-shrink-0 group-hover:scale-110 transition-transform">
+            <Image 
+              src="/logo.png"
+              alt="GameFlashX Logo"
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
           <span className="font-headline text-2xl font-bold tracking-tight text-white">
             GAMEFLASH<span className="text-primary">X</span>

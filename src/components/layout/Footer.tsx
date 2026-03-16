@@ -1,6 +1,7 @@
 
 import Link from 'next/link';
-import { Zap, Instagram, Youtube, Twitter, Disc as Discord, MessageSquare } from 'lucide-react';
+import Image from 'next/image';
+import { Instagram, Youtube, Twitter, Disc as Discord } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -8,9 +9,14 @@ export function Footer() {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-6 group">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Zap className="text-white fill-white w-6 h-6" />
+            <Link href="/" className="flex items-center gap-3 mb-6 group">
+              <div className="relative h-8 w-8 flex-shrink-0">
+                <Image 
+                  src="/logo.png"
+                  alt="GameFlashX Logo"
+                  fill
+                  className="object-contain"
+                />
               </div>
               <span className="font-headline text-2xl font-bold tracking-tight text-white">
                 GAMEFLASH<span className="text-primary">X</span>
