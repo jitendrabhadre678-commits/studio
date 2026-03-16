@@ -14,7 +14,23 @@
           "type": "string",
           "format": "email"
         },
+        "displayName": {
+          "type": "string"
+        },
+        "photoURL": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
         "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
           "type": "string",
           "format": "date-time"
         },
@@ -97,6 +113,10 @@
         "createdAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "recipientEmail": {
+          "type": "string",
+          "format": "email"
         }
       },
       "required": ["id", "userId", "type", "amount", "status", "createdAt"]

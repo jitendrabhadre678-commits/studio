@@ -85,23 +85,23 @@ export default function LeaderboardPage() {
                       <Avatar className="h-12 w-12 border-2 border-white/10 group-hover:border-primary transition-all">
                         <AvatarImage src={user.photoURL} />
                         <AvatarFallback className="bg-white/5 text-white/40 font-black">
-                          {user.email?.charAt(0).toUpperCase()}
+                          {(user.displayName || user.email || '?').charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <p className="font-bold text-white text-lg flex items-center gap-2">
-                          {user.displayName || user.email?.split('@')[0]}
+                          {user.displayName || user.email?.split('@')[0] || 'Unknown Player'}
                           {idx === 0 && <Zap className="w-3.5 h-3.5 text-primary fill-primary" />}
                         </p>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                           <Globe className="w-3 h-3" /> Player Global
+                           <Globe className="w-3 h-3" /> Global Player
                         </p>
                       </div>
                     </div>
 
                     <div className="col-span-4 text-right">
                       <div className="inline-flex flex-col items-end">
-                        <span className="text-2xl font-black text-white tabular-nums">${user.totalEarnings.toFixed(2)}</span>
+                        <span className="text-2xl font-black text-white tabular-nums">${(user.totalEarnings || 0).toFixed(2)}</span>
                         <span className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-1">
                           <ArrowUp className="w-3 h-3" /> Trending
                         </span>
