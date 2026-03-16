@@ -23,8 +23,13 @@ const GenerateGiftCardDescriptionOutputSchema = z.object({
 });
 export type GenerateGiftCardDescriptionOutput = z.infer<typeof GenerateGiftCardDescriptionOutputSchema>;
 
-export async function generateGiftCardDescription(input: GenerateGiftCardDescriptionInput): Promise<GenerateGiftCardDescriptionOutput> {
-  return generateGiftCardDescriptionFlow(input);
+export async function generateGiftCardDescription(input: GenerateGiftCardDescriptionInput): Promise<GenerateGiftCardDescriptionOutput | null> {
+  try {
+    return await generateGiftCardDescriptionFlow(input);
+  } catch (error) {
+    // Silently fail and return null to allow the UI to use a fallback description
+    return null;
+  }
 }
 
 const generateGiftCardDescriptionPrompt = ai.definePrompt({

@@ -25,18 +25,20 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
   // Use the AI flow to generate a description for the specific card with a safety fallback
   let displayDescription = card.description;
   try {
+    // Calling the AI flow directly. generateGiftCardDescription now handles its own internal catch.
     const aiDescription = await generateGiftCardDescription({
       brandName: card.brand,
       value: card.values[card.values.length - 1],
       category: card.category,
       keyFeatures: ["Instant Digital Delivery", "Secured Connection", "Global Gift Support"]
     });
-    if (aiDescription?.description) {
+    
+    if (aiDescription && aiDescription.description) {
       displayDescription = aiDescription.description;
     }
   } catch (error) {
-    console.error("AI Description generation failed:", error);
-    // Fallback to the static description already set above
+    // Extra insurance against any bubbling issues
+    displayDescription = card.description;
   }
 
   return (
