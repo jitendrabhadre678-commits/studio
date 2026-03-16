@@ -40,8 +40,8 @@ export function HowItWorks() {
             <PlayCircle className="w-4 h-4 text-primary" />
             <span className="text-xs font-black uppercase tracking-widest text-primary">Simple 4-Step Process</span>
           </motion.div>
-          <h2 className="font-headline text-4xl md:text-6xl font-black text-white mb-6">
-            How GameFlash<span className="text-primary">X</span> Works
+          <h2 className="font-headline text-4xl md:text-6xl font-bold text-white mb-6">
+            How <span className="text-primary">GameFlashX</span> Works
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Unlocking premium digital rewards has never been easier. Follow our simple process to start claiming your free gift cards today.
