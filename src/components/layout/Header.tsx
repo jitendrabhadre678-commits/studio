@@ -23,7 +23,7 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 glass-card mx-4 mt-4 rounded-2xl border-white/5">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <Logo className="h-8 w-11 md:h-9 md:w-12 lg:h-10 lg:w-14 group-hover:scale-110 transition-transform" />
+          <Logo className="h-8 w-8 md:h-9 md:w-9 lg:h-10 lg:w-10 group-hover:scale-110 transition-transform duration-300" />
           <span className="font-headline text-2xl font-black tracking-tighter text-white">
             GAMEFLASH<span className="text-primary">X</span>
           </span>
