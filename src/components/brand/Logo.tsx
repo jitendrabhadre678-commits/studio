@@ -3,13 +3,13 @@ import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <div className={cn("relative aspect-square shrink-0 overflow-hidden rounded-[20%] shadow-lg shadow-primary/20", className)}>
+    <div className={cn("relative shrink-0", className)}>
       <Image
         src="/logo.png"
         alt="GameFlashX Logo"
-        fill
-        sizes="(max-width: 768px) 32px, (max-width: 1024px) 36px, 40px"
-        className="object-cover"
+        width={100}
+        height={100}
+        className="h-[32px] md:h-[36px] lg:h-[40px] w-auto object-contain"
         priority
       />
     </div>

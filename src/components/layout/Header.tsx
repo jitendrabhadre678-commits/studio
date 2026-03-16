@@ -12,68 +12,77 @@ export function Header() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Gift Cards', href: '#trending' },
-    { name: 'Categories', href: '#categories' },
-    { name: 'Rewards', href: '#' },
-    { name: 'Creator Program', href: '#creator' },
+    { name: 'Rewards', href: '#trending' },
+    { name: 'Tasks', href: '#' },
+    { name: 'Giveaways', href: '#' },
+    { name: 'Leaderboard', href: '#' },
     { name: 'Blog', href: '#' },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-card mx-4 mt-4 rounded-2xl border-white/5">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <Logo className="h-8 w-8 md:h-9 md:w-9 lg:h-10 lg:w-10 group-hover:scale-110 transition-transform duration-300" />
-          <span className="font-headline text-2xl font-black tracking-tighter text-white">
-            GAMEFLASH<span className="text-primary">X</span>
-          </span>
-        </Link>
+    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      <header className={cn(
+        "w-full max-w-[1200px] mt-5 pointer-events-auto transition-all duration-300",
+        "bg-white/5 backdrop-blur-[12px] border border-white/10 rounded-[16px] shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+      )}>
+        <div className="px-6 h-[72px] flex items-center justify-between">
+          {/* Logo Section */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <Logo />
+            <span className="font-headline text-xl lg:text-2xl font-black tracking-tighter text-white">
+              GAMEFLASH<span className="text-primary">X</span>
+            </span>
+          </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
-        </nav>
+          {/* Desktop Nav */}
+          <nav className="hidden xl:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                href={link.href}
+                className="text-[13px] font-bold text-white/70 hover:text-primary uppercase tracking-widest transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
 
-        <div className="hidden lg:flex items-center gap-4">
-          <Button variant="ghost" className="text-white hover:text-primary">Login</Button>
-          <Button className="bg-primary hover:bg-primary/90 text-white font-bold px-6 rounded-xl">Unlock Now</Button>
+          {/* Desktop Actions */}
+          <div className="hidden lg:flex items-center gap-4">
+            <Button variant="ghost" className="text-white font-bold hover:text-primary">Login</Button>
+            <Button className="bg-primary hover:bg-primary/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(223,16,78,0.3)]">Sign Up</Button>
+          </div>
+
+          {/* Mobile Menu Trigger */}
+          <button className="lg:hidden text-white p-2" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
 
-        {/* Mobile Menu Trigger */}
-        <button className="lg:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X /> : <Menu />}
-        </button>
-      </div>
-
-      {/* Mobile Nav Overlay */}
-      <div className={cn(
-        "lg:hidden absolute top-full left-0 right-0 glass-card mt-2 rounded-2xl overflow-hidden transition-all duration-300 origin-top border-white/5",
-        isOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0 pointer-events-none"
-      )}>
-        <nav className="flex flex-col p-4 gap-4">
-          {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="text-lg font-medium text-white hover:text-primary p-2"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <div className="h-px bg-white/10 my-2" />
-          <Button variant="outline" className="text-white border-white/20 rounded-xl">Login</Button>
-          <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl">Join Now</Button>
-        </nav>
-      </div>
-    </header>
+        {/* Mobile Nav Overlay */}
+        <div className={cn(
+          "lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-black/90 backdrop-blur-2xl rounded-b-[16px] border-t border-white/5",
+          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+        )}>
+          <nav className="flex flex-col p-6 gap-4">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-bold text-white/80 hover:text-primary transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+            <div className="h-px bg-white/10 my-2" />
+            <div className="flex flex-col gap-3">
+              <Button variant="outline" className="text-white border-white/20 rounded-xl h-12 font-bold">Login</Button>
+              <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl h-12 font-black">Sign Up</Button>
+            </div>
+          </nav>
+        </div>
+      </header>
+    </div>
   );
 }
