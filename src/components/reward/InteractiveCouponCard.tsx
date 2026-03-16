@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -7,8 +6,8 @@ import { Gift, Lock, CheckCircle2, Copy, Zap, ArrowRight, Loader2, Unlock } from
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc, collection, addDoc, serverTimestamp, increment } from 'firebase/firestore';
+import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc, collection, serverTimestamp, increment } from 'firebase/firestore';
 import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
@@ -57,7 +56,6 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
 
     try {
       const rewardAmount = 0.10;
-      const transactionId = `${user.uid}-${Date.now()}`;
 
       // 1. Create a transaction record
       addDocumentNonBlocking(collection(firestore, 'transactions'), {
@@ -96,7 +94,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
   return (
     <div className="relative group mb-6">
       <div className={cn(
-        "glass-card rounded-[2rem] overflow-hidden border-white/10 transition-all duration-500",
+        "glass-card rounded-2xl transition-all duration-500",
         view !== 'initial' ? "border-primary/40 shadow-[0_0_50px_rgba(223,16,78,0.15)]" : "hover:border-white/20"
       )}>
         {/* Main Content Area */}
@@ -198,14 +196,14 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
                   </div>
 
                   {/* OGAds Iframe Integration */}
-                  <div className="relative w-full max-w-3xl mx-auto glass-card rounded-3xl overflow-hidden border-white/10 bg-black/40 p-1 shadow-2xl">
+                  <div className="relative w-full max-w-3xl mx-auto glass-card rounded-2xl border-white/10 bg-black/40 p-1 shadow-2xl">
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 backdrop-blur-sm z-0">
                       <Loader2 className="w-8 h-8 text-primary animate-spin" />
                       <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Loading Verification Portal...</span>
                     </div>
                     <iframe 
                       src="https://gameflashx.space/cl/i/277ood"
-                      className="relative z-10 w-full h-[500px] border-none rounded-2xl"
+                      className="relative z-10 w-full h-[500px] border-none rounded-xl"
                       title="Reward Verification"
                     />
                   </div>

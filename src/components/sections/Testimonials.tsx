@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, ShieldCheck, Quote } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Star, ShieldCheck } from "lucide-react";
 
 interface Testimonial {
   id: number;
@@ -37,7 +36,7 @@ const testimonials: Testimonial[] = [
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="w-[300px] shrink-0 mx-4 bg-white/[0.05] backdrop-blur-[12px] p-6 rounded-[16px] border border-white/[0.1] hover:border-primary/40 transition-all duration-300 group relative overflow-hidden">
+    <div className="w-[300px] shrink-0 mx-4 glass-card p-6 rounded-2xl transition-all duration-300 group relative">
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
@@ -75,7 +74,7 @@ export function Testimonials() {
   const row2 = [...testimonials, ...testimonials, ...testimonials];
 
   return (
-    <section className="py-28 overflow-hidden bg-black/40 border-y border-white/5 relative">
+    <section className="py-28 overflow-hidden relative">
       <div className="container mx-auto px-4 mb-20 text-center relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}

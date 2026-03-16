@@ -65,7 +65,7 @@ export function TrendingRewards() {
                 transition={{ delay: (idx % 4) * 0.05 }}
                 className="group scroll-mt-32"
               >
-                <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 overflow-hidden rounded-[16px] h-full flex flex-col group/card shadow-2xl">
+                <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 rounded-2xl h-full flex flex-col group/card shadow-2xl">
                   <CardContent className="p-0 flex flex-col h-full">
                     {/* Unique Brand Gradient Banner */}
                     <div 
