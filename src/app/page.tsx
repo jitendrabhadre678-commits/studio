@@ -1,6 +1,6 @@
-
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
+import { FeaturedRewards } from '@/components/sections/FeaturedRewards';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
 import { CreatorProgram } from '@/components/sections/CreatorProgram';
 import { Footer } from '@/components/layout/Footer';
@@ -34,6 +34,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <FeaturedRewards />
 
       <TrendingRewards />
 

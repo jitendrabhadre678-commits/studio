@@ -1,4 +1,3 @@
-
 {
   "placeholderImages": [
     {
@@ -20,6 +19,42 @@
       "imageHint": "gaming platform"
     },
     {
+      "id": "xbox",
+      "description": "Xbox gift card visual",
+      "imageUrl": "https://picsum.photos/seed/xbox/400/250",
+      "imageHint": "xbox console"
+    },
+    {
+      "id": "playstation",
+      "description": "PlayStation gift card visual",
+      "imageUrl": "https://picsum.photos/seed/ps5/400/250",
+      "imageHint": "playstation console"
+    },
+    {
+      "id": "google-play",
+      "description": "Google Play gift card visual",
+      "imageUrl": "https://picsum.photos/seed/google/400/250",
+      "imageHint": "google play"
+    },
+    {
+      "id": "apple",
+      "description": "Apple gift card visual",
+      "imageUrl": "https://picsum.photos/seed/apple/400/250",
+      "imageHint": "apple brand"
+    },
+    {
+      "id": "walmart",
+      "description": "Walmart gift card visual",
+      "imageUrl": "https://picsum.photos/seed/walmart/400/250",
+      "imageHint": "walmart store"
+    },
+    {
+      "id": "starbucks",
+      "description": "Starbucks gift card visual",
+      "imageUrl": "https://picsum.photos/seed/coffee/400/250",
+      "imageHint": "starbucks coffee"
+    },
+    {
       "id": "roblox",
       "description": "Roblox gift card visual",
       "imageUrl": "https://picsum.photos/seed/roblox/400/250",
@@ -32,12 +67,6 @@
       "imageHint": "movie streaming"
     },
     {
-      "id": "google-play",
-      "description": "Google Play gift card visual",
-      "imageUrl": "https://picsum.photos/seed/google/400/250",
-      "imageHint": "google play"
-    },
-    {
       "id": "paypal",
       "description": "PayPal reward visual",
       "imageUrl": "https://picsum.photos/seed/paypal/400/250",
@@ -48,12 +77,6 @@
       "description": "Fortnite gift card visual",
       "imageUrl": "https://picsum.photos/seed/fortnite/400/250",
       "imageHint": "fortnite game"
-    },
-    {
-      "id": "apple",
-      "description": "Apple gift card visual",
-      "imageUrl": "https://picsum.photos/seed/apple/400/250",
-      "imageHint": "apple brand"
     }
   ]
 }
