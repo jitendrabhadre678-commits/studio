@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * GAMEFLASHX SECURITY RULES
+     *
+     * Core Philosophy: 
+     * This ruleset enforces a strict user-ownership model. Every user's data is isolated 
+     * based on their Firebase Authentication UID.
+     *
+     * Data Structure:
+     * All user profile data is stored in the top-level `/users/{userId}` collection, 
+     * where {userId} matches the authenticated user's UID.
+     *
+     * Key Security Decisions:
+     * 1. Path-Based Ownership: Authorization is determined by comparing the document ID 
+     *    directly to the request.auth.uid, providing a highly performant and secure check.
+     * 2. No Public Listing: The user collection is private. Users cannot list or search 
+     *    for other users to prevent data scraping and maintain privacy.
+     * 3. Identity Integrity: The internal 'id' field within a user document is validated 
+     *    on creation and made immutable on update to ensure the data remains linked 
+     *    to the correct owner.
+     * 4. Prototyping Flexibility: While authorization is strictly enforced, the specific 
+     *    fields for points, rewards, and timestamps are not type-validated to allow for 
+     *    rapid iteration of the game's reward logic.
+     */
+
+    // --- HELPER FUNCTIONS ---
+
+    /**
+     * @description Checks if the request is made by an authenticated user.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the authenticated user's UID matches the provided userId.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Combines ownership check with a check that the document already exists.
+     * Used for update and delete operations to ensure state-changing requests are valid.
+     */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    // --- COLLECTION RULES ---
+
+    /**
+     * @description Rules for individual user profile documents.
+     * @path /users/{userId}
+     * @allow (get) If the authenticated user is accessing their own UID.
+     * @allow (create) If the user is authenticated and the internal 'id' matches their UID.
+     * @deny (list) If a user attempts to query the entire users collection.
+     * @principle Enforces strict path-based ownership and relational integrity for user identities.
+     */
+    match /users/{userId} {
+      // Users can only read their own profile document.
+      allow get, list: if isOwner(userId);
+
+      // Users can only create their own profile document.
+      // We validate that the 'id' field matches the path/UID for relational integrity.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+
+      // Users can update their own profile data, but the 'id' field cannot be changed.
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+
+      // Users can delete their own profile document if it exists.
+      allow delete: if isExistingOwner(userId);
+    }
+
+  }
+}

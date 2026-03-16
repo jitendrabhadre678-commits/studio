@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user profile within the GameFlashX platform, storing essential information and reward-related metrics. This entity is tied to an external authentication system (Firebase Authentication) and does not store sensitive credentials.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity, typically corresponding to the Firebase Authentication UID."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address associated with the user's account.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user's account was created.",
+          "format": "date-time"
+        },
+        "points": {
+          "type": "number",
+          "description": "The total number of points accumulated by the user, used for tracking engagement and progress towards rewards."
+        },
+        "rewardsUnlocked": {
+          "type": "number",
+          "description": "The total count of digital gift cards or premium rewards successfully unlocked by the user."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "createdAt",
+        "points",
+        "rewardsUnlocked"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores individual user profile data. The document ID corresponds to the Firebase Authentication UID, enabling strict path-based ownership. Includes fields like email, creation timestamp, accumulated points, and unlocked rewards. No denormalization for authorization is needed as the document ID itself serves as the authorization context.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user, directly corresponding to their Firebase Authentication UID."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The recommended Firestore structure for GameFlashX focuses on a single collection, 'users', to store individual user profiles. Each document in this collection will be identified by the user's Firebase Authentication UID, creating a secure and highly performant path-based ownership model.\n\n**Authorization Independence:** The core principle of authorization independence is achieved by making the `userId` (Firebase Auth UID) the document ID for each user profile. This means that to determine if a user (`request.auth.uid`) can access a specific profile document (`/users/{userId}`), the security rules only need to compare `request.auth.uid` with the `{userId}` in the path. This eliminates the need for any `get()` operations within the security rules to fetch parent documents or external authorization contexts, simplifying rules and enabling atomic operations.\n\n**QAPs (Queries as Permissions):** This structure supports QAPs by ensuring that each document in the `/users` collection has a homogeneous security posture: it is strictly private to the authenticated user. For read operations, a user can only 'get' their own profile document (`/users/request.auth.uid`). Any 'list' operation on the `/users` collection, if permitted by rules, would need to include a filter (e.g., `where('id', '==', request.auth.uid)`) to match the user's own UID, effectively turning it into a highly specific and authorized lookup. An attempt to 'list' all users without such a filter would be denied by security rules, thus preventing unauthorized data leakage and reinforcing that rules are not filters. This design leverages structural segregation (Strategy B) where each user's data is isolated and directly tied to their authentication ID, ensuring that all access checks are explicit and efficient."
+  }
+}
