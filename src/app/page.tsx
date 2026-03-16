@@ -3,6 +3,7 @@ import { Hero } from '@/components/sections/Hero';
 import { FeaturedRewards } from '@/components/sections/FeaturedRewards';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
 import { HowItWorks } from '@/components/sections/HowItWorks';
+import { Testimonials } from '@/components/sections/Testimonials';
 import { Footer } from '@/components/layout/Footer';
 import { LiveActivity } from '@/components/sections/LiveActivity';
 import { categories } from '@/lib/gift-cards';
@@ -40,6 +41,8 @@ export default function Home() {
       <HowItWorks />
 
       <TrendingRewards />
+
+      <Testimonials />
 
       <LiveActivity />
       <Footer />
