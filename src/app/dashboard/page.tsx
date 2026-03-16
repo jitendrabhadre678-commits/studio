@@ -17,7 +17,6 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DailyBonus } from '@/components/dashboard/DailyBonus';
-import { SpinWheel } from '@/components/dashboard/SpinWheel';
 import { WithdrawalModal } from '@/components/dashboard/WithdrawalModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -128,10 +127,8 @@ export default function Dashboard() {
 
               <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
-                  {/* Games & Activities */}
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <SpinWheel userRef={userRef} userData={userData} />
-                    
+                  {/* Activities */}
+                  <div className="grid grid-cols-1 gap-8">
                     <div className="glass-card rounded-[2.5rem] p-8 border-white/10 flex flex-col justify-between">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
