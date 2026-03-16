@@ -8,11 +8,8 @@ export function Footer() {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-6 group">
-              <Logo className="h-8 w-8" />
-              <span className="font-headline text-2xl font-black tracking-tighter text-white">
-                GAMEFLASH<span className="text-primary">X</span>
-              </span>
+            <Link href="/" className="inline-block mb-6 group">
+              <Logo className="h-8 text-2xl" />
             </Link>
             <p className="text-muted-foreground mb-8">
               The premier destination for gamers to earn premium digital rewards through simple activities. Secure, fast, and globally accessible.

@@ -27,11 +27,8 @@ export function Header() {
       )}>
         <div className="px-6 h-[72px] flex items-center justify-between">
           {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <Logo />
-            <span className="font-headline text-xl lg:text-2xl font-black tracking-tighter text-white">
-              GAMEFLASH<span className="text-primary">X</span>
-            </span>
+          <Link href="/" className="flex items-center group">
+            <Logo className="h-[32px] md:h-[36px] lg:h-[40px] text-lg lg:text-2xl" />
           </Link>
 
           {/* Desktop Nav */}
