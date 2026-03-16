@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { doc } from 'firebase/firestore';
-import { Zap, Gift, Trophy, Clock, ArrowRight, ChevronRight } from 'lucide-react';
+import { Zap, Gift, Trophy, Clock, ArrowRight, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
@@ -88,7 +89,7 @@ export default function Dashboard() {
                   </div>
                   <span className="text-xs font-black text-primary uppercase tracking-widest">Player Rank</span>
                 </div>
-                <div className="text-4xl font-black text-white mb-1 uppercase tracking-tighter italic">
+                <div className="text-4xl font-black text-white mb-1 uppercase tracking-tighter italic text-glow">
                   NOVICE
                 </div>
                 <p className="text-xs text-muted-foreground uppercase tracking-widest">Next rank at 100 points</p>
@@ -99,6 +100,33 @@ export default function Dashboard() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content Area */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Creator Submission Tool */}
+              <div className="glass-card rounded-[2.5rem] p-8 border-primary/20 bg-primary/5 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <ImageIcon className="w-32 h-32" />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                      <ImageIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Submit Reward Visual</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-8 max-w-lg">
+                    Design a custom gift card visual for your brand and submit it to our team. Drag and drop your mockup below.
+                  </p>
+                  <ImageUpload 
+                    label="Drop Gift Card Mockup" 
+                    onUpload={(file) => console.log('Gift card visual submitted:', file)}
+                  />
+                  <div className="mt-6 flex justify-end">
+                    <Button className="bg-primary hover:bg-primary/90 text-white font-black px-8 rounded-xl h-12 shadow-lg shadow-primary/20">
+                      Submit Mockup
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
               {/* Progress Section */}
               <div className="glass-card rounded-3xl p-8 border-white/10">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
@@ -117,28 +145,14 @@ export default function Dashboard() {
                   </Button>
                 </div>
               </div>
-
-              {/* Recent Activity */}
-              <div className="glass-card rounded-3xl p-8 border-white/10">
-                <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-tight">Recent Rewards</h3>
-                <div className="space-y-4">
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Gift className="w-12 h-12 mx-auto mb-4 opacity-10" />
-                    <p>You haven't unlocked any rewards yet.</p>
-                    <Button variant="link" className="text-primary p-0 h-auto font-bold mt-2" asChild>
-                      <Link href="/#trending">Browse the gallery</Link>
-                    </Button>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Sidebar area */}
             <div className="space-y-8">
-              <div className="glass-card rounded-3xl p-8 border-white/10 bg-primary/5">
+              <div className="glass-card rounded-3xl p-8 border-white/10">
                 <h3 className="text-lg font-black text-white mb-4 uppercase tracking-widest">Earn Bonus Points</h3>
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed">Refer your friends to GameFlashX and earn 25 points for every successful sign up!</p>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-black rounded-xl">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-black rounded-xl h-12">
                   Get Referral Link
                 </Button>
               </div>

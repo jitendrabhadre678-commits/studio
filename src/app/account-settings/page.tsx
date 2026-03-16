@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
@@ -10,10 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 export default function AccountSettings() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const [isEditingAvatar, setIsEditingAvatar] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -64,24 +66,54 @@ export default function AccountSettings() {
                 </h3>
                 
                 <div className="space-y-6">
-                  <div className="flex items-center gap-6 pb-8 border-b border-white/5">
-                    <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary/50 flex items-center justify-center text-3xl font-black text-primary overflow-hidden">
-                       {user.photoURL ? <img src={user.photoURL} alt="" className="w-full h-full object-cover" /> : user.email?.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <Button variant="outline" className="h-10 border-white/10 bg-white/5 text-white font-bold rounded-xl mb-2">Change Avatar</Button>
-                      <p className="text-xs text-muted-foreground">JPG, GIF or PNG. Max size of 800K</p>
-                    </div>
+                  <div className="pb-8 border-b border-white/5">
+                    <Label className="mb-4 block">Profile Avatar</Label>
+                    {!isEditingAvatar ? (
+                      <div className="flex items-center gap-6">
+                        <div className="w-24 h-24 rounded-[1.5rem] bg-primary/20 border-2 border-primary/50 flex items-center justify-center text-3xl font-black text-primary overflow-hidden shadow-2xl">
+                          {user.photoURL ? (
+                            <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            user.email?.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div>
+                          <Button 
+                            variant="outline" 
+                            className="h-10 border-white/10 bg-white/5 text-white font-bold rounded-xl mb-2"
+                            onClick={() => setIsEditingAvatar(true)}
+                          >
+                            Update Photo
+                          </Button>
+                          <p className="text-xs text-muted-foreground italic">Drag and drop functionality available.</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <ImageUpload 
+                          label="Upload New Avatar" 
+                          onUpload={(file) => console.log('Uploading avatar:', file)} 
+                        />
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-white/40 hover:text-white"
+                          onClick={() => setIsEditingAvatar(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label>Display Name</Label>
-                      <Input defaultValue={user.displayName || ''} className="bg-white/5 border-white/10" />
+                      <Input defaultValue={user.displayName || ''} className="bg-white/5 border-white/10 h-12 rounded-xl" />
                     </div>
                     <div className="space-y-2">
                       <Label>Username</Label>
-                      <Input placeholder="gamer_123" className="bg-white/5 border-white/10" />
+                      <Input placeholder="gamer_123" className="bg-white/5 border-white/10 h-12 rounded-xl" />
                     </div>
                   </div>
 
@@ -93,7 +125,7 @@ export default function AccountSettings() {
                     />
                   </div>
 
-                  <Button className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-12 rounded-xl">
+                  <Button className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-12 rounded-xl w-full md:w-auto">
                     Save Profile Changes
                   </Button>
                 </div>
