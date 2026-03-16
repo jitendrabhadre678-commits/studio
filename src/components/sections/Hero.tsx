@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -55,9 +56,9 @@ export function Hero() {
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/80">Premium Rewards Network</span>
         </div>
         
-        <h1 className="font-headline text-5xl md:text-8xl font-black mb-6 leading-tight animate-fade-in-up [animation-delay:200ms] text-white tracking-tight">
-          Unlock <span style={{ color: '#FA4616' }} className="text-glow-pomegranate">Free Gift Cards</span><br />
-          & <span style={{ color: '#C40006' }} className="text-glow-guardsman">Premium Rewards</span>
+        <h1 className="font-headline text-5xl md:text-8xl font-bold mb-6 leading-tight animate-fade-in-up [animation-delay:200ms] text-white tracking-tight">
+          Unlock <span className="text-[#FA4616]/80 whitespace-nowrap"><span className="[text-shadow:-4px_0_8px_rgba(250,70,22,0.35)]">F</span>ree <span className="[text-shadow:-4px_0_8px_rgba(250,70,22,0.35)]">G</span>ift <span className="[text-shadow:-4px_0_8px_rgba(250,70,22,0.35)]">C</span>ards</span><br />
+          & <span className="text-[#FA4616]/80 whitespace-nowrap"><span className="[text-shadow:-4px_0_8px_rgba(250,70,22,0.35)]">P</span>remium <span className="[text-shadow:-4px_0_8px_rgba(250,70,22,0.35)]">R</span>ewards</span>
         </h1>
 
         <p className="max-w-2xl mx-auto text-muted-foreground text-lg md:text-xl mb-12 animate-fade-in-up [animation-delay:400ms] font-medium leading-relaxed">
