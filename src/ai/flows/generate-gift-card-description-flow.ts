@@ -49,15 +49,17 @@ Generate a marketing description that is concise, impactful, and suitable for ou
 export async function generateGiftCardDescription(input: GenerateGiftCardDescriptionInput): Promise<GenerateGiftCardDescriptionOutput | null> {
   // Defensive check for environment variables and service availability
   try {
-    // If we're in a state where API keys might be missing or service unavailable,
-    // return null early to trigger the fallback in the UI.
-    if (!process.env.GOOGLE_GENAI_API_KEY && process.env.NODE_ENV === 'production') {
+    // If we're in a state where API keys might be missing, return null early
+    if (!process.env.GOOGLE_GENAI_API_KEY) {
       return null;
     }
 
-    const result = await generateGiftCardDescriptionPrompt(input);
+    // Wrap the prompt call in a targeted try-catch to handle Genkit-specific failures
+    const result = await generateGiftCardDescriptionPrompt(input).catch((e) => {
+      // Return a shape that won't cause destructuring errors
+      return { output: null };
+    });
     
-    // Check if the result and output exist safely
     if (result && result.output) {
       return result.output;
     }
@@ -65,8 +67,6 @@ export async function generateGiftCardDescription(input: GenerateGiftCardDescrip
     return null;
   } catch (error) {
     // Catch-all to prevent the server-side action from crashing the page
-    // Returning null allows the calling component to use its default static content.
-    console.error('AI Description Flow Error Catch:', error);
     return null;
   }
 }

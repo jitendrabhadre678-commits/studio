@@ -9,9 +9,9 @@
     },
     {
       "id": "amazon",
-      "description": "Amazon gift card visual",
-      "imageUrl": "https://picsum.photos/seed/amazon/400/250",
-      "imageHint": "amazon logo"
+      "description": "Premium Amazon gift card visual",
+      "imageUrl": "https://picsum.photos/seed/amazon-premium/400/250",
+      "imageHint": "amazon purple"
     },
     {
       "id": "steam",
@@ -22,7 +22,7 @@
     {
       "id": "roblox",
       "description": "Roblox gift card visual",
-      "imageUrl": "https://ibb.co/F4vtH9zX",
+      "imageUrl": "https://picsum.photos/seed/roblox/400/250",
       "imageHint": "roblox game"
     },
     {
