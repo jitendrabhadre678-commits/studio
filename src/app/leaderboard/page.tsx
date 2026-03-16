@@ -22,12 +22,16 @@ const generateStaticUsers = () => {
     const name = NAMES[i % NAMES.length] + " " + String.fromCharCode(65 + (i % 26)) + ".";
     const country = COUNTRIES[i % COUNTRIES.length];
     // Scale earnings realistically from ~40 down to ~3
-    const earnings = (40 - (i * 0.35) + Math.random() * 2).toFixed(2);
+    let earningsNum = (40 - (i * 0.35) + Math.random() * 2);
+    if (earningsNum < 3) {
+      earningsNum = 2 + Math.random() * 2;
+    }
+    
     users.push({
       id: String(i),
       name,
       country,
-      earnings: parseFloat(earnings) < 3 ? (2 + Math.random() * 2).toFixed(2) : earnings
+      earnings: earningsNum
     });
   }
   return users;
@@ -108,7 +112,7 @@ export default function LeaderboardPage() {
 
                   <div className="col-span-4 text-right">
                     <div className="inline-flex flex-col items-end">
-                      <span className="text-xl md:text-2xl font-black text-white tabular-nums">${user.earnings.toFixed(2)}</span>
+                      <span className="text-xl md:text-2xl font-black text-white tabular-nums">${Number(user.earnings).toFixed(2)}</span>
                       <span className={cn(
                         "text-[10px] font-black uppercase tracking-widest flex items-center gap-1",
                         idx < 10 ? "text-green-500" : "text-primary"
