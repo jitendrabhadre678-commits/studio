@@ -37,14 +37,11 @@ const testimonials: Testimonial[] = [
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="w-[340px] shrink-0 mx-4 bg-white/[0.05] backdrop-blur-[14px] p-7 rounded-[18px] border border-white/[0.12] hover:border-primary/40 transition-all duration-500 group hover:shadow-[0_0_40px_rgba(223,16,78,0.25)] relative overflow-hidden">
-      {/* Pink Highlight Glow */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/15 transition-colors duration-500" />
-      
+    <div className="w-[340px] shrink-0 mx-4 bg-white/[0.05] backdrop-blur-[12px] p-7 rounded-[16px] border border-white/[0.1] hover:border-primary/40 transition-all duration-300 group relative overflow-hidden">
       <div className="flex items-center justify-between mb-5">
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-3.5 h-3.5 text-primary fill-primary drop-shadow-[0_0_5px_rgba(223,16,78,0.5)]" />
+            <Star key={i} className="w-3.5 h-3.5 text-primary fill-primary" />
           ))}
         </div>
         <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">
@@ -54,7 +51,6 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       </div>
       
       <div className="relative mb-6">
-        <Quote className="absolute -top-3 -left-3 w-10 h-10 text-white/[0.03] group-hover:text-primary/[0.07] transition-colors duration-500" />
         <p className="text-[15px] text-white/90 leading-relaxed italic relative z-10 font-medium">
           "{testimonial.text}"
         </p>
@@ -65,7 +61,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         <div className="flex items-center gap-2">
           <span className="text-[11px] text-white/40 uppercase tracking-widest font-bold">{testimonial.country}</span>
           <span className="w-1 h-1 bg-white/10 rounded-full" />
-          <span className="text-[11px] text-primary uppercase tracking-widest font-black [text-shadow:0_0_10px_rgba(223,16,78,0.3)]">
+          <span className="text-[11px] text-primary uppercase tracking-widest font-black">
             {testimonial.reward}
           </span>
         </div>
@@ -75,15 +71,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 }
 
 export function Testimonials() {
-  // Triple the list for a truly seamless infinite scroll on very large screens
   const row1 = [...testimonials, ...testimonials, ...testimonials];
   const row2 = [...testimonials, ...testimonials, ...testimonials];
 
   return (
     <section className="py-28 overflow-hidden bg-black/40 border-y border-white/5 relative">
-      {/* Background Ambient Ambient Glows */}
-      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2" />
-      
       <div className="container mx-auto px-4 mb-20 text-center relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
@@ -103,14 +95,12 @@ export function Testimonials() {
       </div>
 
       <div className="relative space-y-12 py-4">
-        {/* Row 1: Right to Left (Slower/Smoother) */}
         <div className="flex w-max animate-marquee-left hover:[animation-play-state:paused] transition-all">
           {row1.map((t, idx) => (
             <TestimonialCard key={`r1-${t.id}-${idx}`} testimonial={t} />
           ))}
         </div>
 
-        {/* Row 2: Left to Right (Slower/Smoother) */}
         <div className="flex w-max animate-marquee-right hover:[animation-play-state:paused] transition-all">
           {row2.map((t, idx) => (
             <TestimonialCard key={`r2-${t.id}-${idx}`} testimonial={t} />

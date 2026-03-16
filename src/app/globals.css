@@ -120,13 +120,12 @@
   animation: pulse-glow 2s infinite;
 }
 
-/* Slower speeds for better readability: 80s and 90s */
 .animate-marquee-left {
-  animation: marquee-left 90s linear infinite;
+  animation: marquee-left 40s linear infinite;
 }
 
 .animate-marquee-right {
-  animation: marquee-right 80s linear infinite;
+  animation: marquee-right 40s linear infinite;
 }
 
 @media (max-width: 768px) {
@@ -136,9 +135,9 @@
     animation-duration: 30s;
   }
   .animate-marquee-left {
-    animation-duration: 45s;
+    animation-duration: 25s;
   }
   .animate-marquee-right {
-    animation-duration: 40s;
+    animation-duration: 20s;
   }
 }
