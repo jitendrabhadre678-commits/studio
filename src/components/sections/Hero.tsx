@@ -44,7 +44,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative pt-32 pb-20 px-4">
+    <section className="relative pt-32 pb-24 px-4">
       {/* Background ambient glows */}
       <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
@@ -52,7 +52,7 @@ export function Hero() {
       <div className="container mx-auto text-center relative z-10">
         <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 animate-fade-in-up">
           <Zap className="w-4 h-4 text-primary fill-primary" />
-          <span className="text-xs font-bold uppercase tracking-widest text-white/80">Trusted by 2.4M+ Global Gamers</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-white/80">Premium Rewards Network</span>
         </div>
         
         <h1 className="font-headline text-5xl md:text-8xl font-black mb-6 leading-tight animate-fade-in-up [animation-delay:200ms] text-white">
@@ -85,7 +85,7 @@ export function Hero() {
           </Button>
         </div>
 
-        <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms] mb-16" ref={dropdownRef}>
+        <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms]" ref={dropdownRef}>
           <div className="relative group">
             <div className={cn(
               "absolute inset-0 bg-primary/20 blur-xl transition-all rounded-2xl",
@@ -146,20 +146,6 @@ export function Hero() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Reverted Trust indicators */}
-        <div className="flex flex-wrap justify-center gap-8 md:gap-12 animate-fade-in-up [animation-delay:700ms]">
-          {[
-            { icon: <CheckCircle2 className="w-4 h-4 text-primary" />, text: "Trusted by thousands" },
-            { icon: <Globe className="w-4 h-4 text-primary" />, text: "Global reward platform" },
-            { icon: <ShieldCheck className="w-4 h-4 text-primary" />, text: "Secure reward system" }
-          ].map((badge, i) => (
-            <div key={i} className="flex items-center gap-2 text-white/40 text-xs font-bold uppercase tracking-widest">
-              {badge.icon}
-              {badge.text}
-            </div>
-          ))}
         </div>
       </div>
     </section>
