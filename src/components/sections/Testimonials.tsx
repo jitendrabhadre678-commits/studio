@@ -37,21 +37,21 @@ const testimonials: Testimonial[] = [
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="w-[340px] shrink-0 mx-4 bg-white/[0.05] backdrop-blur-[12px] p-7 rounded-[16px] border border-white/[0.1] hover:border-primary/40 transition-all duration-300 group relative overflow-hidden">
-      <div className="flex items-center justify-between mb-5">
+    <div className="w-[300px] shrink-0 mx-4 bg-white/[0.05] backdrop-blur-[12px] p-6 rounded-[16px] border border-white/[0.1] hover:border-primary/40 transition-all duration-300 group relative overflow-hidden">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
             <Star key={i} className="w-3.5 h-3.5 text-primary fill-primary" />
           ))}
         </div>
-        <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">
-          <ShieldCheck className="w-3 h-3 text-green-500" />
-          <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">Verified</span>
+        <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+          <ShieldCheck className="w-2.5 h-2.5 text-green-500" />
+          <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified</span>
         </div>
       </div>
       
-      <div className="relative mb-6">
-        <p className="text-[15px] text-white/90 leading-relaxed italic relative z-10 font-medium">
+      <div className="relative mb-5">
+        <p className="text-sm text-white/90 leading-relaxed italic relative z-10 font-medium tracking-tight">
           "{testimonial.text}"
         </p>
       </div>
@@ -59,9 +59,9 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       <div className="flex flex-col mt-auto pt-4 border-t border-white/5">
         <span className="text-sm font-black text-white uppercase tracking-tight mb-0.5">{testimonial.name}</span>
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-white/40 uppercase tracking-widest font-bold">{testimonial.country}</span>
+          <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold">{testimonial.country}</span>
           <span className="w-1 h-1 bg-white/10 rounded-full" />
-          <span className="text-[11px] text-primary uppercase tracking-widest font-black">
+          <span className="text-[10px] text-primary uppercase tracking-widest font-black">
             {testimonial.reward}
           </span>
         </div>

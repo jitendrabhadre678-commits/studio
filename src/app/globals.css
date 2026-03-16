@@ -121,11 +121,11 @@
 }
 
 .animate-marquee-left {
-  animation: marquee-left 40s linear infinite;
+  animation: marquee-left 50s linear infinite;
 }
 
 .animate-marquee-right {
-  animation: marquee-right 40s linear infinite;
+  animation: marquee-right 50s linear infinite;
 }
 
 @media (max-width: 768px) {
@@ -135,9 +135,9 @@
     animation-duration: 30s;
   }
   .animate-marquee-left {
-    animation-duration: 25s;
+    animation-duration: 35s;
   }
   .animate-marquee-right {
-    animation-duration: 20s;
+    animation-duration: 35s;
   }
 }
