@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { ChevronRight, Zap } from 'lucide-react';
 import { giftCards, categories } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
-import { RewardUnlockModal } from '../reward/RewardUnlockModal';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export function TrendingRewards() {
-  const [selectedCard, setSelectedCard] = useState<{card: any, value: string} | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
   const filteredCards = activeCategory === 'All' 
@@ -109,15 +109,17 @@ export function TrendingRewards() {
                       </div>
 
                       <div className="mt-auto">
-                        <button
-                          onClick={() => setSelectedCard({card, value: card.values[card.values.length - 1]})}
+                        <Button 
+                          asChild
                           className="w-full relative group/btn overflow-hidden rounded-xl bg-primary h-12 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-primary/20"
                         >
-                          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-                          <span className="relative z-10 text-xs font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
-                            Unlock Reward <ChevronRight className="w-4 h-4" />
-                          </span>
-                        </button>
+                          <Link href={`/${card.slug}`}>
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                            <span className="relative z-10 text-xs font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
+                              Unlock Reward <ChevronRight className="w-4 h-4" />
+                            </span>
+                          </Link>
+                        </Button>
                       </div>
                     </div>
                   </CardContent>
@@ -127,15 +129,6 @@ export function TrendingRewards() {
           })}
         </div>
       </div>
-
-      {selectedCard && (
-        <RewardUnlockModal 
-          card={selectedCard.card} 
-          value={selectedCard.value}
-          isOpen={!!selectedCard} 
-          onClose={() => setSelectedCard(null)} 
-        />
-      )}
     </section>
   );
 }

@@ -4,10 +4,10 @@ import { giftCards } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { generateGiftCardDescription } from '@/ai/flows/generate-gift-card-description-flow';
 import Image from 'next/image';
-import { Zap, ShieldCheck, Clock, Globe, ArrowRight } from 'lucide-react';
+import { Zap, ShieldCheck, Clock, Globe, ArrowRight, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { CouponCard } from '@/components/reward/CouponCard';
+import { InteractiveCouponCard } from '@/components/reward/InteractiveCouponCard';
 
 export async function generateStaticParams() {
   return giftCards.map((card) => ({
@@ -78,7 +78,7 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
                 <span className="text-[10px] font-black uppercase tracking-widest text-white/80">Active Regional Support</span>
               </div>
               <h1 className="font-headline text-5xl md:text-7xl font-black mb-6 text-white leading-none">
-                Get Your <br /><span className="text-primary text-glow">{card.brand}</span> Reward
+                Claim Your <br /><span className="text-primary text-glow">{card.brand}</span> Reward
               </h1>
               
               <div className="glass-card p-8 rounded-3xl mb-10 border-white/20 relative overflow-hidden group">
@@ -90,29 +90,39 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
                 </p>
               </div>
 
-              <Button asChild className="w-full md:w-auto bg-white/5 hover:bg-white/10 text-white font-black px-12 h-16 rounded-2xl text-xl border border-white/10">
-                <Link href="#coupons">View Available Coupons <ArrowRight className="ml-2" /></Link>
-              </Button>
+              <div className="flex items-center gap-4 text-xs font-bold text-white/40 uppercase tracking-widest">
+                <Shield className="w-4 h-4 text-primary" />
+                Fraud Protection Active
+                <span className="h-1 w-1 bg-white/20 rounded-full" />
+                256-bit AES Encryption
+              </div>
             </div>
           </div>
 
           {/* Coupon Gallery Section */}
-          <section id="coupons" className="scroll-mt-32">
+          <section id="coupons" className="scroll-mt-32 max-w-5xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 block">Selection Gallery</span>
-              <h2 className="font-headline text-4xl md:text-5xl font-black text-white uppercase tracking-tight">Available <span className="text-primary">Coupons</span></h2>
+              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 block">Claim Center</span>
+              <h2 className="font-headline text-4xl md:text-5xl font-black text-white uppercase tracking-tight">Available <span className="text-primary">Reward Values</span></h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="space-y-4">
               {card.values.map((val) => (
-                <CouponCard 
+                <InteractiveCouponCard 
                   key={val}
                   brand={card.brand}
                   value={val}
-                  description={`Unlock a digital reward code for ${card.brand} worth ${val}.`}
-                  slug={card.slug}
+                  description={`Generate a unique digital reward code for ${card.brand} valued at ${val}.`}
                 />
               ))}
+            </div>
+
+            <div className="mt-20 p-8 glass-card rounded-[2.5rem] text-center border-white/5">
+              <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">Need Help?</h3>
+              <p className="text-sm text-muted-foreground mb-6">Our automated support system is available 24/7 for gift card inquiries.</p>
+              <Button variant="outline" className="border-white/10 hover:bg-white/5 text-white font-bold rounded-xl px-8 h-12">
+                Contact Support
+              </Button>
             </div>
           </section>
         </div>

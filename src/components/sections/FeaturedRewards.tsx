@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Zap, ChevronLeft, ChevronRight, Globe } from "lucide-react";
 import {
@@ -16,11 +17,9 @@ import {
 import { giftCards } from "@/lib/gift-cards";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
-import { RewardUnlockModal } from "@/components/reward/RewardUnlockModal";
 
 export function FeaturedRewards() {
   const [api, setApi] = useState<CarouselApi>();
-  const [selectedCard, setSelectedCard] = useState<{ card: any; value: string } | null>(null);
   const featured = giftCards.filter((c) => c.featured);
 
   useEffect(() => {
@@ -132,16 +131,18 @@ export function FeaturedRewards() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => setSelectedCard({ card, value: card.values[0] })}
+                    <Button 
+                      asChild
                       className="relative w-full group/btn overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-rose-600 p-[1px] transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(223,16,78,0.3)] hover:shadow-[0_0_30px_rgba(223,16,78,0.5)]"
                     >
-                      <div className="relative z-10 bg-[#020617] hover:bg-transparent rounded-[calc(1rem-1px)] py-4 transition-colors duration-300">
-                        <span className="text-sm font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
-                          Unlock Reward <ChevronRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </button>
+                      <Link href={`/${card.slug}`}>
+                        <div className="relative z-10 w-full h-full bg-[#020617] hover:bg-transparent rounded-[calc(1rem-1px)] py-4 transition-colors duration-300 flex items-center justify-center">
+                          <span className="text-sm font-black text-white uppercase tracking-widest flex items-center justify-center gap-2">
+                            Unlock Reward <ChevronRight className="w-4 h-4" />
+                          </span>
+                        </div>
+                      </Link>
+                    </Button>
                   </motion.div>
                 </CarouselItem>
               );
@@ -154,15 +155,6 @@ export function FeaturedRewards() {
           </div>
         </Carousel>
       </div>
-
-      {selectedCard && (
-        <RewardUnlockModal
-          card={selectedCard.card}
-          value={selectedCard.value}
-          isOpen={!!selectedCard}
-          onClose={() => setSelectedCard(null)}
-        />
-      )}
     </section>
   );
 }
