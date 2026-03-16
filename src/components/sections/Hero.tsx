@@ -10,15 +10,7 @@ import { cn } from '@/lib/utils';
 export function Hero() {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [claimCount, setClaimCount] = useState(1284392);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setClaimCount(prev => prev + Math.floor(Math.random() * 3) + 1);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   const suggestions = giftCards.filter(c => 
     c.brand.toLowerCase().includes(searchValue.toLowerCase()) ||
@@ -63,9 +55,9 @@ export function Hero() {
           <span className="text-xs font-bold uppercase tracking-widest text-white/80">Trusted by 2.4M+ Global Gamers</span>
         </div>
         
-        <h1 className="font-headline text-5xl md:text-8xl font-black mb-6 leading-tight animate-fade-in-up [animation-delay:200ms]">
-          Unlock <span className="text-glass-gradient glass-glow">Free Gift Cards</span><br />
-          & <span className="text-glass-gradient glass-glow">Premium Rewards</span>
+        <h1 className="font-headline text-5xl md:text-8xl font-black mb-6 leading-tight animate-fade-in-up [animation-delay:200ms] text-white">
+          Unlock Free Gift Cards<br />
+          & Premium Rewards
         </h1>
 
         <p className="max-w-2xl mx-auto text-muted-foreground text-lg md:text-xl mb-12 animate-fade-in-up [animation-delay:400ms]">
@@ -73,13 +65,12 @@ export function Hero() {
           Complete tasks, watch clips, and unlock the rewards you deserve instantly.
         </p>
 
-        <div className="mb-10 flex flex-wrap justify-center gap-4 animate-fade-in-up [animation-delay:500ms]">
+        <div className="mb-16 flex flex-wrap justify-center gap-4 animate-fade-in-up [animation-delay:500ms]">
           <Button 
             onClick={() => handleScrollToSection('trending')}
             size="lg" 
-            className="bg-primary hover:bg-primary/90 text-white font-black px-10 h-14 rounded-[12px] text-lg group shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95 relative overflow-hidden"
+            className="bg-primary hover:bg-primary/90 text-white font-black px-10 h-14 rounded-[12px] text-lg group shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
             Unlock Now
             <Zap className="ml-2 w-5 h-5 group-hover:scale-125 transition-transform" />
           </Button>
@@ -92,16 +83,6 @@ export function Hero() {
             How it Works
             <PlayCircle className="ml-2 w-5 h-5 opacity-60" />
           </Button>
-        </div>
-
-        {/* Live Claim Counter */}
-        <div className="mb-12 animate-fade-in-up [animation-delay:550ms]">
-          <div className="inline-flex flex-col items-center gap-1">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Live Network Activity</span>
-            <div className="text-3xl font-black text-white tabular-nums">
-              {claimCount.toLocaleString()} <span className="text-primary/60">Rewards Claimed</span>
-            </div>
-          </div>
         </div>
 
         <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms] mb-16" ref={dropdownRef}>
@@ -167,7 +148,7 @@ export function Hero() {
           )}
         </div>
 
-        {/* Trust Badges */}
+        {/* Reverted Trust indicators */}
         <div className="flex flex-wrap justify-center gap-8 md:gap-12 animate-fade-in-up [animation-delay:700ms]">
           {[
             { icon: <CheckCircle2 className="w-4 h-4 text-primary" />, text: "Trusted by thousands" },

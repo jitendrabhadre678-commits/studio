@@ -84,17 +84,6 @@
     box-shadow: 0 0 30px rgba(223, 16, 78, 0.3);
     border-color: rgba(255, 255, 255, 0.2);
   }
-  .text-glass-gradient {
-    background: linear-gradient(90deg, #ff94b7, #7dd3fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .glass-glow {
-    text-shadow: 
-      0 0 10px rgba(255, 148, 183, 0.4),
-      0 0 20px rgba(125, 211, 252, 0.4);
-  }
   .text-glow {
     text-shadow: 0 0 10px rgba(223, 16, 78, 0.5), 0 0 20px rgba(223, 16, 78, 0.3);
   }
