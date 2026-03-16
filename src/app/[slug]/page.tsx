@@ -1,9 +1,7 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { giftCards } from '@/lib/gift-cards';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { generateGiftCardDescription } from '@/ai/flows/generate-gift-card-description-flow';
-import Image from 'next/image';
 import { Zap, ShieldCheck, Clock, Globe, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InteractiveCouponCard } from '@/components/reward/InteractiveCouponCard';
@@ -19,9 +17,6 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
   const card = giftCards.find((c) => c.slug === slug);
 
   if (!card) return <div className="min-h-screen flex items-center justify-center text-white font-black text-4xl">404 - REWARD NOT FOUND</div>;
-
-  const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
-  const displayImageUrl = card.imageUrl || imageData.imageUrl;
   
   // Use the AI flow to generate a description for the specific card with a safety fallback
   let displayDescription = card.description;
@@ -50,21 +45,18 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
             <div className="relative animate-fade-in-up">
               <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
-              <div className="relative glass-card aspect-video rounded-3xl overflow-hidden border-white/20 shadow-2xl group bg-black/40">
-                <Image 
-                  src={displayImageUrl}
-                  alt={card.brand}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="bg-primary/90 backdrop-blur-md px-8 py-4 rounded-2xl shadow-2xl border border-white/20 animate-float">
-                    <span className="text-2xl md:text-4xl font-headline font-black text-white uppercase tracking-tighter">
-                      {card.brand} Rewards
-                    </span>
-                  </div>
+              
+              {/* Premium Gradient Card Visual */}
+              <div className="relative glass-card aspect-[16/9] rounded-3xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] group">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700" />
+                <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.4)] px-8">
+                  {card.brand}
+                </span>
+                
+                <div className="absolute bottom-8 right-8 bg-primary/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-white/20 animate-float hidden md:block">
+                  <span className="text-xl font-headline font-black text-white uppercase tracking-tighter">
+                    Official Reward
+                  </span>
                 </div>
               </div>
 

@@ -5,8 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Search, Zap, ArrowRight, PlayCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { giftCards } from '@/lib/gift-cards';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export function Hero() {
@@ -115,23 +113,17 @@ export function Hero() {
               <div className="flex flex-col gap-1 max-h-[400px] overflow-y-auto pr-1 scrollbar-hide">
                 {suggestions.length > 0 ? (
                   suggestions.map(card => {
-                    const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
-                    const displayImageUrl = card.imageUrl || imageData.imageUrl;
-
                     return (
                       <button 
                         key={card.id}
                         onClick={() => handleScrollToCard(card.slug)}
                         className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/[0.08] text-left text-white transition-all group"
                       >
-                        <div className="relative w-24 aspect-video rounded-md overflow-hidden shrink-0 border border-white/10 bg-black/40">
-                          <Image 
-                            src={displayImageUrl} 
-                            alt={card.brand}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                            sizes="96px"
-                          />
+                        {/* Styled Mini Card Visual */}
+                        <div className="relative w-24 aspect-[16/9] rounded-md overflow-hidden shrink-0 border border-white/10 bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] flex items-center justify-center p-2">
+                           <span className="relative z-10 font-headline font-black text-white text-[10px] uppercase tracking-tighter text-center [text-shadow:0_0_8px_rgba(255,255,255,0.3)]">
+                            {card.brand}
+                          </span>
                         </div>
                         <div className="flex-grow min-w-0">
                           <div className="font-bold truncate text-sm flex items-center gap-2">

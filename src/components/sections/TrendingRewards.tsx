@@ -5,8 +5,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Zap } from 'lucide-react';
 import { giftCards, categories } from '@/lib/gift-cards';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
@@ -58,9 +56,6 @@ export function TrendingRewards() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredCards.map((card, idx) => {
-            const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
-            const displayImageUrl = card.imageUrl || imageData.imageUrl;
-
             return (
               <motion.div
                 key={card.id}
@@ -72,17 +67,14 @@ export function TrendingRewards() {
               >
                 <Card className="glass-card border-white/5 hover:border-primary/50 transition-all duration-500 overflow-hidden rounded-[16px] h-full flex flex-col group/card shadow-2xl">
                   <CardContent className="p-0 flex flex-col h-full">
-                    <div className="relative aspect-video w-full overflow-hidden bg-black/40">
-                      <Image 
-                        src={displayImageUrl}
-                        alt={card.brand}
-                        fill
-                        className="object-cover group-hover/card:scale-110 transition-transform duration-700"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60" />
+                    {/* Gradient Card Style Thumbnail */}
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] flex items-center justify-center p-4">
+                      <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
+                      <span className="relative z-10 font-headline font-black text-white text-xl md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_12px_rgba(255,255,255,0.3)]">
+                        {card.brand}
+                      </span>
                       {card.trending && (
-                        <div className="absolute top-4 right-4 bg-primary text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg animate-pulse">
+                        <div className="absolute top-4 right-4 bg-primary text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg animate-pulse z-20">
                           Trending 🔥
                         </div>
                       )}

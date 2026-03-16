@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Zap, ChevronRight } from "lucide-react";
@@ -15,7 +14,6 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { giftCards } from "@/lib/gift-cards";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Button } from "@/components/ui/button";
 
 export function FeaturedRewards() {
@@ -77,10 +75,6 @@ export function FeaturedRewards() {
         >
           <CarouselContent className="-ml-4">
             {featured.map((card, index) => {
-              const imageData =
-                PlaceHolderImages.find((img) => img.id === card.image) || PlaceHolderImages[0];
-              const displayImageUrl = card.imageUrl || imageData.imageUrl;
-
               return (
                 <CarouselItem key={card.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <motion.div
@@ -90,19 +84,13 @@ export function FeaturedRewards() {
                     whileHover={{ y: -10 }}
                     className="glass-card rounded-[2.5rem] p-6 border-white/5 relative overflow-hidden h-full flex flex-col group/card"
                   >
-                    {/* Background glow */}
-                    <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-[60px] group-hover/card:bg-primary/20 transition-colors" />
-
-                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-6 shadow-2xl border border-white/10 bg-black/40">
-                      <Image
-                        src={displayImageUrl}
-                        alt={card.brand}
-                        fill
-                        className="object-cover group-hover/card:scale-110 transition-transform duration-700"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <div className="absolute bottom-3 left-3 flex gap-1">
+                    {/* Background card style */}
+                    <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-6 shadow-2xl border border-white/10 bg-gradient-to-br from-black via-[#df104e] to-[#ff94b7] flex items-center justify-center p-4">
+                      <div className="absolute inset-0 bg-black/20" />
+                      <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_15px_rgba(255,255,255,0.4)]">
+                        {card.brand}
+                      </span>
+                      <div className="absolute bottom-3 left-3 flex gap-1 z-10">
                         {flags.slice(0, 4).map((f, i) => (
                           <span key={i} className="text-sm drop-shadow-md">{f}</span>
                         ))}
