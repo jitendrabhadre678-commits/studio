@@ -4,9 +4,8 @@ import { giftCards } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { generateGiftCardDescription } from '@/ai/flows/generate-gift-card-description-flow';
 import Image from 'next/image';
-import { Zap, ShieldCheck, Clock, Globe, ArrowRight, Shield } from 'lucide-react';
+import { Zap, ShieldCheck, Clock, Globe, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { InteractiveCouponCard } from '@/components/reward/InteractiveCouponCard';
 
 export async function generateStaticParams() {
@@ -19,17 +18,26 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const card = giftCards.find((c) => c.slug === slug);
 
-  if (!card) return <div>Not Found</div>;
+  if (!card) return <div className="min-h-screen flex items-center justify-center text-white font-black text-4xl">404 - REWARD NOT FOUND</div>;
 
   const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
   
-  // Use the AI flow to generate a description for the specific card
-  const aiDescription = await generateGiftCardDescription({
-    brandName: card.brand,
-    value: card.values[card.values.length - 1],
-    category: card.category,
-    keyFeatures: ["Instant Digital Delivery", "Secured Connection", "Global Gift Support"]
-  });
+  // Use the AI flow to generate a description for the specific card with a safety fallback
+  let displayDescription = card.description;
+  try {
+    const aiDescription = await generateGiftCardDescription({
+      brandName: card.brand,
+      value: card.values[card.values.length - 1],
+      category: card.category,
+      keyFeatures: ["Instant Digital Delivery", "Secured Connection", "Global Gift Support"]
+    });
+    if (aiDescription?.description) {
+      displayDescription = aiDescription.description;
+    }
+  } catch (error) {
+    console.error("AI Description generation failed:", error);
+    // Fallback to the static description already set above
+  }
 
   return (
     <main className="min-h-screen">
@@ -86,7 +94,7 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
                    <Zap className="w-32 h-32" />
                 </div>
                 <p className="text-lg text-white/90 leading-relaxed relative z-10">
-                  {aiDescription.description}
+                  {displayDescription}
                 </p>
               </div>
 

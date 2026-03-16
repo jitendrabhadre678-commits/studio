@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gift, Lock, CheckCircle2, Copy, Zap, ArrowRight, ShieldCheck, Loader2, Unlock } from 'lucide-react';
+import { Gift, Lock, CheckCircle2, Copy, Zap, ArrowRight, Loader2, Unlock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
   const [view, setView] = useState<'initial' | 'locked' | 'revealed'>('initial');
   const [isCopied, setIsCopied] = useState(false);
 
-  const couponCode = `${brand.toUpperCase().replace(/\s+/g, '')}-${value.replace('$', '')}-FLASHX`;
+  const couponCode = `${brand.toUpperCase().replace(/\s+/g, '')}-${value.replace('$', '')}-REWARD`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(couponCode);
@@ -118,7 +118,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
                   <div className="text-center max-w-lg mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-4">
                       <Lock className="w-3 h-3 text-primary" />
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest">Action Required</span>
+                      <span className="text-[10px] font-black uppercase text-primary tracking-widest">Verification Required</span>
                     </div>
                     <h4 className="text-xl font-black text-white mb-2">Complete 1 offer to unlock your gift card code.</h4>
                     <p className="text-sm text-muted-foreground mb-6">
@@ -129,12 +129,12 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
                       onClick={handleOpenOffer}
                       className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-12 rounded-xl uppercase tracking-widest text-xs shadow-lg shadow-primary/20 mb-8"
                     >
-                      Complete Offer to Unlock <ArrowRight className="ml-2 w-4 h-4" />
+                      Complete Offer to Unlock Code <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>
 
                   {/* OGAds Iframe Integration */}
-                  <div className="relative w-full max-w-3xl mx-auto glass-card rounded-3xl overflow-hidden border-white/10 bg-black/40 p-1">
+                  <div className="relative w-full max-w-3xl mx-auto glass-card rounded-3xl overflow-hidden border-white/10 bg-black/40 p-1 shadow-2xl">
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 backdrop-blur-sm z-0">
                       <Loader2 className="w-8 h-8 text-primary animate-spin" />
                       <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Loading Verification Portal...</span>
