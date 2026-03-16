@@ -72,7 +72,28 @@
     @apply bg-white/5 backdrop-blur-lg border border-white/10;
   }
   .glass-card {
-    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 20px rgba(223, 16, 78, 0.15);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 30px rgba(223, 16, 78, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .text-glass-gradient {
+    background: linear-gradient(90deg, #ff94b7, #7dd3fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glass-glow {
+    text-shadow: 
+      0 0 10px rgba(255, 148, 183, 0.4),
+      0 0 20px rgba(125, 211, 252, 0.4);
   }
   .text-glow {
     text-shadow: 0 0 10px rgba(223, 16, 78, 0.5), 0 0 20px rgba(223, 16, 78, 0.3);
