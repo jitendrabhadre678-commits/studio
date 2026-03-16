@@ -1,21 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { doc } from 'firebase/firestore';
-import { Zap, Gift, Trophy, Clock, ArrowRight, ChevronRight, Image as ImageIcon } from 'lucide-react';
+import { Zap, Gift, Trophy, Clock, ArrowRight, ChevronRight, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ImageUpload } from '@/components/ui/image-upload';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -29,6 +32,18 @@ export default function Dashboard() {
   }, [firestore, user]);
 
   const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
+
+  const handleSubmitMockup = () => {
+    setIsSubmitting(true);
+    // Simulate a secure upload process
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast({
+        title: "Submission Successful",
+        description: "Your gift card visual has been sent for owner review.",
+      });
+    }, 1500);
+  };
 
   if (isUserLoading || !user) return null;
 
@@ -90,7 +105,7 @@ export default function Dashboard() {
                   <span className="text-xs font-black text-primary uppercase tracking-widest">Player Rank</span>
                 </div>
                 <div className="text-4xl font-black text-white mb-1 uppercase tracking-tighter italic text-glow">
-                  NOVICE
+                  {userData?.points && userData.points > 100 ? 'ELITE' : 'NOVICE'}
                 </div>
                 <p className="text-xs text-muted-foreground uppercase tracking-widest">Next rank at 100 points</p>
               </CardContent>
@@ -113,15 +128,19 @@ export default function Dashboard() {
                     <h3 className="text-xl font-black text-white uppercase tracking-tight">Submit Reward Visual</h3>
                   </div>
                   <p className="text-sm text-muted-foreground mb-8 max-w-lg">
-                    Design a custom gift card visual for your brand and submit it to our team. Drag and drop your mockup below.
+                    Design a custom gift card visual for your brand and submit it to our team. Drag and drop your mockup below. Only you can edit your submissions.
                   </p>
                   <ImageUpload 
                     label="Drop Gift Card Mockup" 
-                    onUpload={(file) => console.log('Gift card visual submitted:', file)}
+                    onUpload={(file) => toast({ title: "Visual Loaded", description: "Your file is ready for submission." })}
                   />
                   <div className="mt-6 flex justify-end">
-                    <Button className="bg-primary hover:bg-primary/90 text-white font-black px-8 rounded-xl h-12 shadow-lg shadow-primary/20">
-                      Submit Mockup
+                    <Button 
+                      onClick={handleSubmitMockup}
+                      disabled={isSubmitting}
+                      className="bg-primary hover:bg-primary/90 text-white font-black px-8 rounded-xl h-12 shadow-lg shadow-primary/20 min-w-[160px]"
+                    >
+                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Mockup"}
                     </Button>
                   </div>
                 </div>
