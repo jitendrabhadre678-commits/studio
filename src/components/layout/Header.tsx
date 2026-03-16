@@ -38,7 +38,7 @@ export function Header() {
     { name: 'Tasks', href: '#' },
     { name: 'Giveaways', href: '#' },
     { name: 'Leaderboard', href: '#' },
-    { name: 'Blog', href: '#' },
+    { name: 'Blog', href: '/blog' },
   ];
 
   return (
