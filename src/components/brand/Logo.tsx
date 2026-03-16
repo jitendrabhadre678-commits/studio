@@ -2,33 +2,32 @@ import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <div className={cn("relative overflow-hidden rounded-[25%] bg-[#df104e] flex items-center justify-center shrink-0", className)}>
+    <div className={cn("relative overflow-hidden rounded-xl bg-[#df104e] flex items-center justify-center shrink-0 shadow-lg shadow-primary/20", className)}>
       <svg
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-[65%] h-[65%]"
+        className="w-[70%] h-[70%]"
       >
-        {/* Abstract Center Flame Stripe */}
+        {/* Gift Card Base Shape (Rounded Rect) */}
+        <rect x="10" y="20" width="80" height="60" rx="8" fill="white" fillOpacity="0.1" />
+        
+        {/* Stylized Flash / Lightning Bolt */}
         <path
-          d="M50 15C55 35 65 50 60 75C58 82 52 85 48 85C42 85 38 80 38 70C38 50 45 35 50 15Z"
+          d="M55 15L35 50H50L45 85L75 40H60L70 15H55Z"
           fill="white"
+          className="drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
         />
-        {/* Left Curved Stripe */}
-        <path
-          d="M32 45C29 55 28 65 33 75C35 80 39 82 43 81"
-          stroke="white"
-          strokeWidth="8"
-          strokeLinecap="round"
-        />
-        {/* Right Curved Stripe */}
-        <path
-          d="M68 50C71 58 72 65 70 75C69 80 65 83 60 82"
-          stroke="white"
-          strokeWidth="8"
-          strokeLinecap="round"
-        />
+        
+        {/* Gaming Button Detail */}
+        <circle cx="82" cy="72" r="4" fill="white" fillOpacity="0.5" />
+        
+        {/* Accent Line */}
+        <rect x="15" y="30" width="20" height="2" rx="1" fill="white" fillOpacity="0.2" />
       </svg>
+      
+      {/* Subtle Glow Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
     </div>
   );
 }
