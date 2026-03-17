@@ -10,7 +10,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/brand/Logo';
 
 type Message = {
   id: string;
@@ -19,53 +18,82 @@ type Message = {
   timestamp: Date;
 };
 
+// Response variations for a human-like feel
 const INTENTS = [
   {
-    keywords: ['reward', 'unlock', 'gift', 'card', 'code', 'claim'],
+    keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
     responses: [
-      "You're just one step away from your reward! 👍\n\nChoose your gift card, click 'Unlock', and complete the quick verification task. Once finished, you can claim it from your dashboard.",
-      "It's simple to unlock! 👍\n\nPick a reward → Click Unlock → Complete the quick step. Your code will be ready in your vault immediately after."
+      "Got it 👍 you're trying to unlock a reward.\n\nHere’s how it works:\n\n• Choose your gift card\n• Click 'Unlock Reward'\n• Complete one quick step\n• Your reward will be prepared\n\nMost users start with a simple task — it’s quick and works smoothly.",
+      "Ready for your reward? 😊 It's a simple process:\n\nPick your card → Click Unlock → Complete one quick task. Your code will be ready right after that. Most people find the simple offers are the fastest way to get verified.",
+      "Happy to help you unlock that! 👍 Just select your brand, click the unlock button, and finish a quick verification step. Most users complete this in under a minute!"
     ],
-    progressResponses: {
-      1: "You're very close! Step 1 is done. 👍\n\nNow, complete the quick offer to verify your session and unlock your reward. It usually takes less than a minute.",
-      2: "Nice progress 🔥 you're almost there! Once the offer is verified, your unique reward code will be revealed.",
-      3: "Everything is ready! 👍\n\nYour reward is now waiting in your dashboard. Go to 'My Rewards' to claim your code now!"
-    }
-  },
-  {
-    keywords: ['real', 'legit', 'fake', 'true', 'work', 'scam'],
-    responses: [
-      "Yes, it's real! 👍\n\nThousands of users unlock rewards daily. You can track all your progress and claims directly in your secure dashboard.",
-      "GameFlashX is 100% verified. 👍\n\nOnce you complete the partner task, the reward is released to your account. Check your dashboard to see your history."
+    step1Responses: [
+      "You're very close 👍 Step 1 is already done. Just complete the quick verification task and your reward will be ready. Most users finish this in under a minute.",
+      "Nice progress 🔥 you're almost there! Just one step left to reveal your code. High demand today, so most users are completing this step quickly."
     ]
   },
   {
-    keywords: ['not working', 'receive', 'didn\'t get', 'problem', 'missing', 'failed'],
+    keywords: ['earn', 'money', 'cash', 'income'],
     responses: [
-      "I can help with that. 👍\n\nFirst, make sure the offer was fully completed without skipping any steps. Sometimes there's a 1-minute delay—please refresh your dashboard.",
-      "Don't worry! 👍\n\nEnsure you finished the task 100%. If you did, check your 'My Rewards' page in a few moments. Your reward is likely being prepared."
+      "Looking to earn rewards? 👍\n\nYou can start by:\n\n• completing simple offers\n• using your referral code\n• participating in activities\n\nMost users begin with one quick task to see how it works.",
+      "Earning is easy here! 😊 Just complete a few offers or share your referral link. Starting with a quick task is the best way to get your first reward into your wallet.",
+      "You've come to the right place! 🔥 You can earn by finishing partner tasks or inviting friends. Why not try one quick offer to see how fast it is?"
     ]
   },
   {
-    keywords: ['earn', 'money', 'cash', 'how', 'steps'],
+    keywords: ['referral', 'code', 'invite', 'refer'],
     responses: [
-      "Earning is easy here! 👍\n\n1. Choose a reward\n2. Click Unlock\n3. Complete one quick task\n4. Claim your reward\n\nStart with a small reward to see how fast it works!",
-      "You can earn free gift cards by completing simple partner offers. It's the fastest way to get rewards without spending any money."
+      "You can grow faster using your referral code 👍\n\nWhen someone signs up using your code, your referral count increases. Many users combine referrals with offers for better results.",
+      "Want to invite friends? 🔥 Your referral link is in your dashboard. When they join, your balance grows. It's a great way to earn while helping others get rewards too.",
+      "Sharing is earning! 😊 Invite others with your unique link. It's one of the fastest ways our top users grow their total earnings."
     ]
   },
   {
-    keywords: ['referral', 'invite', 'friend'],
+    keywords: ['login', 'account', 'signup', 'sign'],
     responses: [
-      "Sharing helps you earn faster! 👍\n\nInvite your friends using your link. When they join and unlock rewards, your referral count increases automatically.",
-      "Invite friends to grow your balance! 👍\n\nYou can find your unique referral link in your dashboard. It's a great way to earn extra rewards."
+      "You can log in using your email or Google account. If signup is currently closed, please wait until it opens again.",
+      "Need help with your account? 👍 You can sign in with Google or your Email. If you're having trouble signing up, we might be temporarily at capacity—just try again later!",
+      "Signing in is quick! 😊 Use Google for instant access. If you can't create a new account right now, please check back soon as we open spots daily."
+    ]
+  },
+  {
+    keywords: ['not working', 'error', 'problem', 'failed', 'stuck'],
+    responses: [
+      "I understand 👍 Let’s check quickly:\n\n• Did you complete the full offer?\n• Try refreshing the page\n• Wait a few minutes\n\nIf you're still stuck, tell me where you're facing the issue.",
+      "Sorry to hear that! 😊 Usually, a quick refresh or double-checking the offer steps fixes it. Sometimes there's a small delay, so check your dashboard in a few minutes.",
+      "I'm here to help! 👍 Make sure the task was finished 100%. Most issues are fixed by just trying one more quick offer to trigger the system."
+    ]
+  },
+  {
+    keywords: ['offer', 'task', 'complete'],
+    responses: [
+      "Offers help verify users and unlock rewards. You need to complete at least one step before claiming your gift card.",
+      "Tasks are part of our verification process. 👍 They ensure you're a real human user so we can provide these premium rewards for free.",
+      "Complete one quick task to verify your session. 🔥 It's the only requirement to unlock your chosen reward instantly."
+    ]
+  },
+  {
+    keywords: ['time', 'delay', 'wait', 'slow'],
+    responses: [
+      "Some rewards take a few minutes to process. Please wait a bit and refresh your dashboard.",
+      "Hang tight! 👍 Rewards are in high demand, so processing might take a minute or two. Just refresh your 'My Rewards' page shortly.",
+      "Almost there! 😊 Sometimes the verification signal takes a moment. Just wait 60 seconds and give your page a quick refresh."
+    ]
+  },
+  {
+    keywords: ['real', 'legit', 'safe', 'scam'],
+    responses: [
+      "It's 100% real! 😊 Thousands of users claim rewards every day. You can track all your earnings and history in your secure dashboard.",
+      "We're a verified platform. 👍 Once the task is finished, the reward is released. Check the leaderboard to see others cashing out right now!",
+      "GameFlashX is trusted by millions. 🔥 Complete the verification and you'll see your code in your vault immediately."
     ]
   }
 ];
 
 const FALLBACK_RESPONSES = [
-  "I'm here to guide you. 👍 Would you like to know how to unlock a reward or check your dashboard?",
-  "Please tell me more. Are you looking to claim a gift card or invite friends?",
-  "I'm ready to help! You can ask about rewards, earning methods, or how to claim your code."
+  "I'm here to help 👍 Could you tell me a bit more about what you're looking for?",
+  "I understand! 😊 Are you looking to unlock a reward, earn cash, or do you have a question about your account?",
+  "I'm ready to guide you. 👍 You can ask about rewards, earning methods, or how our referral system works."
 ];
 
 export function SupportChat() {
@@ -75,7 +103,7 @@ export function SupportChat() {
   const [progress, setProgress] = useState(0);
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
+      id: 'initial',
       text: "Hello! I'm your Assistant. Ready to unlock your first reward today? 👍",
       sender: 'ai',
       timestamp: new Date()
@@ -83,18 +111,20 @@ export function SupportChat() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Background scroll lock when open
+  // Background scroll lock logic
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = 'auto';
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [isOpen]);
 
+  // Listen for reward progress from other components
   useEffect(() => {
     const handleStep1 = () => setProgress(prev => Math.max(prev, 1));
     const handleStep2 = () => setProgress(prev => Math.max(prev, 2));
@@ -104,7 +134,8 @@ export function SupportChat() {
     window.addEventListener('reward-step-2', handleStep2);
     window.addEventListener('reward-step-3', handleStep3);
     
-    if (typeof window !== 'undefined' && window.location.pathname.length > 1 && !window.location.pathname.includes('dashboard') && !window.location.pathname.includes('blog')) {
+    // Auto-detect if we are on a specific reward page
+    if (typeof window !== 'undefined' && window.location.pathname.length > 1 && !['/dashboard', '/blog', '/leaderboard'].some(p => window.location.pathname.includes(p))) {
       setProgress(prev => Math.max(prev, 1));
     }
 
@@ -115,6 +146,7 @@ export function SupportChat() {
     };
   }, []);
 
+  // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       const scrollContainer = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -124,6 +156,7 @@ export function SupportChat() {
     }
   }, [messages, isTyping]);
 
+  // Listen for open events from triggers
   useEffect(() => {
     const handleOpenSupport = () => setIsOpen(true);
     window.addEventListener('open-support-chat', handleOpenSupport);
@@ -132,9 +165,10 @@ export function SupportChat() {
 
   const getRandomElement = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 
-  const handleSend = (textInput?: string) => {
-    const text = (textInput || inputValue).trim();
-    if (!text) return;
+  const handleSend = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const text = inputValue.trim();
+    if (!text || isTyping) return;
 
     const userMsg: Message = {
       id: Date.now().toString(),
@@ -147,14 +181,16 @@ export function SupportChat() {
     setInputValue('');
     setIsTyping(true);
 
+    // Human-like response timing
     setTimeout(() => {
       const lowerText = text.toLowerCase();
       let responseText = getRandomElement(FALLBACK_RESPONSES);
 
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
-          if ('progressResponses' in intent && (intent.progressResponses as any)[progress]) {
-            responseText = (intent.progressResponses as any)[progress];
+          // Progress-aware logic for rewards
+          if (intent.keywords.includes('reward') && progress === 1 && 'step1Responses' in intent) {
+            responseText = getRandomElement((intent as any).step1Responses);
           } else {
             responseText = getRandomElement(intent.responses);
           }
@@ -171,11 +207,12 @@ export function SupportChat() {
 
       setMessages(prev => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1200 + Math.random() * 600);
+    }, 1200 + Math.random() * 800);
   };
 
   return (
     <>
+      {/* Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -189,7 +226,6 @@ export function SupportChat() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            ref={chatContainerRef}
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ 
               opacity: 1, 
@@ -208,7 +244,7 @@ export function SupportChat() {
               !isFullScreen && "shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
             )}
           >
-            {/* Header */}
+            {/* Fixed Header */}
             <div className="shrink-0 p-6 border-b border-white/5 flex flex-col gap-6 bg-gradient-to-b from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -219,7 +255,7 @@ export function SupportChat() {
                     <h3 className="font-black text-white text-lg uppercase tracking-widest leading-none mb-1">Assistant</h3>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-[9px] font-black text-green-500 uppercase tracking-[0.2em]">Live Support</span>
+                      <span className="text-[9px] font-black text-green-500 uppercase tracking-[0.2em]">Online Now</span>
                     </div>
                   </div>
                 </div>
@@ -231,10 +267,16 @@ export function SupportChat() {
                   >
                     {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
                   </button>
+                  <button 
+                    onClick={() => setIsOpen(false)}
+                    className="p-3 hover:bg-white/5 rounded-xl text-white/40 hover:text-white transition-all active:scale-95 lg:hidden"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 
-              {/* Progress Line */}
+              {/* Reward Progress System */}
               <div className="px-1">
                 <div className="h-1 w-full bg-white/5 rounded-full relative overflow-hidden">
                   <motion.div 
@@ -244,23 +286,25 @@ export function SupportChat() {
                   />
                 </div>
                 <div className="flex justify-between mt-2">
-                  {['Select', 'Verify', 'Unlock'].map((step, i) => (
-                    <span key={step} className={cn(
-                      "text-[8px] font-black uppercase tracking-widest",
-                      progress > i ? "text-primary" : progress === i ? "text-white animate-pulse" : "text-white/20"
-                    )}>{step}</span>
+                  {[
+                    { label: 'Select', step: 1 },
+                    { label: 'Verify', step: 2 },
+                    { label: 'Unlock', step: 3 }
+                  ].map((s) => (
+                    <span key={s.label} className={cn(
+                      "text-[8px] font-black uppercase tracking-widest transition-colors",
+                      progress >= s.step ? "text-primary" : progress === s.step - 1 ? "text-white animate-pulse" : "text-white/20"
+                    )}>
+                      {progress >= s.step ? `✓ ${s.label}` : progress === s.step - 1 ? `→ ${s.label}` : s.label}
+                    </span>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Messages */}
+            {/* Scrollable Message Area */}
             <ScrollArea className="flex-grow p-6 h-full" ref={scrollRef}>
               <div className={cn("space-y-6 pb-4", isFullScreen && "max-w-4xl mx-auto")}>
-                <div className="flex justify-center mb-8 opacity-20 grayscale">
-                  <Logo className="h-6" />
-                </div>
-
                 {messages.map((msg) => (
                   <motion.div
                     key={msg.id}
@@ -290,10 +334,15 @@ export function SupportChat() {
                 {isTyping && (
                   <div className="flex items-start max-w-[85%]">
                     <div className="bg-white/[0.03] border border-white/5 px-5 py-3.5 rounded-[1.5rem] rounded-tl-none flex items-center gap-3">
-                      <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em] animate-pulse">Typing</span>
+                      <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em] animate-pulse">Assistant Typing</span>
                       <div className="flex gap-1">
                         {[0, 0.2, 0.4].map((d) => (
-                          <motion.div key={d} animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: d }} className="w-1 h-1 bg-primary rounded-full" />
+                          <motion.div 
+                            key={d} 
+                            animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }} 
+                            transition={{ repeat: Infinity, duration: 0.8, delay: d }} 
+                            className="w-1 h-1 bg-primary rounded-full" 
+                          />
                         ))}
                       </div>
                     </div>
@@ -302,16 +351,16 @@ export function SupportChat() {
               </div>
             </ScrollArea>
 
-            {/* Input Box */}
+            {/* Fixed Input Box */}
             <div className="shrink-0 p-6 border-t border-white/5 bg-black/40 relative">
               <form 
-                onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                onSubmit={handleSend}
                 className={cn("relative", isFullScreen && "max-w-4xl mx-auto")}
               >
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask a question..."
+                  placeholder="Ask a question about rewards..."
                   disabled={isTyping}
                   className="bg-white/[0.03] border-white/10 h-14 rounded-2xl px-5 pr-14 focus-visible:ring-primary/50 text-white placeholder:text-white/20"
                 />
@@ -323,6 +372,9 @@ export function SupportChat() {
                   <Send className="w-4 h-4" />
                 </button>
               </form>
+              <div className="mt-4 flex justify-center">
+                <p className="text-[8px] font-black text-white/10 uppercase tracking-[0.3em]">GameFlashX High-Demand Rewards Port</p>
+              </div>
             </div>
           </motion.div>
         )}
