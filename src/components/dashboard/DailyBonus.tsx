@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
 import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -12,10 +12,17 @@ import { cn } from '@/lib/utils';
 
 export function DailyBonus({ userRef, userData }: { userRef: any, userData: any }) {
   const [isClaiming, setIsClaiming] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const firestore = useFirestore();
   const { toast } = useToast();
 
-  const lastLogin = userData?.lastLoginAt ? new Date(userData.lastLoginAt) : null;
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return <div className="h-12 w-48 bg-white/5 animate-pulse rounded-xl" />;
+
+  const lastLogin = userData?.lastLoginAt ? (userData.lastLoginAt.toDate ? userData.lastLoginAt.toDate() : new Date(userData.lastLoginAt)) : null;
   const today = new Date();
   const isAvailable = !lastLogin || lastLogin.toDateString() !== today.toDateString();
   const streak = userData?.loginStreak || 0;

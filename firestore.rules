@@ -14,7 +14,10 @@ service cloud.firestore {
     match /users/{userId} {
       allow get, list: if isSignedIn();
       allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isOwner(userId) && request.resource.data.id == resource.data.id;
+      // Allow the owner to update everything, OR allow anyone to increment the referral count
+      allow update: if (isOwner(userId) && request.resource.data.id == resource.data.id)
+                    || (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['referralsCount'])
+                        && request.resource.data.referralsCount == resource.data.referralsCount + 1);
       allow delete: if isOwner(userId);
     }
 

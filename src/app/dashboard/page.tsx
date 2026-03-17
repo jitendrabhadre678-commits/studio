@@ -17,6 +17,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DailyBonus } from '@/components/dashboard/DailyBonus';
+import { SpinWheel } from '@/components/dashboard/SpinWheel';
 import { WithdrawalModal } from '@/components/dashboard/WithdrawalModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -29,7 +30,7 @@ export default function Dashboard() {
   const [isCopied, setIsCopied] = useState(false);
   const [origin, setOrigin] = useState('');
 
-  // Get dynamic origin for referral links (handles system and custom domains automatically)
+  // Get dynamic origin for referral links
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setOrigin(window.location.origin);
@@ -76,6 +77,13 @@ export default function Dashboard() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  const formatDate = (val: any) => {
+    if (!val) return '...';
+    // Handle Firestore Timestamps
+    const date = val.toDate ? val.toDate() : new Date(val);
+    return date.toLocaleDateString();
+  };
+
   if (isUserLoading || !user) return null;
 
   const balance = userData?.balance || 0;
@@ -102,7 +110,7 @@ export default function Dashboard() {
               </p>
             </div>
             
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <DailyBonus userRef={userRef} userData={userData} />
               <WithdrawalModal balance={balance} userRef={userRef} />
             </div>
@@ -143,8 +151,8 @@ export default function Dashboard() {
 
               <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
-                  {/* Activities */}
-                  <div className="grid grid-cols-1 gap-8">
+                  {/* Activities Row */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="glass-card rounded-[2.5rem] p-8 border-white/10 flex flex-col justify-between">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
@@ -163,6 +171,8 @@ export default function Dashboard() {
                         <Link href="/#trending">Start New Tasks <ArrowRight className="ml-2 w-4 h-4" /></Link>
                       </Button>
                     </div>
+                    
+                    <SpinWheel userRef={userRef} userData={userData} />
                   </div>
 
                   {/* Recent Activity */}
@@ -171,7 +181,7 @@ export default function Dashboard() {
                       <h3 className="text-xl font-bold text-white flex items-center gap-3">
                         <History className="w-5 h-5 text-primary" /> Recent History
                       </h3>
-                      <Link href="/dashboard/transactions" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">View All</Link>
+                      <button onClick={() => router.push('/dashboard/transactions')} className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">View All</button>
                     </div>
                     
                     <div className="space-y-4">
@@ -193,7 +203,7 @@ export default function Dashboard() {
                                 <p className="text-sm font-bold text-white uppercase tracking-tight">
                                   {tx.type === 'offer' ? `Offer: ${tx.rewardName || 'OGAds'}` : tx.type.replace('_', ' ')}
                                 </p>
-                                <p className="text-[10px] text-muted-foreground">{new Date(tx.createdAt).toLocaleDateString()}</p>
+                                <p className="text-[10px] text-muted-foreground">{formatDate(tx.createdAt)}</p>
                               </div>
                             </div>
                             <span className={cn(

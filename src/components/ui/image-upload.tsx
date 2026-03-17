@@ -1,9 +1,11 @@
+
 "use client";
 
 import { useState, useRef, useCallback } from 'react';
 import { Upload, X, Image as ImageIcon, FileWarning, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { AnimatePresence } from 'framer-motion';
 
 interface ImageUploadProps {
   onUpload?: (file: File) => void;
@@ -166,5 +168,3 @@ export function ImageUpload({
     </div>
   );
 }
-
-import { AnimatePresence } from 'framer-motion';
