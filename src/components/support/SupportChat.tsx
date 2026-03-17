@@ -17,71 +17,67 @@ type Message = {
   timestamp: Date;
 };
 
-// Supported Topic Intents based on specified keywords
+// Trained Intent clusters with randomized variations
 const INTENTS = [
   {
     keywords: ['reward', 'gift', 'card', 'unlock', 'code', 'claim'],
     responses: [
       "Got it 👍 you're trying to unlock a reward.\n\nHere’s how it works:\n\n• Choose your gift card\n• Click 'Unlock Reward'\n• Complete one quick step\n• Your reward will be prepared\n\nMost users start with a simple task — it’s quick and works smoothly.",
-      "Ready for your reward? 😊 It's a simple process:\n\nPick your card → Click Unlock → Complete one quick task. Your code will be ready right after that. Most people find the simple offers are the fastest way to get verified.",
-      "Happy to help you unlock that! 👍 Just select your brand, click the unlock button, and finish a quick verification step. Most users complete this in under a minute!"
-    ],
-    step1Responses: [
-      "You're very close 👍 Step 1 is already done. Just complete the quick verification task and your reward will be ready. Most users finish this in under a minute.",
-      "Nice progress 🔥 you're almost there! Just one step left to reveal your code. High demand today, so most users are completing this step quickly."
+      "Alright 👍 let me guide you. To unlock your gift card:\n\n• Select a reward\n• Click unlock\n• Complete a required step\n\nMost users finish this quickly. Just complete the task to reveal your code!",
+      "Ready for your reward? 😊 It's a simple process:\n\nPick your card → Click Unlock → Complete one quick task. Your unique digital code will be ready right after that. Most people find the simple offers are the fastest way to get verified."
     ]
   },
   {
     keywords: ['earn', 'money', 'cash', 'income'],
     responses: [
       "Looking to earn rewards? 👍\n\nYou can start by:\n\n• completing simple offers\n• using your referral code\n• participating in activities\n\nMost users begin with one quick task to see how it works.",
-      "Earning is easy here! 😊 Just complete a few offers or share your referral link. Starting with a quick task is the best way to get your first reward into your wallet.",
-      "You've come to the right place! 🔥 You can earn by finishing partner tasks or inviting friends. Why not try one quick offer to see how fast it is?"
+      "Alright! 🔥 Earning is easy here. Just complete a few offers or share your referral link. Most beginners start with a small task to get the hang of it. You'll see your balance grow in your dashboard!",
+      "You've come to the right place! 🔥 You can earn by finishing partner tasks or inviting friends. Why not try one quick offer? They are designed to be fast and helpful for new users."
     ]
   },
   {
     keywords: ['referral', 'refer', 'invite', 'code'],
     responses: [
       "You can grow faster using your referral code 👍\n\nWhen someone signs up using your code, your referral count increases. Many users combine referrals with offers for better results.",
-      "Want to invite friends? 🔥 Your referral link is in your dashboard. When they join, your balance grows. It's a great way to earn while helping others get rewards too.",
-      "Sharing is earning! 😊 Invite others with your unique link. It's one of the fastest ways our top users grow their total earnings."
+      "Want to invite friends? 🔥 Your referral link is in your dashboard. When they join, your balance grows. It's a great way to earn while helping others get rewards too!",
+      "Sharing is earning! 😊 Invite others with your unique link found in your profile. It's one of the fastest ways our top users grow their total earnings without completing daily tasks."
     ]
   },
   {
     keywords: ['login', 'signup', 'account', 'sign'],
     responses: [
-      "You can log in using your email or Google account. If signup is currently closed, please wait until it opens again.",
-      "Need help with your account? 👍 You can sign in with Google or your Email. If you're having trouble signing up, we might be temporarily at capacity—just try again later!",
-      "Signing in is quick! 😊 Use Google for instant access. If you can't create a new account right now, please check back soon as we open spots daily."
+      "Alright, let me help with your account 👍\n\nYou can log in using your email or Google account. If signup is currently closed, please check back soon as we open spots daily.",
+      "Need help signing in? 😊 You can use Google for instant access. If you're having trouble creating a new account, we might be at temporary capacity—try again in a few hours!",
+      "I understand 👍 Accessing your account is quick! Use Google or your Email. If registration isn't working right now, it's likely we've hit our daily limit for new users."
     ]
   },
   {
     keywords: ['offer', 'task', 'complete'],
     responses: [
-      "Offers help verify users and unlock rewards. You need to complete at least one step before claiming your gift card.",
-      "Tasks are part of our verification process. 👍 They ensure you're a real human user so we can provide these premium rewards for free.",
-      "Complete one quick task to verify your session. 🔥 It's the only requirement to unlock your chosen reward instantly."
+      "I understand, you're asking about tasks 👍\n\nOffers help verify users and unlock rewards. You need to complete at least one step before claiming your gift card. It ensures the platform stays free for everyone.",
+      "Tasks are part of our verification process. 👍 They ensure you're a real human user. Once you finish one, your reward becomes available immediately. Most users find them quite simple!",
+      "Alright! 🔥 To get your reward, just complete one quick task from the list. It's the only requirement to verify your session and release the digital code instantly."
     ]
   },
   {
     keywords: ['problem', 'error', 'not working', 'failed'],
     responses: [
-      "I understand 👍 Let’s check quickly:\n\n• Did you complete the full offer?\n• Try refreshing the page\n• Wait a few minutes\n\nIf you're still stuck, tell me where you're facing the issue.",
-      "Sorry to hear that! 😊 Usually, a quick refresh or double-checking the offer steps fixes it. Sometimes there's a small delay, so check your dashboard in a few minutes.",
-      "I'm here to help! 👍 Make sure the task was finished 100%. Most issues are fixed by just trying one more quick offer to trigger the system."
+      "I understand 👍 that can happen sometimes. Let’s check quickly:\n\n• make sure the offer is completed\n• refresh the page\n• wait a few minutes\n\nLet me know if you're still stuck.",
+      "Sorry to hear that! 😊 Usually, a quick refresh or double-checking the offer steps fixes it. Sometimes there's a small delay in the signal, so check your dashboard in a few minutes.",
+      "I'm here to help! 👍 If something isn't working, make sure the task was finished 100%. Most issues are fixed by just trying one more quick offer to trigger the verification system."
     ]
   },
   {
     keywords: ['time', 'delay', 'wait'],
     responses: [
-      "Some rewards take a few minutes to process. Please wait a bit and refresh your dashboard.",
-      "Hang tight! 👍 Rewards are in high demand, so processing might take a minute or two. Just refresh your 'My Rewards' page shortly.",
-      "Almost there! 😊 Sometimes the verification signal takes a moment. Just wait 60 seconds and give your page a quick refresh."
+      "Hang tight! 👍 Some rewards take a few minutes to process. Please wait a bit and refresh your dashboard to see your updated status.",
+      "Almost there! 😊 High demand can sometimes cause a slight delay. Just wait 60 seconds and give your 'My Rewards' page a quick refresh. Your code should appear soon.",
+      "I understand the wait 👍 Verification signals usually arrive within a minute. If it's taking longer, try refreshing the page or checking your dashboard activity log."
     ]
   }
 ];
 
-const FALLBACK_RESPONSE = "I'm here to help 👍\nPlease ask about rewards, earning, referral, or your account.";
+const FALLBACK_RESPONSE = "I'm here to help 👍\nCould you tell me a bit more about your question? You can ask about rewards, earning, referral, or your account.";
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -99,6 +95,7 @@ export function SupportChat() {
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Background Scroll Lock logic
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -110,6 +107,7 @@ export function SupportChat() {
     };
   }, [isOpen]);
 
+  // Progress Tracking Events
   useEffect(() => {
     const handleStep1 = () => setProgress(prev => Math.max(prev, 1));
     const handleStep2 = () => setProgress(prev => Math.max(prev, 2));
@@ -119,6 +117,7 @@ export function SupportChat() {
     window.addEventListener('reward-step-2', handleStep2);
     window.addEventListener('reward-step-3', handleStep3);
     
+    // Auto-detect step 1 if on a specific reward page
     if (typeof window !== 'undefined' && window.location.pathname.length > 1 && !['/dashboard', '/blog', '/leaderboard'].some(p => window.location.pathname.includes(p))) {
       setProgress(prev => Math.max(prev, 1));
     }
@@ -130,6 +129,7 @@ export function SupportChat() {
     };
   }, []);
 
+  // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       const scrollContainer = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -139,6 +139,7 @@ export function SupportChat() {
     }
   }, [messages, isTyping]);
 
+  // External trigger support
   useEffect(() => {
     const handleOpenSupport = () => setIsOpen(true);
     window.addEventListener('open-support-chat', handleOpenSupport);
@@ -152,6 +153,7 @@ export function SupportChat() {
     const text = inputValue.trim();
     if (!text || isTyping) return;
 
+    // 1. Add User Message Instantly
     const userMsg: Message = {
       id: Date.now().toString(),
       text,
@@ -163,17 +165,15 @@ export function SupportChat() {
     setInputValue('');
     setIsTyping(true);
 
+    // 2. Delayed Human-like AI Response
     setTimeout(() => {
       const lowerText = text.toLowerCase();
       let responseText = FALLBACK_RESPONSE;
 
+      // Intent logic with randomized variations
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
-          if (intent.keywords.includes('reward') && progress === 1 && 'step1Responses' in intent) {
-            responseText = getRandomElement((intent as any).step1Responses);
-          } else {
-            responseText = getRandomElement(intent.responses);
-          }
+          responseText = getRandomElement(intent.responses);
           break;
         }
       }
@@ -187,11 +187,12 @@ export function SupportChat() {
 
       setMessages(prev => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1200 + Math.random() * 800);
+    }, 1200 + Math.random() * 800); // Random delay between 1.2s and 2s
   };
 
   return (
     <>
+      {/* Floating Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -223,6 +224,7 @@ export function SupportChat() {
               !isFullScreen && "shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
             )}
           >
+            {/* Fixed Header */}
             <div className="shrink-0 p-6 border-b border-white/5 flex flex-col gap-6 bg-gradient-to-b from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -254,6 +256,7 @@ export function SupportChat() {
                 </div>
               </div>
 
+              {/* Progress System */}
               <div className="px-1">
                 <div className="h-1 w-full bg-white/5 rounded-full relative overflow-hidden">
                   <motion.div 
@@ -279,6 +282,7 @@ export function SupportChat() {
               </div>
             </div>
 
+            {/* Scrollable Message Area */}
             <ScrollArea className="flex-grow p-6 h-full" ref={scrollRef}>
               <div className={cn("space-y-6 pb-4", isFullScreen && "max-w-4xl mx-auto")}>
                 {messages.map((msg) => (
@@ -307,6 +311,7 @@ export function SupportChat() {
                   </motion.div>
                 ))}
                 
+                {/* Typing Animation */}
                 {isTyping && (
                   <div className="flex items-start max-w-[85%]">
                     <div className="bg-white/[0.03] border border-white/5 px-5 py-3.5 rounded-[1.5rem] rounded-tl-none flex items-center gap-3">
@@ -327,6 +332,7 @@ export function SupportChat() {
               </div>
             </ScrollArea>
 
+            {/* Fixed Input Area */}
             <div className="shrink-0 p-6 border-t border-white/5 bg-black/40 relative">
               <form 
                 onSubmit={handleSend}
