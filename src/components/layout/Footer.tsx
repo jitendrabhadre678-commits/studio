@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Video } from 'lucide-react';
 import { Logo } from '@/components/brand/Logo';
@@ -56,16 +55,16 @@ export function Footer() {
   return (
     <footer className="bg-transparent pt-16 pb-10 px-4">
       <div className="container mx-auto">
-        <div className="bg-black/80 backdrop-blur-xl border border-white/5 rounded-[20px] overflow-hidden p-8 md:p-12">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-12">
+        <div className="bg-black/80 backdrop-blur-2xl border border-white/5 rounded-[32px] overflow-hidden p-8 md:p-16">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-16 mb-16">
             <div className="max-w-sm">
-              <Link href="/" className="inline-block mb-6 group">
-                <Logo className="h-8" />
+              <Link href="/" className="inline-block mb-8 group">
+                <Logo className="h-8 md:h-10" />
               </Link>
-              <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
+              <p className="text-muted-foreground mb-10 text-base leading-relaxed font-medium">
                 The premier destination for gamers to earn premium digital rewards through simple activities. Secure, fast, and globally accessible.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 {socials.map((social, idx) => (
                   <a 
                     key={idx} 
@@ -73,8 +72,8 @@ export function Footer() {
                     target="_blank" 
                     rel="noopener noreferrer"
                     className={cn(
-                      "w-10 h-10 glass-card rounded-xl flex items-center justify-center text-white/60 transition-all duration-300",
-                      "hover:scale-110 hover:border-white/20",
+                      "w-12 h-12 glass-card rounded-2xl flex items-center justify-center text-white/60 transition-all duration-300",
+                      "hover:scale-110 hover:border-white/20 hover:bg-white/5",
                       social.glow,
                       social.hoverColor
                     )}
@@ -85,20 +84,29 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-12 gap-y-4">
-              <Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors font-bold">Privacy Policy</Link>
-              <Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary transition-colors font-bold">Terms of Service</Link>
-              <Link href="/cookie-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors font-bold">Cookie Policy</Link>
-              <Link href="/disclaimer" className="text-sm text-muted-foreground hover:text-primary transition-colors font-bold">Disclaimer</Link>
+            <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-12 md:gap-x-24 gap-y-6">
+              <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6">Platform</h4>
+                <Link href="/privacy-policy" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Privacy</Link>
+                <Link href="/terms-of-service" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Terms</Link>
+                <Link href="/cookie-policy" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Cookies</Link>
+                <Link href="/disclaimer" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Disclaimer</Link>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6">Community</h4>
+                <Link href="/blog" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Blog</Link>
+                <Link href="/leaderboard" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Winners</Link>
+                <Link href="/#faq" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Support</Link>
+              </div>
             </div>
           </div>
 
-          <div className="h-px bg-white/5 mb-8" />
+          <div className="h-px bg-white/5 mb-10" />
           
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-muted-foreground font-black uppercase tracking-widest">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
             <p>© 2024 GAMEFLASHX. ALL RIGHTS RESERVED.</p>
-            <div className="flex gap-6">
-              <span className="text-primary/60">Global Reward Network</span>
+            <div className="flex items-center gap-6">
+              <span className="text-primary/60 border border-primary/20 px-3 py-1 rounded-full bg-primary/5">Global Reward Network</span>
             </div>
           </div>
         </div>

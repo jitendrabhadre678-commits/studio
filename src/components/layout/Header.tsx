@@ -44,19 +44,19 @@ export function Header() {
       <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
         <header className={cn(
           "w-full max-w-[1200px] mt-5 pointer-events-auto transition-all duration-300",
-          "bg-white/5 backdrop-blur-[12px] border border-white/10 rounded-[16px] shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+          "bg-black/40 backdrop-blur-[16px] border border-white/10 rounded-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.6)]"
         )}>
-          <div className="px-6 h-[72px] flex items-center justify-between">
-            <Link href="/" className="flex items-center group">
+          <div className="px-4 md:px-6 h-[72px] flex items-center justify-between">
+            <Link href="/" className="flex items-center group shrink-0">
               <Logo className="h-[32px] md:h-[36px] lg:h-[40px] text-lg lg:text-2xl" />
             </Link>
 
-            <nav className="hidden xl:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
                   href={link.href}
-                  className="text-[13px] font-bold text-white/70 hover:text-primary uppercase tracking-widest transition-colors"
+                  className="text-[12px] xl:text-[13px] font-black text-white/60 hover:text-primary uppercase tracking-[0.15em] transition-colors"
                 >
                   {link.name}
                 </Link>
@@ -67,21 +67,21 @@ export function Header() {
               {!isUserLoading && (
                 <>
                   {!user ? (
-                    <>
+                    <div className="flex items-center gap-2">
                       <Button 
                         variant="ghost" 
-                        className="text-white font-bold hover:text-primary"
+                        className="text-white font-bold hover:text-primary hover:bg-white/5"
                         onClick={() => setAuthModal({ open: true, tab: 'login' })}
                       >
                         Login
                       </Button>
                       <Button 
-                        className="bg-primary hover:bg-primary/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(223,16,78,0.3)]"
+                        className="bg-primary hover:bg-primary/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(250,70,22,0.3)] transition-all hover:scale-105"
                         onClick={() => setAuthModal({ open: true, tab: 'signup' })}
                       >
                         Sign Up
                       </Button>
-                    </>
+                    </div>
                   ) : (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -94,13 +94,13 @@ export function Header() {
                               </AvatarFallback>
                             </Avatar>
                           </div>
-                          <span className="hidden sm:inline text-sm font-bold text-white/90 group-hover:text-white transition-colors">
+                          <span className="hidden xl:inline text-sm font-bold text-white/90 group-hover:text-white transition-colors">
                             {user.displayName || user.email?.split('@')[0] || 'Account'} 
                             <span className="ml-1 text-primary opacity-50 group-hover:opacity-100">⌄</span>
                           </span>
                         </div>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56 bg-black/90 backdrop-blur-2xl border-white/10 rounded-2xl p-2" align="end">
+                      <DropdownMenuContent className="w-56 bg-black/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 shadow-2xl" align="end">
                         <DropdownMenuLabel className="font-bold text-white px-3 py-2">
                           <div className="flex flex-col space-y-1">
                             <p className="text-sm leading-none truncate">{user.displayName || 'Gamer'}</p>
@@ -108,20 +108,20 @@ export function Header() {
                           </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-white/5" />
-                        <DropdownMenuItem onClick={() => router.push('/dashboard')} className="hover:bg-white/5 rounded-xl cursor-pointer">
-                          <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                        <DropdownMenuItem onClick={() => router.push('/dashboard')} className="hover:bg-white/5 rounded-xl cursor-pointer text-white/80 h-11 px-3">
+                          <LayoutDashboard className="mr-2 h-4 w-4 text-primary" /> Dashboard
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/leaderboard')} className="hover:bg-white/5 rounded-xl cursor-pointer">
-                          <Trophy className="mr-2 h-4 w-4" /> Leaderboard
+                        <DropdownMenuItem onClick={() => router.push('/leaderboard')} className="hover:bg-white/5 rounded-xl cursor-pointer text-white/80 h-11 px-3">
+                          <Trophy className="mr-2 h-4 w-4 text-primary" /> Leaderboard
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/my-rewards')} className="hover:bg-white/5 rounded-xl cursor-pointer">
-                          <Gift className="mr-2 h-4 w-4" /> My Rewards
+                        <DropdownMenuItem onClick={() => router.push('/my-rewards')} className="hover:bg-white/5 rounded-xl cursor-pointer text-white/80 h-11 px-3">
+                          <Gift className="mr-2 h-4 w-4 text-primary" /> My Rewards
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push('/account-settings')} className="hover:bg-white/5 rounded-xl cursor-pointer">
-                          <Settings className="mr-2 h-4 w-4" /> Account Settings
+                        <DropdownMenuItem onClick={() => router.push('/account-settings')} className="hover:bg-white/5 rounded-xl cursor-pointer text-white/80 h-11 px-3">
+                          <Settings className="mr-2 h-4 w-4 text-primary" /> Account Settings
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-white/5" />
-                        <DropdownMenuItem onClick={handleLogout} className="text-red-500 hover:bg-red-500/10 rounded-xl cursor-pointer">
+                        <DropdownMenuItem onClick={handleLogout} className="text-red-500 hover:bg-red-500/10 rounded-xl cursor-pointer h-11 px-3">
                           <LogOut className="mr-2 h-4 w-4" /> Logout
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -131,37 +131,40 @@ export function Header() {
               )}
             </div>
 
-            <button className="lg:hidden text-white p-2" onClick={() => setIsOpen(!isOpen)}>
+            <button 
+              className="lg:hidden text-white p-2 hover:bg-white/5 rounded-xl transition-all" 
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle Menu"
+            >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
 
           <div className={cn(
-            "lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-black/90 backdrop-blur-2xl rounded-b-[16px] border-t border-white/5",
-            isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            "lg:hidden overflow-hidden transition-all duration-500 ease-in-out bg-black/95 backdrop-blur-2xl rounded-b-[20px] border-t border-white/5 shadow-2xl",
+            isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
           )}>
-            <nav className="flex flex-col p-6 gap-4">
+            <nav className="flex flex-col p-6 gap-2">
               {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-lg font-bold text-white/80 hover:text-primary transition-colors"
+                  className="text-lg font-black text-white/70 hover:text-primary transition-colors py-3 uppercase tracking-widest border-b border-white/5 last:border-0"
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="h-px bg-white/10 my-2" />
-              <div className="flex flex-col gap-3">
+              <div className="pt-6 flex flex-col gap-3">
                 {!user ? (
                   <>
-                    <Button variant="outline" className="text-white border-white/20 rounded-xl h-12 font-bold" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'login' }); }}>Login</Button>
-                    <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl h-12 font-black" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'signup' }); }}>Sign Up</Button>
+                    <Button variant="outline" className="text-white border-white/10 bg-white/5 rounded-xl h-14 font-black uppercase tracking-widest text-xs" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'login' }); }}>Login</Button>
+                    <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl h-14 font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'signup' }); }}>Create Account</Button>
                   </>
                 ) : (
                   <>
-                    <Button variant="outline" className="text-white border-white/20 rounded-xl h-12 font-bold" onClick={() => { setIsOpen(false); router.push('/dashboard'); }}>Dashboard</Button>
-                    <Button variant="ghost" className="text-red-500 font-bold" onClick={() => { setIsOpen(false); handleLogout(); }}>Logout</Button>
+                    <Button variant="outline" className="text-white border-white/10 bg-white/5 rounded-xl h-14 font-black uppercase tracking-widest text-xs" onClick={() => { setIsOpen(false); router.push('/dashboard'); }}>Open Dashboard</Button>
+                    <Button variant="ghost" className="text-red-500 font-black h-14 uppercase tracking-widest text-xs" onClick={() => { setIsOpen(false); handleLogout(); }}>Sign Out</Button>
                   </>
                 )}
               </div>
