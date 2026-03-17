@@ -3,16 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  MessageSquare, X, Send, Zap, User, 
-  ArrowRight, Bot, Loader2, CheckCircle2, 
-  TrendingUp, Maximize2, Minimize2, Search
+  MessageSquare, X, Send, Zap, Bot, 
+  ArrowRight, Maximize2, Minimize2, CheckCircle2,
+  TrendingUp, Clock
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/brand/Logo';
-import { Progress } from '@/components/ui/progress';
 
 type Message = {
   id: string;
@@ -47,7 +44,7 @@ const INTENTS = [
     keywords: ['earn', 'money', 'cash', 'income'],
     responses: [
       "Looking to earn rewards? 👍\n\nYou can start by completing simple tasks and offers. They’re designed to be quick, and once done, your reward becomes available.\n\nMany users begin with one easy task just to see how it works.",
-      "Earning is straightforward here! 👍\n\nBy engaging with our sponsors through quick offers, you unlock your favorite gift cards. It's a great way to turn a few minutes of time into real rewards.\n\nStart with a simple offer to see how it works.",
+      "Earning is straightforward here! 👍\n\nBy engaging with our sponsors through quick offers, you unlock your favorite gift cards. It's a great way to turn a few minutes of time into real rewards.\n\nStart with a simple offer to get started.",
       "I'd love to help you earn! 👍\n\nThe most popular way is completing advertiser tasks. They are short, verified activities that add value to your account immediately.\n\nYou can try one quick task to get started."
     ]
   },
@@ -70,33 +67,14 @@ const INTENTS = [
 const FALLBACK_RESPONSES = [
   "Please choose a topic or ask a clear question so I can help you better.",
   "I'm not sure I understand that. Try asking about rewards, referrals, or how to earn.",
-  "I'm here to help! Could you provide more details or pick one of the quick options below?"
+  "I'm here to help! Could you provide more details about your request?"
 ];
-
-const QUICK_OPTIONS = [
-  { label: "Unlock Rewards", keyword: "reward" },
-  { label: "Referral Help", keyword: "referral" },
-  { label: "Earning Guide", keyword: "earn" },
-  { label: "Account Help", keyword: "login" }
-];
-
-const SUGGESTION_DATA = [
-  { keywords: ['rew', 'gif', 'cod'], options: ["Unlock reward", "Reward not showing", "How to claim gift card"] },
-  { keywords: ['mon', 'ear', 'cas'], options: ["How to earn money", "Earning guide", "Payment methods"] },
-  { keywords: ['ref', 'inv'], options: ["Referral help", "Invite friends", "Referral tracking"] },
-  { keywords: ['log', 'acc', 'sig'], options: ["Login help", "Account settings", "Signup assistance"] },
-  { keywords: ['err', 'pro', 'not', 'fai'], options: ["Reward not working", "Offer issue", "System error"] }
-];
-
-const DEFAULT_SUGGESTIONS = ["Unlock rewards", "How to earn money", "Referral help"];
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [progress, setProgress] = useState(0); // 0: Start, 1: Selected, 2: Offer Clicked, 3: Completed
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -158,8 +136,8 @@ export function SupportChat() {
 
   const getRandomElement = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 
-  const handleSend = (textOverride?: string) => {
-    const text = textOverride || inputValue.trim();
+  const handleSend = () => {
+    const text = inputValue.trim();
     if (!text) return;
 
     const userMsg: Message = {
@@ -171,8 +149,6 @@ export function SupportChat() {
 
     setMessages(prev => [...prev, userMsg]);
     setInputValue('');
-    setSuggestions([]);
-    setShowSuggestions(false);
     setIsTyping(true);
 
     const typingTime = 1200 + Math.random() * 800;
@@ -205,25 +181,13 @@ export function SupportChat() {
     }, typingTime);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setInputValue(val);
-
-    if (val.length > 0) {
-      const lowerVal = val.toLowerCase();
-      const matched = SUGGESTION_DATA.find(s => s.keywords.some(k => lowerVal.includes(k)));
-      if (matched) {
-        setSuggestions(matched.options);
-      } else {
-        setSuggestions(DEFAULT_SUGGESTIONS);
-      }
-      setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
-    }
-  };
-
   const progressPercent = (progress / 3) * 100;
+
+  const steps = [
+    { label: "Select Reward", index: 1 },
+    { label: "Complete Offer", index: 2 },
+    { label: "Unlock Reward", index: 3 }
+  ];
 
   return (
     <>
@@ -246,10 +210,10 @@ export function SupportChat() {
               opacity: 1, 
               scale: 1, 
               y: 0,
-              width: isFullScreen ? '100vw' : 'min(400px, calc(100vw - 48px))',
-              height: isFullScreen ? '100vh' : 'min(650px, calc(100vh - 120px))',
-              bottom: isFullScreen ? 0 : '96px', // bottom-24
-              right: isFullScreen ? 0 : '24px', // right-6
+              width: isFullScreen ? '100vw' : 'min(700px, calc(100vw - 48px))',
+              height: isFullScreen ? '100vh' : 'min(85vh, calc(100vh - 120px))',
+              bottom: isFullScreen ? 0 : '96px',
+              right: isFullScreen ? 0 : '24px',
               borderRadius: isFullScreen ? '0px' : '2.5rem',
             }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -259,67 +223,91 @@ export function SupportChat() {
               !isFullScreen && "shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
             )}
           >
-            <div className="p-6 border-b border-white/5 flex flex-col gap-4 bg-primary/5">
+            {/* Header */}
+            <div className="p-6 border-b border-white/5 flex flex-col gap-6 bg-gradient-to-b from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
-                    <Bot className="w-6 h-6 text-primary" />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-[1.2rem] bg-primary/20 flex items-center justify-center border border-primary/30 shadow-[0_0_20px_rgba(250,70,22,0.2)]">
+                    <Bot className="w-7 h-7 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-black text-white text-sm uppercase tracking-wider">Assistant</h3>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
+                    <h3 className="font-black text-white text-lg uppercase tracking-widest">GameFlashX Assistant</h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[10px] font-black text-green-500 uppercase tracking-[0.2em]">Active Session</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={() => setIsFullScreen(!isFullScreen)}
-                    className="p-2 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-colors"
-                    title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
-                  >
-                    {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                  </button>
-                  <Logo className="h-5 opacity-40" />
-                </div>
+                <button 
+                  onClick={() => setIsFullScreen(!isFullScreen)}
+                  className="p-3 hover:bg-white/5 rounded-xl text-white/40 hover:text-white transition-all active:scale-95"
+                  title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+                >
+                  {isFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                </button>
               </div>
 
-              {/* Progress Tracking Visual */}
-              <div className="space-y-2 px-1">
-                <div className="flex justify-between items-end mb-1">
-                  <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">Unlock Progress</span>
-                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">{Math.round(progressPercent)}% Complete</span>
-                </div>
-                <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPercent}%` }}
-                    className="absolute inset-y-0 left-0 bg-primary shadow-[0_0_10px_rgba(250,70,22,0.5)]"
-                  />
-                </div>
-                <div className="flex justify-between text-[8px] font-bold text-white/20 uppercase tracking-widest">
-                  <span className={cn(progress >= 1 && "text-primary")}>Select</span>
-                  <span className={cn(progress >= 2 && "text-primary")}>Verify</span>
-                  <span className={cn(progress >= 3 && "text-primary")}>Unlock</span>
+              {/* Enhanced Step Progress */}
+              <div className="space-y-4 px-1">
+                <div className="flex items-center justify-between gap-4">
+                  {steps.map((step) => {
+                    const isDone = progress >= step.index;
+                    const isCurrent = progress + 1 === step.index;
+                    
+                    return (
+                      <div key={step.index} className="flex-1 flex flex-col items-center gap-2">
+                        <div className={cn(
+                          "w-full h-1.5 rounded-full transition-all duration-700 relative",
+                          isDone ? "bg-primary shadow-[0_0_15px_rgba(250,70,22,0.4)]" : "bg-white/5"
+                        )}>
+                          {isCurrent && (
+                            <motion.div 
+                              layoutId="active-step-glow"
+                              className="absolute inset-0 bg-primary/40 blur-md rounded-full" 
+                            />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {isDone ? (
+                            <CheckCircle2 className="w-3 h-3 text-primary" />
+                          ) : isCurrent ? (
+                            <ArrowRight className="w-3 h-3 text-white/60 animate-pulse" />
+                          ) : (
+                            <div className="w-3 h-3" />
+                          )}
+                          <span className={cn(
+                            "text-[9px] font-black uppercase tracking-widest transition-colors",
+                            isDone || isCurrent ? "text-white" : "text-white/20"
+                          )}>
+                            {step.label}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            <ScrollArea className="flex-grow p-6" ref={scrollRef}>
-              <div className={cn("space-y-6", isFullScreen && "max-w-3xl mx-auto")}>
-                {/* Soft Urgency Prompt */}
+            <ScrollArea className="flex-grow p-8" ref={scrollRef}>
+              <div className={cn("space-y-8", isFullScreen && "max-w-4xl mx-auto")}>
+                {/* Visual Context Prompt */}
                 {progress < 3 && (
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3"
+                    className="bg-white/[0.03] border border-white/5 rounded-2xl p-5 flex items-start gap-4"
                   >
-                    <TrendingUp className="w-4 h-4 text-primary shrink-0" />
-                    <p className="text-[10px] text-primary font-bold uppercase tracking-widest leading-tight">
-                      Rewards are currently in high demand. Secure your session soon!
-                    </p>
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                      <TrendingUp className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/80 font-bold uppercase tracking-wider mb-1">Status Update</p>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        Rewards are processed in real-time. Complete your verification step to secure the current value.
+                      </p>
+                    </div>
                   </motion.div>
                 )}
 
@@ -334,18 +322,21 @@ export function SupportChat() {
                     )}
                   >
                     <div className={cn(
-                      "px-4 py-3 rounded-2xl text-sm leading-relaxed",
+                      "px-6 py-4 rounded-[1.5rem] text-sm leading-relaxed shadow-2xl",
                       msg.sender === 'user' 
-                        ? "bg-primary text-white rounded-tr-none shadow-lg shadow-primary/10" 
-                        : "bg-white/5 text-white/90 border border-white/10 rounded-tl-none"
+                        ? "bg-primary text-white rounded-tr-none border border-white/10" 
+                        : "bg-white/[0.03] text-white/90 border border-white/5 rounded-tl-none"
                     )}>
                       {msg.text.split('\n').map((line, i) => (
                         <p key={i} className={i > 0 ? "mt-2" : ""}>{line}</p>
                       ))}
                     </div>
-                    <span className="text-[9px] font-bold text-white/20 uppercase mt-1.5 px-1">
-                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                    <div className="flex items-center gap-2 mt-2 px-2">
+                      <Clock className="w-2.5 h-2.5 text-white/20" />
+                      <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">
+                        {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
                   </motion.div>
                 ))}
                 
@@ -355,24 +346,17 @@ export function SupportChat() {
                     animate={{ opacity: 1, y: 0 }}
                     className="flex flex-col items-start max-w-[85%]"
                   >
-                    <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-3">
-                      <span className="text-white/40 text-[10px] font-black uppercase tracking-widest animate-pulse">Assistant is typing</span>
-                      <div className="flex gap-1.5 pt-0.5">
-                        <motion.div 
-                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }} 
-                          transition={{ repeat: Infinity, duration: 0.8 }} 
-                          className="w-1.5 h-1.5 bg-primary rounded-full" 
-                        />
-                        <motion.div 
-                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }} 
-                          transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} 
-                          className="w-1.5 h-1.5 bg-primary rounded-full" 
-                        />
-                        <motion.div 
-                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }} 
-                          transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} 
-                          className="w-1.5 h-1.5 bg-primary rounded-full" 
-                        />
+                    <div className="bg-white/[0.03] border border-white/5 px-6 py-4 rounded-[1.5rem] rounded-tl-none flex items-center gap-4">
+                      <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Processing Query</span>
+                      <div className="flex gap-1.5">
+                        {[0, 0.2, 0.4].map((delay) => (
+                          <motion.div 
+                            key={delay}
+                            animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }} 
+                            transition={{ repeat: Infinity, duration: 0.8, delay }} 
+                            className="w-1.5 h-1.5 bg-primary rounded-full" 
+                          />
+                        ))}
                       </div>
                     </div>
                   </motion.div>
@@ -380,86 +364,29 @@ export function SupportChat() {
               </div>
             </ScrollArea>
 
-            <div className="p-6 border-t border-white/5 bg-black/40 relative">
-              {/* Typing Suggestions UI */}
-              <AnimatePresence>
-                {showSuggestions && suggestions.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className={cn(
-                      "absolute bottom-full left-6 right-6 mb-4 bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-[120]",
-                      isFullScreen && "max-w-xl mx-auto left-0 right-0"
-                    )}
-                  >
-                    <div className="p-2 flex flex-col gap-1">
-                      <div className="px-3 py-1.5 text-[8px] font-black text-white/20 uppercase tracking-[0.2em] border-b border-white/5 mb-1 flex items-center gap-2">
-                        <Search className="w-2.5 h-2.5" /> Suggestions
-                      </div>
-                      {suggestions.map((suggestion, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          className="w-full text-left px-4 py-3 rounded-xl hover:bg-primary/10 hover:text-primary text-xs font-bold text-white/60 transition-all flex items-center justify-between group"
-                        >
-                          {suggestion}
-                          <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className={cn("mb-4", isFullScreen && "max-w-3xl mx-auto flex flex-wrap gap-2")}>
-                {!isFullScreen && (
-                  <div className="flex flex-wrap gap-2">
-                    {QUICK_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.keyword}
-                        onClick={() => handleSend(opt.label)}
-                        disabled={isTyping}
-                        className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest disabled:opacity-50"
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {isFullScreen && QUICK_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.keyword}
-                    onClick={() => handleSend(opt.label)}
-                    disabled={isTyping}
-                    className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest disabled:opacity-50"
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-
+            <div className="p-8 border-t border-white/5 bg-black/40">
               <form 
                 onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                className={cn("relative group", isFullScreen && "max-w-3xl mx-auto")}
+                className={cn("relative group", isFullScreen && "max-w-4xl mx-auto")}
               >
+                <div className="absolute inset-0 bg-primary/5 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
                 <Input
                   value={inputValue}
-                  onChange={handleInputChange}
-                  placeholder="Type a message..."
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Ask about rewards, referrals, or tasks..."
                   disabled={isTyping}
-                  className="bg-white/5 border-white/10 h-14 rounded-2xl pr-14 focus-visible:ring-primary/50 text-white font-medium disabled:opacity-50"
+                  className="bg-white/[0.03] border-white/10 h-16 rounded-[1.2rem] px-6 pr-16 focus-visible:ring-primary/50 text-white font-medium disabled:opacity-50 text-base"
                 />
                 <button
                   type="submit"
                   disabled={!inputValue.trim() || isTyping}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center transition-all hover:bg-primary/90 disabled:opacity-50 disabled:grayscale"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center transition-all hover:bg-primary/90 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:grayscale"
                 >
                   <Send className="w-4 h-4" />
                 </button>
               </form>
-              <p className="text-center text-[9px] text-white/20 font-bold uppercase tracking-[0.2em] mt-4">
-                Human-like Support • 24/7 Availability
+              <p className="text-center text-[10px] text-white/20 font-black uppercase tracking-[0.3em] mt-6">
+                GameFlashX Automated Support • 24/7 Availability
               </p>
             </div>
           </motion.div>
@@ -467,8 +394,4 @@ export function SupportChat() {
       </AnimatePresence>
     </>
   );
-}
-
-const handleSuggestionClick = (suggestion: string) => {
-  // Logic is now inline in the component
 }
