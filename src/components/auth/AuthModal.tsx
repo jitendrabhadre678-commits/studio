@@ -11,10 +11,10 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   GoogleAuthProvider, 
-  signInWithRedirect,
+  signInWithPopup,
   sendEmailVerification
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -45,12 +45,36 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      // Close the modal before redirecting to prevent state mismatch when returning
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          id: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          createdAt: serverTimestamp(),
+          balance: 0,
+          totalEarnings: 0,
+          offersCompleted: 0,
+          rewardsUnlocked: 0,
+          points: 0,
+          referralsCount: 0,
+          referralEarnings: 0,
+          accountStatus: 'active'
+        }, { merge: true });
+      }
+
+      toast({ title: "Welcome!", description: "Successfully logged in with Google." });
+      router.push('/dashboard');
       onClose();
-      // Using Redirect instead of Popup for mobile compatibility
-      await signInWithRedirect(auth, provider);
     } catch (error: any) {
       toast({ variant: "destructive", title: "Login Failed", description: error.message });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -73,7 +97,6 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
         await sendEmailVerification(user);
 
-        // Initialize user profile with all required fields from backend.json
         await setDoc(doc(db, 'users', user.uid), {
           id: user.uid,
           email: user.email,
@@ -185,7 +208,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
             <Button onClick={handleGoogleLogin} variant="outline" className="w-full h-12 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl" disabled={isLoading}>
               {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon className="mr-2 h-5 w-5" />}
-              {isLoading ? "Redirecting..." : "Google"}
+              {isLoading ? "Signing in..." : "Google"}
             </Button>
           </Tabs>
         </div>
