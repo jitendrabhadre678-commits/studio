@@ -1,3 +1,4 @@
+
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { giftCards } from '@/lib/gift-cards';
@@ -5,6 +6,7 @@ import { generateGiftCardDescription } from '@/ai/flows/generate-gift-card-descr
 import { Zap, ShieldCheck, Clock, Globe, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InteractiveCouponCard } from '@/components/reward/InteractiveCouponCard';
+import { SupportTrigger } from '@/components/support/SupportTrigger';
 
 export async function generateStaticParams() {
   return giftCards.map((card) => ({
@@ -125,9 +127,7 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
             <div className="mt-20 p-8 glass-card rounded-[2.5rem] text-center border-white/5">
               <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">Need Help?</h3>
               <p className="text-sm text-muted-foreground mb-6">Our automated support system is available 24/7 for gift card inquiries.</p>
-              <Button variant="outline" className="border-white/10 hover:bg-white/5 text-white font-bold rounded-xl px-8 h-12">
-                Contact Support
-              </Button>
+              <SupportTrigger />
             </div>
           </section>
         </div>

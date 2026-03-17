@@ -8,6 +8,7 @@ import {
   AccordionTrigger 
 } from "@/components/ui/accordion";
 import { HelpCircle } from "lucide-react";
+import { SupportTrigger } from "@/components/support/SupportTrigger";
 
 export function FAQ() {
   const faqs = [
@@ -34,7 +35,7 @@ export function FAQ() {
   ];
 
   return (
-    <section className="py-24 px-4 bg-black/40">
+    <section id="faq" className="py-24 px-4 bg-black/40">
       <div className="container mx-auto max-w-3xl">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full mb-4">
@@ -44,6 +45,9 @@ export function FAQ() {
           <h2 className="font-headline text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tight">
             Frequently Asked <span className="text-primary">Questions</span>
           </h2>
+          <div className="mt-4">
+            <SupportTrigger />
+          </div>
         </div>
 
         <Accordion type="single" collapsible className="space-y-4">

@@ -1,9 +1,11 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import {Toaster} from '@/components/ui/toaster';
 import {FirebaseClientProvider} from '@/firebase/client-provider';
 import {AuthRedirectListener} from '@/components/auth/AuthRedirectListener';
 import {ReferralTracker} from '@/components/referral/ReferralTracker';
+import {SupportChat} from '@/components/support/SupportChat';
 
 export const metadata: Metadata = {
   title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
@@ -43,6 +45,7 @@ export default function RootLayout({
           <AuthRedirectListener />
           <ReferralTracker />
           {children}
+          <SupportChat />
           <Toaster />
         </FirebaseClientProvider>
       </body>
