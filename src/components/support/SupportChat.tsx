@@ -18,7 +18,7 @@ type Message = {
   timestamp: Date;
 };
 
-// Response variations for a human-like feel
+// Supported Topic Intents
 const INTENTS = [
   {
     keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
@@ -90,11 +90,7 @@ const INTENTS = [
   }
 ];
 
-const FALLBACK_RESPONSES = [
-  "I'm here to help 👍 Could you tell me a bit more about what you're looking for?",
-  "I understand! 😊 Are you looking to unlock a reward, earn cash, or do you have a question about your account?",
-  "I'm ready to guide you. 👍 You can ask about rewards, earning methods, or how our referral system works."
-];
+const OUT_OF_SCOPE_RESPONSE = "I'm here to help with GameFlashX related questions 👍\nYou can ask about rewards, earning, referral, or your account.";
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -134,7 +130,6 @@ export function SupportChat() {
     window.addEventListener('reward-step-2', handleStep2);
     window.addEventListener('reward-step-3', handleStep3);
     
-    // Auto-detect if we are on a specific reward page
     if (typeof window !== 'undefined' && window.location.pathname.length > 1 && !['/dashboard', '/blog', '/leaderboard'].some(p => window.location.pathname.includes(p))) {
       setProgress(prev => Math.max(prev, 1));
     }
@@ -146,7 +141,6 @@ export function SupportChat() {
     };
   }, []);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       const scrollContainer = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -156,7 +150,6 @@ export function SupportChat() {
     }
   }, [messages, isTyping]);
 
-  // Listen for open events from triggers
   useEffect(() => {
     const handleOpenSupport = () => setIsOpen(true);
     window.addEventListener('open-support-chat', handleOpenSupport);
@@ -181,14 +174,12 @@ export function SupportChat() {
     setInputValue('');
     setIsTyping(true);
 
-    // Human-like response timing
     setTimeout(() => {
       const lowerText = text.toLowerCase();
-      let responseText = getRandomElement(FALLBACK_RESPONSES);
+      let responseText = OUT_OF_SCOPE_RESPONSE; // Default to out-of-scope message
 
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
-          // Progress-aware logic for rewards
           if (intent.keywords.includes('reward') && progress === 1 && 'step1Responses' in intent) {
             responseText = getRandomElement((intent as any).step1Responses);
           } else {
@@ -212,7 +203,6 @@ export function SupportChat() {
 
   return (
     <>
-      {/* Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -244,7 +234,6 @@ export function SupportChat() {
               !isFullScreen && "shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
             )}
           >
-            {/* Fixed Header */}
             <div className="shrink-0 p-6 border-b border-white/5 flex flex-col gap-6 bg-gradient-to-b from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -276,7 +265,6 @@ export function SupportChat() {
                 </div>
               </div>
 
-              {/* Reward Progress System */}
               <div className="px-1">
                 <div className="h-1 w-full bg-white/5 rounded-full relative overflow-hidden">
                   <motion.div 
@@ -302,7 +290,6 @@ export function SupportChat() {
               </div>
             </div>
 
-            {/* Scrollable Message Area */}
             <ScrollArea className="flex-grow p-6 h-full" ref={scrollRef}>
               <div className={cn("space-y-6 pb-4", isFullScreen && "max-w-4xl mx-auto")}>
                 {messages.map((msg) => (
@@ -351,7 +338,6 @@ export function SupportChat() {
               </div>
             </ScrollArea>
 
-            {/* Fixed Input Box */}
             <div className="shrink-0 p-6 border-t border-white/5 bg-black/40 relative">
               <form 
                 onSubmit={handleSend}
