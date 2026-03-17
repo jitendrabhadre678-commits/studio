@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Zap, User, ArrowRight, Bot, Loader2 } from 'lucide-react';
+import { MessageSquare, X, Send, Zap, User, ArrowRight, Bot, Loader2, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
+import { Progress } from '@/components/ui/progress';
 
 type Message = {
   id: string;
@@ -16,7 +17,7 @@ type Message = {
   timestamp: Date;
 };
 
-// Soft-Conversion Intent Matching Data
+// Soft-Conversion Intent Matching Data with Progress Awareness
 const INTENTS = [
   {
     keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
@@ -24,7 +25,12 @@ const INTENTS = [
       "Got it 👍 you're looking to unlock a reward.\n\nHere’s how it works:\n\n• Choose your gift card\n• Click 'Unlock Reward'\n• Complete one quick step\n\nMost users start with a simple offer — it's usually quick and unlocks the reward smoothly.\n\nIf you want, I can guide you step-by-step.",
       "Ready to claim? 👍 Unlocking is designed to be simple.\n\nPick your favorite brand and follow the steps to complete one quick activity. This is how we keep the platform free for everyone.\n\nYou can try one quick task to see how it works!",
       "I see you're ready for your reward! 👍\n\nUnlocking is a secure process where you complete a quick sponsor task to release your code. It's safe and helps us verify your session.\n\nStart with a simple offer to get started."
-    ]
+    ],
+    progressResponses: {
+      1: "You're very close 👍 Step 1 is already done. Just complete one quick step and your reward will be ready. Most users finish this in under a minute.",
+      2: "Nice progress 🔥 you're almost there! You've started the verification. Once confirmed, your unique code will be instantly revealed.",
+      3: "Everything is ready 👍 Your reward vault is updated. Click unlock to access your digital code now!"
+    }
   },
   {
     keywords: ['referral', 'invite', 'refer'],
@@ -54,27 +60,6 @@ const INTENTS = [
       "I understand 👍\n\nSometimes rewards take a little time. Make sure the offer was fully completed and you didn’t skip steps.\n\nIf everything looks good, try one quick task again — it usually fixes the issue.",
       "Sorry to hear there's a hiccup! 👍\n\nMost processing delays are caused by incomplete verification signals. A quick refresh or trying one more short activity usually resolves it.\n\nLet me know if you want help with the next step."
     ]
-  },
-  {
-    keywords: ['offer', 'task', 'complete'],
-    responses: [
-      "Got it! 👍 Offers are how we keep things moving.\n\nThey verify you're a real human player and help sponsors reach active users. Once one is finished, your reward path opens up.\n\nYou can try one quick task to get started.",
-      "Offers are the key to unlocking! 👍\n\nJust follow the instructions on the sponsor's page. Most only take a minute or two to finish.\n\nStart with a simple offer to see how it works."
-    ]
-  },
-  {
-    keywords: ['withdraw', 'payment', 'paypal', 'redeem'],
-    responses: [
-      "I understand! 👍 You're ready to redeem your hard work.\n\nCashing out is available once you reach the minimum balance. Just follow the steps in your wallet to initiate the process.\n\nLet me know if you want help with the next step.",
-      "Ready for your payout? 👍\n\nFollow the simple redemption guide in your dashboard. Most payments are processed within a short verification window.\n\nYou can try one quick task to reach your goal faster!"
-    ]
-  },
-  {
-    keywords: ['time', 'delay', 'wait', 'slow'],
-    responses: [
-      "I understand 👍\n\nSometimes verification signals take a few minutes to sync. Your patience helps ensure everything is secure.\n\nTry refreshing your dashboard in a few minutes to see your progress.",
-      "Got it 👍 processing can sometimes be a bit slower during peak times. \n\nJust hang tight, and once the system confirms your activity, your reward will be ready."
-    ]
   }
 ];
 
@@ -94,6 +79,7 @@ const QUICK_OPTIONS = [
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [progress, setProgress] = useState(0); // 0: Start, 1: Selected, 2: Offer Clicked, 3: Completed
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -104,6 +90,28 @@ export function SupportChat() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Sync Progress with Browser Events
+  useEffect(() => {
+    const handleStep1 = () => setProgress(prev => Math.max(prev, 1));
+    const handleStep2 = () => setProgress(prev => Math.max(prev, 2));
+    const handleStep3 = () => setProgress(prev => Math.max(prev, 3));
+    
+    window.addEventListener('reward-step-1', handleStep1);
+    window.addEventListener('reward-step-2', handleStep2);
+    window.addEventListener('reward-step-3', handleStep3);
+    
+    // Initial check: if on a reward page, step 1 is done
+    if (typeof window !== 'undefined' && window.location.pathname.length > 1 && !window.location.pathname.includes('dashboard') && !window.location.pathname.includes('blog')) {
+      setProgress(prev => Math.max(prev, 1));
+    }
+
+    return () => {
+      window.removeEventListener('reward-step-1', handleStep1);
+      window.removeEventListener('reward-step-2', handleStep2);
+      window.removeEventListener('reward-step-3', handleStep3);
+    };
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -145,7 +153,12 @@ export function SupportChat() {
 
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
-          responseText = getRandomElement(intent.responses);
+          // If we have a progress-specific response, use it
+          if ('progressResponses' in intent && (intent.progressResponses as any)[progress]) {
+            responseText = (intent.progressResponses as any)[progress];
+          } else {
+            responseText = getRandomElement(intent.responses);
+          }
           break;
         }
       }
@@ -161,6 +174,8 @@ export function SupportChat() {
       setIsTyping(false);
     }, typingTime);
   };
+
+  const progressPercent = (progress / 3) * 100;
 
   return (
     <>
@@ -180,26 +195,62 @@ export function SupportChat() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed bottom-24 right-6 z-[100] w-[calc(100vw-48px)] sm:w-[400px] h-[600px] max-h-[calc(100vh-120px)] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-[100] w-[calc(100vw-48px)] sm:w-[400px] h-[650px] max-h-[calc(100vh-120px)] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden"
           >
-            <div className="p-6 border-b border-white/5 flex items-center justify-between bg-primary/5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
-                  <Bot className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-black text-white text-sm uppercase tracking-wider">Assistant</h3>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
+            <div className="p-6 border-b border-white/5 flex flex-col gap-4 bg-primary/5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
+                    <Bot className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-white text-sm uppercase tracking-wider">Assistant</h3>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
+                    </div>
                   </div>
                 </div>
+                <Logo className="h-5 opacity-40" />
               </div>
-              <Logo className="h-5 opacity-40" />
+
+              {/* Progress Tracking Visual */}
+              <div className="space-y-2 px-1">
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">Unlock Progress</span>
+                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">{Math.round(progressPercent)}% Complete</span>
+                </div>
+                <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    className="absolute inset-y-0 left-0 bg-primary shadow-[0_0_10px_rgba(250,70,22,0.5)]"
+                  />
+                </div>
+                <div className="flex justify-between text-[8px] font-bold text-white/20 uppercase tracking-widest">
+                  <span className={cn(progress >= 1 && "text-primary")}>Select</span>
+                  <span className={cn(progress >= 2 && "text-primary")}>Verify</span>
+                  <span className={cn(progress >= 3 && "text-primary")}>Unlock</span>
+                </div>
+              </div>
             </div>
 
             <ScrollArea className="flex-grow p-6" ref={scrollRef}>
               <div className="space-y-6">
+                {/* Soft Urgency Prompt */}
+                {progress < 3 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3"
+                  >
+                    <TrendingUp className="w-4 h-4 text-primary shrink-0" />
+                    <p className="text-[10px] text-primary font-bold uppercase tracking-widest leading-tight">
+                      Rewards are currently in high demand. Secure your session soon!
+                    </p>
+                  </motion.div>
+                )}
+
                 {messages.map((msg) => (
                   <motion.div
                     key={msg.id}

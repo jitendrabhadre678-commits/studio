@@ -37,6 +37,9 @@ export function RewardUnlockModal({
     if (!isOpen) {
       setStep('info');
       setHasClickedOffer(false);
+    } else {
+      // Dispatch Step 1 Progress
+      window.dispatchEvent(new CustomEvent('reward-step-1'));
     }
   }, [isOpen]);
 
@@ -56,6 +59,11 @@ export function RewardUnlockModal({
         clearTimeout(timeout);
       };
     }
+    
+    if (step === 'final') {
+      // Dispatch Step 3 Progress
+      window.dispatchEvent(new CustomEvent('reward-step-3'));
+    }
   }, [step]);
 
   const handleContinue = () => setStep('verifying');
@@ -63,6 +71,8 @@ export function RewardUnlockModal({
   const handleOpenOffer = () => {
     window.open("https://gameflashx.space/cl/i/277ood", "_blank");
     setHasClickedOffer(true);
+    // Dispatch Step 2 Progress
+    window.dispatchEvent(new CustomEvent('reward-step-2'));
     setTimeout(() => setStep('checking'), 1000);
   };
 
