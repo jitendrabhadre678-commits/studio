@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -114,7 +113,10 @@ export function SupportChat() {
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      const scrollContainer = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
     }
   }, [messages, isTyping]);
 
@@ -131,6 +133,7 @@ export function SupportChat() {
     const text = textOverride || inputValue.trim();
     if (!text) return;
 
+    // Instant display for user message
     const userMsg: Message = {
       id: Date.now().toString(),
       text,
@@ -143,7 +146,7 @@ export function SupportChat() {
     setIsTyping(true);
 
     // AI Logic with Intent Matching and Random Variations
-    // Simulate thinking/typing time (1.5s to 2.5s)
+    // Simulate thinking/typing time (1.2s to 2.0s)
     const typingTime = 1200 + Math.random() * 800;
 
     setTimeout(() => {
@@ -237,29 +240,34 @@ export function SupportChat() {
                   </motion.div>
                 ))}
                 
+                {/* Human-like Typing Indicator */}
                 {isTyping && (
-                  <div className="flex flex-col items-start max-w-[85%]">
-                    <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-2">
-                      <span className="text-white/40 text-xs font-bold uppercase tracking-widest animate-pulse">Typing</span>
-                      <div className="flex gap-1">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-start max-w-[85%]"
+                  >
+                    <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-3">
+                      <span className="text-white/40 text-[10px] font-black uppercase tracking-widest animate-pulse">Assistant is typing</span>
+                      <div className="flex gap-1.5 pt-0.5">
                         <motion.div 
-                          animate={{ scale: [1, 1.5, 1] }} 
-                          transition={{ repeat: Infinity, duration: 0.6 }} 
-                          className="w-1 h-1 bg-primary rounded-full" 
+                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }} 
+                          transition={{ repeat: Infinity, duration: 0.8 }} 
+                          className="w-1.5 h-1.5 bg-primary rounded-full" 
                         />
                         <motion.div 
-                          animate={{ scale: [1, 1.5, 1] }} 
-                          transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} 
-                          className="w-1 h-1 bg-primary rounded-full" 
+                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }} 
+                          transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} 
+                          className="w-1.5 h-1.5 bg-primary rounded-full" 
                         />
                         <motion.div 
-                          animate={{ scale: [1, 1.5, 1] }} 
-                          transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} 
-                          className="w-1 h-1 bg-primary rounded-full" 
+                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }} 
+                          transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} 
+                          className="w-1.5 h-1.5 bg-primary rounded-full" 
                         />
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             </ScrollArea>
@@ -272,7 +280,8 @@ export function SupportChat() {
                   <button
                     key={opt.keyword}
                     onClick={() => handleSend(opt.label)}
-                    className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest"
+                    disabled={isTyping}
+                    className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest disabled:opacity-50"
                   >
                     {opt.label}
                   </button>
@@ -287,7 +296,8 @@ export function SupportChat() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Type a message..."
-                  className="bg-white/5 border-white/10 h-14 rounded-2xl pr-14 focus-visible:ring-primary/50 text-white font-medium"
+                  disabled={isTyping}
+                  className="bg-white/5 border-white/10 h-14 rounded-2xl pr-14 focus-visible:ring-primary/50 text-white font-medium disabled:opacity-50"
                 />
                 <button
                   type="submit"
