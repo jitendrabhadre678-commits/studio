@@ -17,14 +17,43 @@ type Message = {
   timestamp: Date;
 };
 
-const RESPONSES = {
-  reward: "To unlock rewards:\n1. Choose your favorite brand.\n2. Click the 'Reveal Code' button.\n3. Complete 1 quick advertiser activity.\n4. Your code will be instantly revealed in your Reward Vault!",
-  referral: "Referral System Guide:\n1. Go to your Dashboard.\n2. Copy your unique referral link.\n3. Share it with friends.\n4. You earn a 10% lifetime commission on every reward they unlock!",
-  login: "Account Help:\n- Use the 'Login' or 'Sign Up' buttons in the header.\n- We support Google and Email authentication.\n- If using email, please verify your inbox (check spam folder) to unlock all features.",
-  earn: "Ways to Earn:\n- Complete sponsored tasks in the Reward Gallery.\n- Claim your Daily Bonus in the Dashboard.\n- Refer friends to earn passive commissions.",
-  offer: "Offer Completion Tips:\n- Turn off all Ad-Blockers before starting.\n- Use accurate information during verification.\n- Most offers verify within 1-5 minutes of completion.",
-  fallback: "Please select a topic below or ask a clear question about rewards, referrals, or your account. I'm here to help!"
-};
+// Advanced Intent Matching Data
+const INTENTS = [
+  {
+    keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
+    response: "To unlock a reward:\n\n1. Select your gift card\n2. Click Unlock Reward\n3. Complete a required offer\n4. Your reward will be prepared"
+  },
+  {
+    keywords: ['referral', 'invite', 'refer'],
+    response: "You can earn by inviting others.\n\n1. Share your referral link from the dashboard\n2. When someone signs up using your link\n3. Your referral count increases"
+  },
+  {
+    keywords: ['earn', 'money', 'cash', 'income'],
+    response: "You can earn rewards by:\n\n• completing offers\n• using referral system\n• participating in activities"
+  },
+  {
+    keywords: ['login', 'account', 'signup', 'sign'],
+    response: "You can login using email or Google.\n\nIf signup is closed, please wait until registration opens again."
+  },
+  {
+    keywords: ['not working', 'error', 'problem', 'failed', 'issue'],
+    response: "If your reward is not showing:\n\n• ensure you completed the offer correctly\n• wait a few minutes\n• try again if needed"
+  },
+  {
+    keywords: ['offer', 'task', 'complete'],
+    response: "Offers are required to verify users.\n\nYou must complete at least one offer before claiming a reward."
+  },
+  {
+    keywords: ['withdraw', 'payment', 'paypal', 'redeem'],
+    response: "Rewards are provided after successful completion of required steps.\n\nFollow instructions carefully to receive your reward."
+  },
+  {
+    keywords: ['time', 'delay', 'wait', 'slow'],
+    response: "Some rewards may take a few minutes to process.\n\nPlease wait and refresh your dashboard."
+  }
+];
+
+const FALLBACK_RESPONSE = "Please choose a topic or ask a clear question so I can help you better.";
 
 const QUICK_OPTIONS = [
   { label: "Unlock Rewards", keyword: "reward" },
@@ -75,16 +104,18 @@ export function SupportChat() {
     setInputValue('');
     setIsTyping(true);
 
-    // AI Logic
+    // AI Logic with Intent Matching
     setTimeout(() => {
       const lowerText = text.toLowerCase();
-      let responseText = RESPONSES.fallback;
+      let responseText = FALLBACK_RESPONSE;
 
-      if (lowerText.includes('reward')) responseText = RESPONSES.reward;
-      else if (lowerText.includes('referral')) responseText = RESPONSES.referral;
-      else if (lowerText.includes('login') || lowerText.includes('account')) responseText = RESPONSES.login;
-      else if (lowerText.includes('earn')) responseText = RESPONSES.earn;
-      else if (lowerText.includes('offer')) responseText = RESPONSES.offer;
+      // Find the best intent match
+      for (const intent of INTENTS) {
+        if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
+          responseText = intent.response;
+          break;
+        }
+      }
 
       const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
