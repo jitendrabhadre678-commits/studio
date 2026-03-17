@@ -16,70 +16,64 @@ type Message = {
   timestamp: Date;
 };
 
-// Advanced Intent Matching Data with Human-like Variations
+// Soft-Conversion Intent Matching Data
 const INTENTS = [
   {
     keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
     responses: [
-      "To unlock a reward:\n\n1. Select your gift card\n2. Click Unlock Reward\n3. Complete a required offer\n4. Your reward will be prepared",
-      "Ready to claim? Here's the process:\n\n• Pick your favorite brand\n• Hit 'Unlock Reward'\n• Finish one quick activity\n• Your code will be released!",
-      "Unlocking is easy! Just select a card, click the unlock button, and complete a sponsored task. Your digital code arrives right after verification."
+      "Got it 👍 you're looking to unlock a reward.\n\nHere’s how it works:\n\n• Choose your gift card\n• Click 'Unlock Reward'\n• Complete one quick step\n\nMost users start with a simple offer — it's usually quick and unlocks the reward smoothly.\n\nIf you want, I can guide you step-by-step.",
+      "Ready to claim? 👍 Unlocking is designed to be simple.\n\nPick your favorite brand and follow the steps to complete one quick activity. This is how we keep the platform free for everyone.\n\nYou can try one quick task to see how it works!",
+      "I see you're ready for your reward! 👍\n\nUnlocking is a secure process where you complete a quick sponsor task to release your code. It's safe and helps us verify your session.\n\nStart with a simple offer to get started."
     ]
   },
   {
     keywords: ['referral', 'invite', 'refer'],
     responses: [
-      "You can earn by inviting others.\n\n1. Share your referral link from the dashboard\n2. When someone signs up using your link\n3. Your referral count increases",
-      "Want to earn more? Share your unique referral link! Every friend who joins increases your stats and unlocks future bonuses.",
-      "Invite your friends! Use the link in your dashboard. Once they sign up, you'll see your referral count grow in real-time."
+      "You can also grow faster using your referral system 👍\n\nInvite others, and your referral count increases. Some users combine this with offers to maximize rewards.\n\nLet me know if you want help with finding your link.",
+      "Got it! 👍 Sharing the platform is a great way to earn. \n\nWhen your friends sign up using your link, your lifetime commission grows. It's a nice way to build up a balance over time.\n\nYou can find your unique link in your dashboard!"
     ]
   },
   {
     keywords: ['earn', 'money', 'cash', 'income'],
     responses: [
-      "You can earn rewards by:\n\n• completing offers\n• using referral system\n• participating in activities",
-      "Looking to make some cash? You can earn by finishing offers, referring friends, or claiming daily rewards in your dashboard.",
-      "There are several ways to earn here: complete sponsored tasks, invite your gaming friends, or grab your daily bonus!"
+      "Looking to earn rewards? 👍\n\nYou can start by completing simple tasks and offers. They’re designed to be quick, and once done, your reward becomes available.\n\nMany users begin with one easy task just to see how it works.",
+      "Earning is straightforward here! 👍\n\nBy engaging with our sponsors through quick offers, you unlock your favorite gift cards. It's a great way to turn a few minutes of time into real rewards.\n\nStart with a simple offer to see how it works.",
+      "I'd love to help you earn! 👍\n\nThe most popular way is completing advertiser tasks. They are short, verified activities that add value to your account immediately.\n\nYou can try one quick task to get started."
     ]
   },
   {
     keywords: ['login', 'account', 'signup', 'sign'],
     responses: [
-      "You can login using email or Google.\n\nIf signup is closed, please wait until registration opens again.",
-      "Access your account via Google or Email. If you're having trouble signing up, please check if registrations are currently open.",
-      "Standard login supports Email and Google. If registration isn't working, we might be at temporary capacity - try again shortly!"
+      "I understand 👍 you're checking on your account.\n\nYou can access everything using your Email or Google login. If registration is currently at capacity, just keep an eye out for when it opens up again.",
+      "Got it 👍 logging in is easy.\n\nJust use the 'Login' button at the top. If you're having any specific trouble with your profile, let me know and I'll do my best to guide you."
     ]
   },
   {
     keywords: ['not working', 'error', 'problem', 'failed', 'issue'],
     responses: [
-      "If your reward is not showing:\n\n• ensure you completed the offer correctly\n• wait a few minutes\n• try again if needed",
-      "Having issues? Double-check that the offer was finished fully. Sometimes it takes 2-5 minutes for the system to sync your unlock.",
-      "If things aren't working as expected, try refreshing your vault after a few minutes. Most issues are caused by incomplete offer verification."
+      "I understand 👍\n\nSometimes rewards take a little time. Make sure the offer was fully completed and you didn’t skip steps.\n\nIf everything looks good, try one quick task again — it usually fixes the issue.",
+      "Sorry to hear there's a hiccup! 👍\n\nMost processing delays are caused by incomplete verification signals. A quick refresh or trying one more short activity usually resolves it.\n\nLet me know if you want help with the next step."
     ]
   },
   {
     keywords: ['offer', 'task', 'complete'],
     responses: [
-      "Offers are required to verify users.\n\nYou must complete at least one offer before claiming a reward.",
-      "To keep rewards free, advertisers require one quick task completion. This verifies you're a real human player!",
-      "Tasks are simple! Finish one sponsored activity to release your code. This is how we keep the platform free for everyone."
+      "Got it! 👍 Offers are how we keep things moving.\n\nThey verify you're a real human player and help sponsors reach active users. Once one is finished, your reward path opens up.\n\nYou can try one quick task to get started.",
+      "Offers are the key to unlocking! 👍\n\nJust follow the instructions on the sponsor's page. Most only take a minute or two to finish.\n\nStart with a simple offer to see how it works."
     ]
   },
   {
     keywords: ['withdraw', 'payment', 'paypal', 'redeem'],
     responses: [
-      "Rewards are provided after successful completion of required steps.\n\nFollow instructions carefully to receive your reward.",
-      "Cashing out is simple once you meet the requirements. Follow the steps in your dashboard to initiate a withdrawal.",
-      "Payments are processed after verification. Make sure you've followed all instructions to avoid any delays in your reward delivery."
+      "I understand! 👍 You're ready to redeem your hard work.\n\nCashing out is available once you reach the minimum balance. Just follow the steps in your wallet to initiate the process.\n\nLet me know if you want help with the next step.",
+      "Ready for your payout? 👍\n\nFollow the simple redemption guide in your dashboard. Most payments are processed within a short verification window.\n\nYou can try one quick task to reach your goal faster!"
     ]
   },
   {
     keywords: ['time', 'delay', 'wait', 'slow'],
     responses: [
-      "Some rewards may take a few minutes to process.\n\nPlease wait and refresh your dashboard.",
-      "Patience is key! Some advertisers take a few minutes to send the verification signal. Refresh your vault in 5-10 minutes.",
-      "Digital rewards are usually instant, but can sometimes take a short while. Keep an eye on your activity log!"
+      "I understand 👍\n\nSometimes verification signals take a few minutes to sync. Your patience helps ensure everything is secure.\n\nTry refreshing your dashboard in a few minutes to see your progress.",
+      "Got it 👍 processing can sometimes be a bit slower during peak times. \n\nJust hang tight, and once the system confirms your activity, your reward will be ready."
     ]
   }
 ];
@@ -120,7 +114,6 @@ export function SupportChat() {
     }
   }, [messages, isTyping]);
 
-  // Listen for global custom event to open chat
   useEffect(() => {
     const handleOpenSupport = () => setIsOpen(true);
     window.addEventListener('open-support-chat', handleOpenSupport);
@@ -133,7 +126,6 @@ export function SupportChat() {
     const text = textOverride || inputValue.trim();
     if (!text) return;
 
-    // Instant display for user message
     const userMsg: Message = {
       id: Date.now().toString(),
       text,
@@ -145,15 +137,12 @@ export function SupportChat() {
     setInputValue('');
     setIsTyping(true);
 
-    // AI Logic with Intent Matching and Random Variations
-    // Simulate thinking/typing time (1.2s to 2.0s)
     const typingTime = 1200 + Math.random() * 800;
 
     setTimeout(() => {
       const lowerText = text.toLowerCase();
       let responseText = getRandomElement(FALLBACK_RESPONSES);
 
-      // Find the best intent match
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
           responseText = getRandomElement(intent.responses);
@@ -175,7 +164,6 @@ export function SupportChat() {
 
   return (
     <>
-      {/* Floating Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -194,7 +182,6 @@ export function SupportChat() {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed bottom-24 right-6 z-[100] w-[calc(100vw-48px)] sm:w-[400px] h-[600px] max-h-[calc(100vh-120px)] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden"
           >
-            {/* Header */}
             <div className="p-6 border-b border-white/5 flex items-center justify-between bg-primary/5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
@@ -211,7 +198,6 @@ export function SupportChat() {
               <Logo className="h-5 opacity-40" />
             </div>
 
-            {/* Chat Body */}
             <ScrollArea className="flex-grow p-6" ref={scrollRef}>
               <div className="space-y-6">
                 {messages.map((msg) => (
@@ -240,7 +226,6 @@ export function SupportChat() {
                   </motion.div>
                 ))}
                 
-                {/* Human-like Typing Indicator */}
                 {isTyping && (
                   <motion.div 
                     initial={{ opacity: 0, y: 5 }}
@@ -272,9 +257,7 @@ export function SupportChat() {
               </div>
             </ScrollArea>
 
-            {/* Footer / Input */}
             <div className="p-6 border-t border-white/5 bg-black/40">
-              {/* Quick Options */}
               <div className="flex flex-wrap gap-2 mb-4">
                 {QUICK_OPTIONS.map((opt) => (
                   <button
