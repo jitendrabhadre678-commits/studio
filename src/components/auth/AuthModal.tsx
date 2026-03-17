@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -15,7 +14,7 @@ import {
   signInWithRedirect,
   sendEmailVerification
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, increment, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, serverTimestamp, increment, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { Mail, Lock, Loader2, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -50,8 +49,8 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     });
 
     try {
+      onClose(); // Close modal before redirect to prevent UI artifacts
       await signInWithRedirect(auth, provider);
-      onClose();
     } catch (error: any) {
       toast({ variant: "destructive", title: "Login Failed", description: error.message });
       setIsLoading(false);
@@ -99,9 +98,9 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
         // Manual code takes priority over link if both present
         const finalReferrerId = manualReferrerId || linkReferrerId;
 
-        // Initialize user profile in Firestore
+        // Initialize user profile in Firestore (Non-blocking)
         const newUserCode = generateReferralCode();
-        await setDoc(doc(db, 'users', user.uid), {
+        setDocumentNonBlocking(doc(db, 'users', user.uid), {
           id: user.uid,
           email: user.email,
           createdAt: serverTimestamp(),
@@ -115,17 +114,19 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           referralCode: newUserCode,
           referredBy: finalReferrerId || null,
           accountStatus: 'active'
-        });
+        }, { merge: true });
 
-        // If referred, increment referrer's count
+        // If referred, increment referrer's count (Non-blocking)
         if (finalReferrerId && finalReferrerId !== user.uid) {
           const referrerRef = doc(db, 'users', finalReferrerId);
-          const referrerSnap = await getDoc(referrerRef);
-          if (referrerSnap.exists()) {
-            await updateDoc(referrerRef, {
-              referralsCount: increment(1)
-            });
-          }
+          // We check existence first but increment non-blocking
+          getDoc(referrerRef).then(snap => {
+            if (snap.exists()) {
+              updateDocumentNonBlocking(referrerRef, {
+                referralsCount: increment(1)
+              });
+            }
+          });
         }
 
         toast({ title: "Account Created", description: "Please check your email for verification." });

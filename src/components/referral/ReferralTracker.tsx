@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useFirestore } from '@/firebase';
-import { doc, setDoc, updateDoc, increment, serverTimestamp, getDoc } from 'firebase/firestore';
+import { useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking, errorEmitter, FirestorePermissionError } from '@/firebase';
+import { doc, increment, serverTimestamp, getDoc } from 'firebase/firestore';
 
 function ReferralTrackerContent() {
   const searchParams = useSearchParams();
@@ -27,22 +26,27 @@ function ReferralTrackerContent() {
           const docSnap = await getDoc(referralRef);
           
           if (docSnap.exists()) {
-            await updateDoc(referralRef, {
+            updateDocumentNonBlocking(referralRef, {
               clicks: increment(1),
               lastUpdated: serverTimestamp()
             });
           } else {
-            await setDoc(referralRef, {
+            setDocumentNonBlocking(referralRef, {
               referrerId: ref,
               clicks: 1,
               lastUpdated: serverTimestamp()
-            });
+            }, { merge: true });
           }
           
           // Prevent multiple counts from same device for this specific referrer
           localStorage.setItem(`refCounted_${ref}`, 'true');
-        } catch (error) {
-          console.error("Referral tracking failed:", error);
+        } catch (serverError: any) {
+          // Emit contextual permission error for better debugging
+          const permissionError = new FirestorePermissionError({
+            path: referralRef.path,
+            operation: 'write'
+          });
+          errorEmitter.emit('permission-error', permissionError);
         }
       };
 

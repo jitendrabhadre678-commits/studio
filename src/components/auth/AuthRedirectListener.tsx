@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useEffect } from 'react';
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { getRedirectResult } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp, increment, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, increment } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 /**
@@ -23,15 +22,17 @@ export function AuthRedirectListener() {
         if (result?.user) {
           const user = result.user;
           const userRef = doc(db, 'users', user.uid);
+          
+          // Check if this is a new user
           const userSnap = await getDoc(userRef);
 
-          // If this is a new user, initialize their profile in Firestore
           if (!userSnap.exists()) {
             // Check for referral ID in localStorage
             const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
             const newUserCode = 'GFX-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
-            await setDoc(userRef, {
+            // Initialize profile (Non-blocking)
+            setDocumentNonBlocking(userRef, {
               id: user.uid,
               email: user.email,
               displayName: user.displayName,
@@ -49,15 +50,16 @@ export function AuthRedirectListener() {
               accountStatus: 'active'
             }, { merge: true });
 
-            // If referred, increment referrer's count
+            // If referred, increment referrer's count (Non-blocking)
             if (referralId && referralId !== user.uid) {
               const referrerRef = doc(db, 'users', referralId);
-              const referrerSnap = await getDoc(referrerRef);
-              if (referrerSnap.exists()) {
-                await updateDoc(referrerRef, {
-                  referralsCount: increment(1)
-                });
-              }
+              getDoc(referrerRef).then(snap => {
+                if (snap.exists()) {
+                  updateDocumentNonBlocking(referrerRef, {
+                    referralsCount: increment(1)
+                  });
+                }
+              });
             }
           }
           
