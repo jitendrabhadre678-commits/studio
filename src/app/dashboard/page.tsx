@@ -10,7 +10,8 @@ import { doc, collection, query, where, orderBy, limit } from 'firebase/firestor
 import { 
   Gift, Trophy, Clock, ArrowRight, ChevronRight, 
   DollarSign, CheckCircle, Users, Sparkles, 
-  History, Wallet, Share2, Copy, Check, MousePointer2 
+  History, Wallet, Share2, Copy, Check, MousePointer2, 
+  UserPlus
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -28,6 +29,7 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const [isCopied, setIsCopied] = useState(false);
+  const [isCodeCopied, setIsCodeCopied] = useState(false);
   const [origin, setOrigin] = useState('');
 
   // Get dynamic origin for referral links
@@ -68,6 +70,7 @@ export default function Dashboard() {
   const { data: transactions } = useCollection(transactionsQuery);
 
   const referralLink = user ? `${origin}/?ref=${user.uid}` : '';
+  const myReferralCode = userData?.referralCode || '...';
 
   const handleCopyRef = () => {
     if (!referralLink) return;
@@ -77,9 +80,16 @@ export default function Dashboard() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  const handleCopyCode = () => {
+    if (myReferralCode === '...') return;
+    navigator.clipboard.writeText(myReferralCode);
+    setIsCodeCopied(true);
+    toast({ title: "Referral Code Copied!", description: "Friends can enter this code during manual signup." });
+    setTimeout(() => setIsCodeCopied(false), 2000);
+  };
+
   const formatDate = (val: any) => {
     if (!val) return '...';
-    // Handle Firestore Timestamps
     const date = val.toDate ? val.toDate() : new Date(val);
     return date.toLocaleDateString();
   };
@@ -248,11 +258,14 @@ export default function Dashboard() {
                   </div>
 
                   <div className="glass-card rounded-[2.5rem] p-8 border-white/10 bg-primary/5">
-                    <h3 className="text-lg font-black text-white mb-4 uppercase tracking-tight">Need Support?</h3>
-                    <p className="text-xs text-muted-foreground mb-6 leading-relaxed">Our 24/7 automated support system handles reward inquiries instantly.</p>
-                    <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/10 text-primary font-bold rounded-xl h-11">
-                      Open Help Desk
-                    </Button>
+                    <h3 className="text-lg font-black text-white mb-4 uppercase tracking-tight">Your Referral Code</h3>
+                    <div className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-primary/20 mb-4">
+                       <span className="font-black text-primary text-lg tracking-wider">{myReferralCode}</span>
+                       <button onClick={handleCopyCode} className="text-white/40 hover:text-primary">
+                         {isCodeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                       </button>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground leading-tight">Friends can enter this manual code during signup to join your network.</p>
                   </div>
                 </div>
               </div>
@@ -292,18 +305,28 @@ export default function Dashboard() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="glass-card rounded-[2.5rem] p-10 border-white/10">
-                  <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Your Referral Link</h3>
+                  <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Referral Assets</h3>
                   <div className="space-y-6">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      Share this unique URL with your friends or on social media. You'll receive a 10% lifetime commission on every offer they complete!
-                    </p>
-                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-4">
-                      <div className="text-xs font-mono text-white/60 break-all select-all">
-                        {referralLink || 'Generating link...'}
+                    <div>
+                      <Label className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2 block">Manual Referral Code</Label>
+                      <div className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10">
+                        <span className="text-2xl font-black text-primary tracking-widest">{myReferralCode}</span>
+                        <Button onClick={handleCopyCode} size="sm" variant="ghost" className="text-primary font-black uppercase tracking-widest">
+                          {isCodeCopied ? "Copied" : "Copy Code"}
+                        </Button>
                       </div>
-                      <Button onClick={handleCopyRef} className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
-                        {isCopied ? <><Check className="mr-2 w-4 h-4" /> Link Copied</> : <><Copy className="mr-2 w-4 h-4" /> Copy My Link</>}
-                      </Button>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2 block">Direct Referral Link</Label>
+                      <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-4">
+                        <div className="text-xs font-mono text-white/60 break-all select-all">
+                          {referralLink || 'Generating link...'}
+                        </div>
+                        <Button onClick={handleCopyRef} className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
+                          {isCopied ? <><Check className="mr-2 w-4 h-4" /> Link Copied</> : <><Copy className="mr-2 w-4 h-4" /> Copy My Link</>}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -312,7 +335,7 @@ export default function Dashboard() {
                   <ul className="space-y-4">
                     <li className="flex gap-4 items-start">
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">1</div>
-                      <p className="text-sm text-muted-foreground">Share your unique referral link with friends or on social media.</p>
+                      <p className="text-sm text-muted-foreground">Share your unique referral link or manual code with friends.</p>
                     </li>
                     <li className="flex gap-4 items-start">
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">2</div>

@@ -15,8 +15,8 @@ import {
   signInWithRedirect,
   sendEmailVerification
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, increment, updateDoc, getDoc } from 'firebase/firestore';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { doc, setDoc, serverTimestamp, increment, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { Mail, Lock, Loader2, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
@@ -58,6 +58,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     }
   };
 
+  const generateReferralCode = () => {
+    return 'GFX-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+  };
+
   const handleEmailAuth = async (e: React.FormEvent<HTMLFormElement>, mode: 'login' | 'signup') => {
     e.preventDefault();
     setIsLoading(true);
@@ -68,18 +72,35 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     try {
       if (mode === 'signup') {
         const confirmPassword = formData.get('confirmPassword') as string;
+        const enteredRefCode = formData.get('referralCode') as string;
+
         if (password !== confirmPassword) {
           throw new Error("Passwords do not match");
         }
+
+        let manualReferrerId = null;
+        if (enteredRefCode) {
+          const q = query(collection(db, 'users'), where('referralCode', '==', enteredRefCode.toUpperCase()));
+          const querySnap = await getDocs(q);
+          if (querySnap.empty) {
+            throw new Error("Invalid referral code");
+          }
+          manualReferrerId = querySnap.docs[0].id;
+        }
+
         const result = await createUserWithEmailAndPassword(auth, email, password);
         const user = result.user;
 
         await sendEmailVerification(user);
 
-        // Check for referral ID in localStorage
-        const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
+        // Check for referral ID in localStorage (link tracking)
+        const linkReferrerId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
+        
+        // Manual code takes priority over link if both present
+        const finalReferrerId = manualReferrerId || linkReferrerId;
 
         // Initialize user profile in Firestore
+        const newUserCode = generateReferralCode();
         await setDoc(doc(db, 'users', user.uid), {
           id: user.uid,
           email: user.email,
@@ -91,12 +112,14 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           points: 0,
           referralsCount: 0,
           referralEarnings: 0,
+          referralCode: newUserCode,
+          referredBy: finalReferrerId || null,
           accountStatus: 'active'
         });
 
         // If referred, increment referrer's count
-        if (referralId && referralId !== user.uid) {
-          const referrerRef = doc(db, 'users', referralId);
+        if (finalReferrerId && finalReferrerId !== user.uid) {
+          const referrerRef = doc(db, 'users', finalReferrerId);
           const referrerSnap = await getDoc(referrerRef);
           if (referrerSnap.exists()) {
             await updateDoc(referrerRef, {
@@ -187,6 +210,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input id="confirm-password" name="confirmPassword" type="password" placeholder="••••••••" className="pl-10 bg-white/5 border-white/10" required />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-ref">Referral Code (Optional)</Label>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input id="signup-ref" name="referralCode" placeholder="GFX-12345" className="pl-10 bg-white/5 border-white/10 uppercase" />
                   </div>
                 </div>
                 <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl" disabled={isLoading}>
