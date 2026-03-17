@@ -45,7 +45,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative pt-32 pb-24 px-4 overflow-hidden">
+    <section className="relative pt-32 pb-24 px-4 overflow-visible">
       {/* Background ambient glows */}
       <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
@@ -106,24 +106,24 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Search Results Dropdown */}
+          {/* Search Results Dropdown Fix */}
           {isFocused && searchValue.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-3 bg-[#050505] backdrop-blur-[20px] border border-white/10 rounded-2xl p-2 z-[9999] shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200">
-              <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2 px-3 pt-2">Live Results</div>
-              <div className="flex flex-col gap-1 max-h-[400px] overflow-y-auto pr-1 scrollbar-hide">
+            <div className="absolute top-full left-0 right-0 mt-3 bg-[#0f0f0f] backdrop-blur-[20px] border border-white/10 rounded-2xl p-3 z-50 shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in duration-300">
+              <div className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3 px-3">Live Results</div>
+              <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-hide">
                 {suggestions.length > 0 ? (
                   suggestions.map(card => {
                     return (
                       <button 
                         key={card.id}
                         onClick={() => handleScrollToCard(card.slug)}
-                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.08] text-left text-white transition-all group"
+                        className="flex items-center gap-4 p-3 rounded-xl bg-[#1a1a1a] hover:bg-[#222] text-left text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(250,70,22,0.4)] group"
                       >
                         <div 
-                          className="relative w-24 aspect-[16/9] rounded-lg overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-2"
+                          className="relative w-20 aspect-[16/9] rounded-lg overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-2"
                           style={{ background: card.gradient }}
                         >
-                           <span className="relative z-10 font-headline font-black text-white text-[10px] uppercase tracking-tighter text-center [text-shadow:0_0_10px_rgba(255,255,255,0.4)] px-2 leading-none">
+                           <span className="relative z-10 font-headline font-black text-white text-[8px] uppercase tracking-tighter text-center [text-shadow:0_0_10px_rgba(255,255,255,0.4)] px-1 leading-none">
                             {card.brand}
                           </span>
                         </div>
@@ -132,15 +132,15 @@ export function Hero() {
                             {card.brand}
                             {card.trending && <span className="text-[8px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full uppercase tracking-widest font-black">Hot</span>}
                           </div>
-                          <div className="text-[11px] text-muted-foreground line-clamp-1 font-medium">{card.description}</div>
+                          <div className="text-[11px] text-muted-foreground line-clamp-1 font-medium">{card.category} Reward</div>
                         </div>
                         <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all mr-2" />
                       </button>
                     );
                   })
                 ) : (
-                  <div className="p-8 text-center">
-                    <p className="text-sm text-muted-foreground font-medium">No rewards found for "{searchValue}"</p>
+                  <div className="p-8 text-center bg-[#1a1a1a] rounded-xl">
+                    <p className="text-sm text-muted-foreground font-medium">No results found for "{searchValue}"</p>
                   </div>
                 )}
               </div>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -33,7 +34,7 @@ export function FeaturedRewards() {
   const flags = ["🇺🇸", "🇬🇧", "🇨🇦", "🇦🇺", "🇳🇿", "🇫🇷", "🇮🇹", "🇲🇦"];
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-[#0f172a] to-[#020617] overflow-hidden">
+    <section className="py-24 px-4 bg-gradient-to-b from-[#0f172a] to-[#020617] overflow-visible">
       <div className="container mx-auto">
         <div className="text-center mb-16 space-y-4">
           <motion.div
@@ -65,85 +66,94 @@ export function FeaturedRewards() {
           </motion.p>
         </div>
 
-        <Carousel
-          setApi={setApi}
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full max-w-7xl mx-auto relative group"
-        >
-          <CarouselContent className="-ml-4">
-            {featured.map((card, index) => {
-              return (
-                <CarouselItem key={card.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -10 }}
-                    className="glass-card rounded-[2.5rem] p-6 border-white/5 relative overflow-hidden h-full flex flex-col group/card"
-                  >
-                    {/* Unique Gradient Background Banner */}
-                    <div 
-                      className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-6 shadow-2xl border border-white/10 flex items-center justify-center p-4 transition-transform duration-500 group-hover/card:scale-[1.02]"
-                      style={{ background: card.gradient }}
+        <div className="overflow-visible pb-10">
+          <Carousel
+            setApi={setApi}
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-7xl mx-auto relative group overflow-visible"
+          >
+            <CarouselContent className="-ml-4 overflow-visible">
+              {featured.map((card, index) => {
+                return (
+                  <CarouselItem key={card.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 overflow-visible">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                      whileHover={{ y: -6 }}
+                      className="rounded-[18px] p-6 border border-white/10 transition-all duration-300 flex flex-col h-full group/card relative"
+                      style={{ 
+                        background: 'linear-gradient(145deg, #1a1a1a, #111)',
+                        boxShadow: '0 15px 40px rgba(0,0,0,0.4)' 
+                      }}
                     >
-                      <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
-                      <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.4)] px-4 leading-none">
-                        {card.brand}
-                      </span>
-                      <div className="absolute bottom-3 left-3 flex gap-1 z-10">
-                        {flags.slice(0, 4).map((f, i) => (
-                          <span key={i} className="text-sm drop-shadow-md">{f}</span>
-                        ))}
-                      </div>
-                    </div>
+                      {/* Glow Overlay on Hover */}
+                      <div className="absolute inset-0 rounded-[18px] border border-primary/0 group-hover/card:border-primary/40 group-hover/card:shadow-[0_0_20px_rgba(250,70,22,0.25)] transition-all duration-300 pointer-events-none" />
 
-                    <div className="flex-grow">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">
-                            {card.category} Reward
-                          </p>
-                          <h3 className="text-2xl font-black text-white">{card.brand}</h3>
-                        </div>
-                        <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover/card:border-primary/50 transition-colors">
-                          <Zap className="w-5 h-5 text-primary" />
+                      {/* Unique Gradient Background Banner */}
+                      <div 
+                        className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-6 shadow-2xl border border-white/5 flex items-center justify-center p-4 transition-transform duration-500 group-hover/card:scale-[1.02]"
+                        style={{ background: card.gradient }}
+                      >
+                        <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
+                        <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.4)] px-4 leading-none">
+                          {card.brand}
+                        </span>
+                        <div className="absolute bottom-3 left-3 flex gap-1 z-10">
+                          {flags.slice(0, 4).map((f, i) => (
+                            <span key={i} className="text-sm drop-shadow-md">{f}</span>
+                          ))}
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 mb-6">
-                        {card.values.map((val) => (
-                          <div
-                            key={val}
-                            className="bg-white/5 border border-white/5 rounded-xl py-2 text-center text-xs font-bold text-white/80"
-                          >
-                            {val}
+                      <div className="flex-grow">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">
+                              {card.category} Reward
+                            </p>
+                            <h3 className="text-2xl font-black text-white">{card.brand}</h3>
                           </div>
-                        ))}
-                      </div>
-                    </div>
+                          <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover/card:border-primary/50 transition-colors">
+                            <Zap className="w-5 h-5 text-primary" />
+                          </div>
+                        </div>
 
-                    <Button 
-                      asChild
-                      className="relative w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(223,16,78,0.3)] transition-all active:scale-[0.98]"
-                    >
-                      <Link href={`/${card.slug}`} prefetch={true}>
-                        Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
-                      </Link>
-                    </Button>
-                  </motion.div>
-                </CarouselItem>
-              );
-            })}
-          </CarouselContent>
-          
-          <div className="hidden lg:block">
-            <CarouselPrevious className="left-[-2rem] bg-black/40 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-12 w-12" />
-            <CarouselNext className="right-[-2rem] bg-black/40 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-12 w-12" />
-          </div>
-        </Carousel>
+                        <div className="grid grid-cols-2 gap-2 mb-6">
+                          {card.values.map((val) => (
+                            <div
+                              key={val}
+                              className="bg-white/5 border border-white/5 rounded-xl py-2 text-center text-xs font-bold text-white/80"
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Button 
+                        asChild
+                        className="relative w-full h-12 rounded-[10px] bg-gradient-to-r from-[#FA4616] to-[#ff7a3d] hover:to-[#FA4616] text-white font-bold uppercase tracking-widest transition-all duration-300 hover:scale-[1.05] hover:shadow-[0_0_15px_rgba(250,70,22,0.5)] active:scale-[0.98]"
+                      >
+                        <Link href={`/${card.slug}`} prefetch={true}>
+                          Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
+                        </Link>
+                      </Button>
+                    </motion.div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            
+            <div className="hidden lg:block">
+              <CarouselPrevious className="left-[-3rem] bg-black/40 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-12 w-12" />
+              <CarouselNext className="right-[-3rem] bg-black/40 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-12 w-12" />
+            </div>
+          </Carousel>
+        </div>
       </div>
     </section>
   );
