@@ -10,7 +10,7 @@ import { doc, collection, query, where, orderBy, limit } from 'firebase/firestor
 import { 
   Gift, Trophy, Clock, ArrowRight, ChevronRight, 
   DollarSign, CheckCircle, Users, Sparkles, 
-  History, Wallet, Share2, Copy, Check 
+  History, Wallet, Share2, Copy, Check, MousePointer2 
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -39,6 +39,11 @@ export default function Dashboard() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
+  const referralStatsRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'referrals', user.uid);
+  }, [firestore, user]);
+
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return query(
@@ -50,13 +55,14 @@ export default function Dashboard() {
   }, [firestore, user]);
 
   const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
+  const { data: referralData, isLoading: isReferralLoading } = useDoc(referralStatsRef);
   const { data: transactions } = useCollection(transactionsQuery);
 
   const handleCopyRef = () => {
-    const refLink = `${window.location.origin}/signup?ref=${userData?.referralCode || user?.uid}`;
+    const refLink = `${window.location.origin}/?ref=${user?.uid}`;
     navigator.clipboard.writeText(refLink);
     setIsCopied(true);
-    toast({ title: "Referral Link Copied!", description: "Share this with friends to earn $0.10 per offer they complete." });
+    toast({ title: "Referral Link Copied!", description: "Share this with friends to earn rewards for their activity." });
     setTimeout(() => setIsCopied(false), 2000);
   };
 
@@ -65,9 +71,9 @@ export default function Dashboard() {
   const balance = userData?.balance || 0;
   const totalEarnings = userData?.totalEarnings || 0;
   const offersCompleted = userData?.offersCompleted || 0;
-  const rewardsUnlocked = userData?.rewardsUnlocked || 0;
   const referralsCount = userData?.referralsCount || 0;
   const referralEarnings = userData?.referralEarnings || 0;
+  const referralClicks = referralData?.clicks || 0;
 
   return (
     <main className="min-h-screen">
@@ -203,11 +209,11 @@ export default function Dashboard() {
                       <Share2 className="w-5 h-5 text-primary" /> Invite Friends
                     </h3>
                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                      Earn $0.10 for every $1.00 your friends earn on GameFlashX. There is no limit to how much you can earn!
+                      Earn rewards for every person you bring to GameFlashX. Start sharing your link now!
                     </p>
                     <div className="relative mb-6">
                       <div className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-mono text-white/40 truncate">
-                        {userData?.referralCode || user?.uid}
+                        {`${window.location.origin}/?ref=${user?.uid}`}
                       </div>
                       <button 
                         onClick={handleCopyRef}
@@ -240,18 +246,44 @@ export default function Dashboard() {
                </div>
             </TabsContent>
 
-            <TabsContent value="referrals">
+            <TabsContent value="referrals" className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { label: 'Referral Clicks', val: referralClicks, icon: <MousePointer2 className="text-primary" />, sub: 'Unique visitors tracked' },
+                  { label: 'Friends Joined', val: referralsCount, icon: <Users className="text-primary" />, sub: 'Account registrations' },
+                  { label: 'Total Commission', val: `$${referralEarnings.toFixed(2)}`, icon: <DollarSign className="text-primary" />, sub: 'Lifetime earnings' },
+                ].map((stat, i) => (
+                  <Card key={i} className="glass-card border-white/10 overflow-hidden">
+                    <CardContent className="p-8">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
+                          {stat.icon}
+                        </div>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">{stat.label}</span>
+                      </div>
+                      <div className="text-4xl font-black text-white mb-1">
+                        {isReferralLoading || isUserDataLoading ? '...' : stat.val}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{stat.sub}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="glass-card rounded-[2.5rem] p-10 border-white/10">
-                  <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Your Stats</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
-                      <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Friends Invited</p>
-                      <p className="text-3xl font-black text-white">{referralsCount}</p>
-                    </div>
-                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5">
-                      <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Total Earned</p>
-                      <p className="text-3xl font-black text-white">${referralEarnings.toFixed(2)}</p>
+                  <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Your Referral Link</h3>
+                  <div className="space-y-6">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Share this unique URL with your friends or on social media. You'll receive a 10% lifetime commission on every offer they complete!
+                    </p>
+                    <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-4">
+                      <div className="text-xs font-mono text-white/60 break-all select-all">
+                        {`${window.location.origin}/?ref=${user?.uid}`}
+                      </div>
+                      <Button onClick={handleCopyRef} className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
+                        {isCopied ? <><Check className="mr-2 w-4 h-4" /> Link Copied</> : <><Copy className="mr-2 w-4 h-4" /> Copy My Link</>}
+                      </Button>
                     </div>
                   </div>
                 </div>

@@ -12,7 +12,6 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      // Allow authenticated users to read profiles for the leaderboard
       allow get, list: if isSignedIn();
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && request.resource.data.id == resource.data.id;
@@ -20,14 +19,20 @@ service cloud.firestore {
     }
 
     match /transactions/{transactionId} {
-      // Users can read their own transactions
       allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
-      
-      // Users can create a transaction record for themselves
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      
-      // Transactions should be immutable
       allow update, delete: if false;
+    }
+
+    match /referrals/{referrerId} {
+      // Users can see their own referral stats
+      allow get: if isOwner(referrerId);
+      
+      // Anyone can increment a click count (for visitors)
+      // We enforce that they only increment 'clicks' and update 'lastUpdated'
+      allow create: if request.resource.data.clicks == 1;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks', 'lastUpdated'])
+                    && request.resource.data.clicks == resource.data.clicks + 1;
     }
   }
 }
