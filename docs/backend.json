@@ -62,13 +62,6 @@
         "loginStreak": {
           "type": "number"
         },
-        "lastSpinAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "referralCode": {
-          "type": "string"
-        },
         "accountStatus": {
           "type": "string",
           "enum": ["active", "suspended"]

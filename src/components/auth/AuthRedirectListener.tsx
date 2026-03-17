@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -26,7 +27,6 @@ export function AuthRedirectListener() {
 
           if (!userSnap.exists()) {
             const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
-            const newUserCode = 'GFX-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
             setDocumentNonBlocking(userRef, {
               id: user.uid,
@@ -41,7 +41,6 @@ export function AuthRedirectListener() {
               points: 0,
               referralsCount: 0,
               referralEarnings: 0,
-              referralCode: newUserCode,
               referredBy: referralId || null,
               accountStatus: 'active'
             }, { merge: true });

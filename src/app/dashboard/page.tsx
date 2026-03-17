@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -17,18 +18,17 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DailyBonus } from '@/components/dashboard/DailyBonus';
-import { SpinWheel } from '@/components/dashboard/SpinWheel';
 import { WithdrawalModal } from '@/components/dashboard/WithdrawalModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
   const { toast } = useToast();
   const [isCopied, setIsCopied] = useState(false);
-  const [isCodeCopied, setIsCodeCopied] = useState(false);
   const [origin, setOrigin] = useState('');
 
   // Get dynamic origin for referral links
@@ -69,7 +69,6 @@ export default function Dashboard() {
   const { data: transactions } = useCollection(transactionsQuery);
 
   const referralLink = user ? `${origin}/?ref=${user.uid}` : '';
-  const myReferralCode = userData?.referralCode || '...';
 
   const handleCopyRef = () => {
     if (!referralLink) return;
@@ -77,14 +76,6 @@ export default function Dashboard() {
     setIsCopied(true);
     toast({ title: "Referral Link Copied!", description: "Share this with friends to earn rewards for their activity." });
     setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  const handleCopyCode = () => {
-    if (myReferralCode === '...') return;
-    navigator.clipboard.writeText(myReferralCode);
-    setIsCodeCopied(true);
-    toast({ title: "Referral Code Copied!", description: "Friends can enter this code during manual signup." });
-    setTimeout(() => setIsCodeCopied(false), 2000);
   };
 
   const formatDate = (val: any) => {
@@ -160,28 +151,23 @@ export default function Dashboard() {
 
               <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
-                  {/* Activities Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="glass-card rounded-[2.5rem] p-8 border-white/10 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
-                          <Sparkles className="w-5 h-5 text-primary" /> Daily Goal
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-6">Complete 5 offers today to unlock a bonus $0.50 reward!</p>
-                        <div className="space-y-2 mb-8">
-                          <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
-                            <span className="text-white/60">Progress</span>
-                            <span className="text-primary">{offersCompleted % 5} / 5</span>
-                          </div>
-                          <Progress value={((offersCompleted % 5) / 5) * 100} className="h-2 bg-white/5" />
+                  <div className="glass-card rounded-[2.5rem] p-8 border-white/10 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                        <Sparkles className="w-5 h-5 text-primary" /> Daily Goal
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-6">Complete 5 offers today to unlock a bonus $0.50 reward!</p>
+                      <div className="space-y-2 mb-8">
+                        <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
+                          <span className="text-white/60">Progress</span>
+                          <span className="text-primary">{offersCompleted % 5} / 5</span>
                         </div>
+                        <Progress value={((offersCompleted % 5) / 5) * 100} className="h-2 bg-white/5" />
                       </div>
-                      <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
-                        <Link href="/#trending">Start New Tasks <ArrowRight className="ml-2 w-4 h-4" /></Link>
-                      </Button>
                     </div>
-                    
-                    <SpinWheel userRef={userRef} userData={userData} />
+                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
+                      <Link href="/#trending">Start New Tasks <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                    </Button>
                   </div>
 
                   {/* Recent Activity */}
@@ -255,17 +241,6 @@ export default function Dashboard() {
                       Copy Link
                     </Button>
                   </div>
-
-                  <div className="glass-card rounded-[2.5rem] p-8 border-white/10 bg-primary/5">
-                    <h3 className="text-lg font-black text-white mb-4 uppercase tracking-tight">Your Referral Code</h3>
-                    <div className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-primary/20 mb-4">
-                       <span className="font-black text-primary text-lg tracking-wider">{myReferralCode}</span>
-                       <button onClick={handleCopyCode} className="text-white/40 hover:text-primary">
-                         {isCodeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                       </button>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground leading-tight">Friends can enter this manual code during signup to join your network.</p>
-                  </div>
                 </div>
               </div>
             </TabsContent>
@@ -307,16 +282,6 @@ export default function Dashboard() {
                   <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">Referral Assets</h3>
                   <div className="space-y-6">
                     <div>
-                      <Label className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2 block">Manual Referral Code</Label>
-                      <div className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10">
-                        <span className="text-2xl font-black text-primary tracking-widest">{myReferralCode}</span>
-                        <Button onClick={handleCopyCode} size="sm" variant="ghost" className="text-primary font-black uppercase tracking-widest">
-                          {isCodeCopied ? "Copied" : "Copy Code"}
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
                       <Label className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2 block">Direct Referral Link</Label>
                       <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-4">
                         <div className="text-xs font-mono text-white/60 break-all select-all">
@@ -334,7 +299,7 @@ export default function Dashboard() {
                   <ul className="space-y-4">
                     <li className="flex gap-4 items-start">
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">1</div>
-                      <p className="text-sm text-muted-foreground">Share your unique referral link or manual code with friends.</p>
+                      <p className="text-sm text-muted-foreground">Share your unique referral link with friends.</p>
                     </li>
                     <li className="flex gap-4 items-start">
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 text-xs font-bold text-primary">2</div>
