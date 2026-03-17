@@ -85,7 +85,7 @@ export function SupportChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm the GameFlashX Assistant. How can I help you unlock premium rewards today?",
+      text: "Hello! I'm your Assistant. How can I help you unlock premium rewards today?",
       sender: 'ai',
       timestamp: new Date()
     }
@@ -94,14 +94,15 @@ export function SupportChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  // Background scroll lock when open
   useEffect(() => {
-    if (isFullScreen && isOpen) {
+    if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [isFullScreen, isOpen]);
+  }, [isOpen]);
 
   useEffect(() => {
     const handleStep1 = () => setProgress(prev => Math.max(prev, 1));
@@ -234,18 +235,18 @@ export function SupportChat() {
               !isFullScreen && "shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
             )}
           >
-            {/* Header */}
-            <div className="p-6 border-b border-white/5 flex flex-col gap-6 bg-gradient-to-b from-primary/10 to-transparent">
+            {/* Header - Fixed at Top */}
+            <div className="shrink-0 p-6 border-b border-white/5 flex flex-col gap-6 bg-gradient-to-b from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-[1.2rem] bg-primary/20 flex items-center justify-center border border-primary/30 shadow-[0_0_20px_rgba(250,70,22,0.2)]">
                     <Bot className="w-7 h-7 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-black text-white text-lg uppercase tracking-widest leading-none mb-1">GFlashX Agent</h3>
+                    <h3 className="font-black text-white text-lg uppercase tracking-widest leading-none mb-1">Assistant</h3>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-[9px] font-black text-green-500 uppercase tracking-[0.2em]">Active</span>
+                      <span className="text-[9px] font-black text-green-500 uppercase tracking-[0.2em]">Live</span>
                     </div>
                   </div>
                 </div>
@@ -280,8 +281,9 @@ export function SupportChat() {
               </div>
             </div>
 
-            <ScrollArea className="flex-grow p-6" ref={scrollRef}>
-              <div className={cn("space-y-6", isFullScreen && "max-w-4xl mx-auto")}>
+            {/* Scrollable Message Area */}
+            <ScrollArea className="flex-grow p-6 h-full" ref={scrollRef}>
+              <div className={cn("space-y-6 pb-4", isFullScreen && "max-w-4xl mx-auto")}>
                 <div className="flex justify-center mb-8 opacity-20 grayscale">
                   <Logo className="h-6" />
                 </div>
@@ -315,7 +317,7 @@ export function SupportChat() {
                 {isTyping && (
                   <div className="flex items-start max-w-[85%]">
                     <div className="bg-white/[0.03] border border-white/5 px-5 py-3.5 rounded-[1.5rem] rounded-tl-none flex items-center gap-3">
-                      <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em] animate-pulse">Assistant Typing</span>
+                      <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em] animate-pulse">Typing</span>
                       <div className="flex gap-1">
                         {[0, 0.2, 0.4].map((d) => (
                           <motion.div key={d} animate={{ scale: [1, 1.5, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: d }} className="w-1 h-1 bg-primary rounded-full" />
@@ -327,7 +329,8 @@ export function SupportChat() {
               </div>
             </ScrollArea>
 
-            <div className="p-6 border-t border-white/5 bg-black/40 relative">
+            {/* Input Box - Fixed at Bottom */}
+            <div className="shrink-0 p-6 border-t border-white/5 bg-black/40 relative">
               {/* Typing Suggestions */}
               <AnimatePresence>
                 {suggestions.length > 0 && (
