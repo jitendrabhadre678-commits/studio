@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Header } from '@/components/layout/Header';
@@ -6,49 +5,53 @@ import { Footer } from '@/components/layout/Footer';
 import { Trophy, Medal, Globe, Zap, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useEffect, useState } from 'react';
 
 // Realistic list of names and countries for 100 users
 const FIRST_NAMES = ["James", "Emma", "Liam", "Olivia", "Noah", "Ava", "William", "Sophia", "Lucas", "Mia", "Benjamin", "Charlotte", "Oliver", "Amelia", "Jacob", "Harper", "Michael", "Evelyn", "Daniel", "Abigail", "Henry", "Emily", "Sebastian", "Elizabeth", "Jack", "Sofia", "Samuel", "Avery", "David", "Ella"];
 const LAST_INITIALS = ["W.", "B.", "M.", "T.", "C.", "S.", "G.", "H.", "K.", "L.", "P.", "R.", "V.", "Z."];
 const COUNTRIES = ["USA", "UK", "Canada", "Australia", "New Zealand", "Germany", "France", "Spain", "Italy", "Netherlands", "Brazil", "Japan", "Norway", "Sweden", "Switzerland"];
 
-const generateStaticUsers = () => {
-  const users = [];
-  
-  // High-value earnings generation: $100 to $1000
-  // Top earner starts near 1000, and it curves down to 100
-  for (let i = 0; i < 100; i++) {
-    const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
-    const lastInitial = LAST_INITIALS[i % LAST_INITIALS.length];
-    const country = COUNTRIES[i % COUNTRIES.length];
-    
-    // Calculate a realistic descending earning value
-    // We use a slight curve so the top ranks have bigger gaps
-    let baseEarnings = 980 - (i * 8.5);
-    let variation = Math.random() * 15;
-    let finalEarnings = Math.max(105, baseEarnings + variation);
-
-    // Profile Image Logic: Use Picsum seeds for variety
-    // We alternate between different "looks" based on index
-    // Seeds 1-100 provide consistent but different images
-    const imageId = i + 10;
-    const profileImageUrl = `https://picsum.photos/seed/${imageId}/100/100`;
-
-    users.push({
-      id: String(i + 1),
-      rank: i + 1,
-      name: `${firstName} ${lastInitial}`,
-      country,
-      earnings: finalEarnings,
-      photo: profileImageUrl
-    });
-  }
-  return users;
-};
-
-const staticUsers = generateStaticUsers();
-
 export default function LeaderboardPage() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const generateStaticUsers = () => {
+      const generated = [];
+      // High-value earnings generation: $100 to $1000
+      for (let i = 0; i < 100; i++) {
+        const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
+        const lastInitial = LAST_INITIALS[i % LAST_INITIALS.length];
+        const country = COUNTRIES[i % COUNTRIES.length];
+        
+        let baseEarnings = 980 - (i * 8.5);
+        let variation = Math.random() * 15;
+        let finalEarnings = Math.max(105, baseEarnings + variation);
+
+        const imageId = i + 10;
+        const profileImageUrl = `https://picsum.photos/seed/${imageId}/100/100`;
+
+        generated.push({
+          id: String(i + 1),
+          rank: i + 1,
+          name: `${firstName} ${lastInitial}`,
+          country,
+          earnings: finalEarnings,
+          photo: profileImageUrl
+        });
+      }
+      return generated;
+    };
+
+    setUsers(generateStaticUsers());
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <main className="min-h-screen bg-black" />;
+  }
+
   return (
     <main className="min-h-screen bg-black">
       <Header />
@@ -80,7 +83,7 @@ export default function LeaderboardPage() {
 
             {/* User List */}
             <div className="divide-y divide-white/5">
-              {staticUsers.map((user, idx) => (
+              {users.map((user, idx) => (
                 <div 
                   key={user.id} 
                   className={cn(

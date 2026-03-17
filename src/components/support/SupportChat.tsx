@@ -31,14 +31,7 @@ export function SupportChat() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [progress, setProgress] = useState(0);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'initial',
-      text: "Hello! I'm your Assistant. Ready to unlock your first reward today? 👍",
-      sender: 'ai',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -56,6 +49,18 @@ export function SupportChat() {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
+
+  // Initial Message Population (Avoids Hydration Mismatch)
+  useEffect(() => {
+    setMessages([
+      {
+        id: 'initial',
+        text: "Hello! I'm your Assistant. Ready to unlock your first reward today? 👍",
+        sender: 'ai',
+        timestamp: new Date()
+      }
+    ]);
+  }, []);
 
   // Progress Tracking Events
   useEffect(() => {
@@ -290,7 +295,7 @@ export function SupportChat() {
                       {msg.text}
                     </div>
                     <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest mt-2 px-2">
-                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {msg.timestamp?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || '...'}
                     </span>
                   </motion.div>
                 ))}
