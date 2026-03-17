@@ -117,7 +117,7 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
                   key={val}
                   brand={card.brand}
                   value={val}
-                  description={`Claim your ${card.brand} digital reward code valued at ${val}.`}
+                  description={`Generate a unique digital reward code for ${card.brand} valued at ${val}.`}
                 />
               ))}
             </div>
