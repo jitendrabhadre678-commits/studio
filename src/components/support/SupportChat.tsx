@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Zap, User, ArrowRight, Bot, Loader2, CheckCircle2, TrendingUp } from 'lucide-react';
+import { 
+  MessageSquare, X, Send, Zap, User, 
+  ArrowRight, Bot, Loader2, CheckCircle2, 
+  TrendingUp, Maximize2, Minimize2 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -78,6 +82,7 @@ const QUICK_OPTIONS = [
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [progress, setProgress] = useState(0); // 0: Start, 1: Selected, 2: Offer Clicked, 3: Completed
   const [messages, setMessages] = useState<Message[]>([
@@ -90,6 +95,16 @@ export function SupportChat() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Lock scroll when full screen is active
+  useEffect(() => {
+    if (isFullScreen && isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isFullScreen, isOpen]);
 
   // Sync Progress with Browser Events
   useEffect(() => {
@@ -193,9 +208,22 @@ export function SupportChat() {
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1, 
+              y: 0,
+              width: isFullScreen ? '100vw' : 'min(400px, calc(100vw - 48px))',
+              height: isFullScreen ? '100vh' : 'min(650px, calc(100vh - 120px))',
+              bottom: isFullScreen ? 0 : '96px', // bottom-24
+              right: isFullScreen ? 0 : '24px', // right-6
+              borderRadius: isFullScreen ? '0px' : '2.5rem',
+            }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed bottom-24 right-6 z-[100] w-[calc(100vw-48px)] sm:w-[400px] h-[650px] max-h-[calc(100vh-120px)] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden"
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className={cn(
+              "fixed z-[110] bg-black/95 backdrop-blur-3xl border border-white/10 flex flex-col overflow-hidden",
+              !isFullScreen && "shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
+            )}
           >
             <div className="p-6 border-b border-white/5 flex flex-col gap-4 bg-primary/5">
               <div className="flex items-center justify-between">
@@ -211,7 +239,17 @@ export function SupportChat() {
                     </div>
                   </div>
                 </div>
-                <Logo className="h-5 opacity-40" />
+                
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setIsFullScreen(!isFullScreen)}
+                    className="p-2 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-colors"
+                    title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+                  >
+                    {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                  </button>
+                  <Logo className="h-5 opacity-40" />
+                </div>
               </div>
 
               {/* Progress Tracking Visual */}
@@ -236,7 +274,7 @@ export function SupportChat() {
             </div>
 
             <ScrollArea className="flex-grow p-6" ref={scrollRef}>
-              <div className="space-y-6">
+              <div className={cn("space-y-6", isFullScreen && "max-w-3xl mx-auto")}>
                 {/* Soft Urgency Prompt */}
                 {progress < 3 && (
                   <motion.div 
@@ -309,13 +347,27 @@ export function SupportChat() {
             </ScrollArea>
 
             <div className="p-6 border-t border-white/5 bg-black/40">
-              <div className="flex flex-wrap gap-2 mb-4">
-                {QUICK_OPTIONS.map((opt) => (
+              <div className={cn("mb-4", isFullScreen && "max-w-3xl mx-auto flex flex-wrap gap-2")}>
+                {!isFullScreen && (
+                  <div className="flex flex-wrap gap-2">
+                    {QUICK_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.keyword}
+                        onClick={() => handleSend(opt.label)}
+                        disabled={isTyping}
+                        className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest disabled:opacity-50"
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {isFullScreen && QUICK_OPTIONS.map((opt) => (
                   <button
                     key={opt.keyword}
                     onClick={() => handleSend(opt.label)}
                     disabled={isTyping}
-                    className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest disabled:opacity-50"
+                    className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-black text-white/60 hover:bg-primary/20 hover:text-primary hover:border-primary/30 transition-all uppercase tracking-widest disabled:opacity-50"
                   >
                     {opt.label}
                   </button>
@@ -324,7 +376,7 @@ export function SupportChat() {
 
               <form 
                 onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                className="relative group"
+                className={cn("relative group", isFullScreen && "max-w-3xl mx-auto")}
               >
                 <Input
                   value={inputValue}
