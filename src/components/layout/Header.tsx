@@ -1,9 +1,8 @@
-
 "use client";
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Menu, X, User as UserIcon, LogOut, LayoutDashboard, Gift, Settings, Trophy } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, Gift, Settings, Trophy } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
@@ -86,14 +85,20 @@ export function Header() {
                   ) : (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden border border-white/10 hover:border-primary/50 transition-all">
-                          <Avatar className="h-full w-full">
-                            <AvatarImage src={user.photoURL || undefined} alt={user.email || ''} />
-                            <AvatarFallback className="bg-primary/20 text-primary font-black">
-                              {user.email?.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        </Button>
+                        <div className="flex items-center gap-3 cursor-pointer group px-2 py-1.5 rounded-full hover:bg-white/5 transition-all">
+                          <div className="relative h-9 w-9 rounded-full p-0 overflow-hidden border-2 border-primary shadow-[0_0_10px_rgba(250,70,22,0.3)] group-hover:scale-105 transition-all">
+                            <Avatar className="h-full w-full">
+                              <AvatarImage src={user.photoURL || undefined} alt={user.email || ''} />
+                              <AvatarFallback className="bg-primary/20 text-primary font-black">
+                                {user.email?.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <span className="hidden sm:inline text-sm font-bold text-white/90 group-hover:text-white transition-colors">
+                            {user.displayName || user.email?.split('@')[0] || 'Account'} 
+                            <span className="ml-1 text-primary opacity-50 group-hover:opacity-100">⌄</span>
+                          </span>
+                        </div>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-56 bg-black/90 backdrop-blur-2xl border-white/10 rounded-2xl p-2" align="end">
                         <DropdownMenuLabel className="font-bold text-white px-3 py-2">

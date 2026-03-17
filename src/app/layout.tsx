@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import {Toaster} from '@/components/ui/toaster';
 import {FirebaseClientProvider} from '@/firebase/client-provider';
+import {AuthRedirectListener} from '@/components/auth/AuthRedirectListener';
 
 export const metadata: Metadata = {
   title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
@@ -25,6 +26,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased selection:bg-primary selection:text-white">
         <FirebaseClientProvider>
+          <AuthRedirectListener />
           {children}
           <Toaster />
         </FirebaseClientProvider>
