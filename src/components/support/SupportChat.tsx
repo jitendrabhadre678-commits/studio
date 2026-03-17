@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MessageSquare, X, Send, Zap, Bot, 
-  ArrowRight, Maximize2, Minimize2, CheckCircle2,
-  TrendingUp, Clock, Search
+  Maximize2, Minimize2
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -18,10 +17,10 @@ type Message = {
   timestamp: Date;
 };
 
-// Supported Topic Intents
+// Supported Topic Intents based on specified keywords
 const INTENTS = [
   {
-    keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
+    keywords: ['reward', 'gift', 'card', 'unlock', 'code', 'claim'],
     responses: [
       "Got it 👍 you're trying to unlock a reward.\n\nHere’s how it works:\n\n• Choose your gift card\n• Click 'Unlock Reward'\n• Complete one quick step\n• Your reward will be prepared\n\nMost users start with a simple task — it’s quick and works smoothly.",
       "Ready for your reward? 😊 It's a simple process:\n\nPick your card → Click Unlock → Complete one quick task. Your code will be ready right after that. Most people find the simple offers are the fastest way to get verified.",
@@ -41,7 +40,7 @@ const INTENTS = [
     ]
   },
   {
-    keywords: ['referral', 'code', 'invite', 'refer'],
+    keywords: ['referral', 'refer', 'invite', 'code'],
     responses: [
       "You can grow faster using your referral code 👍\n\nWhen someone signs up using your code, your referral count increases. Many users combine referrals with offers for better results.",
       "Want to invite friends? 🔥 Your referral link is in your dashboard. When they join, your balance grows. It's a great way to earn while helping others get rewards too.",
@@ -49,19 +48,11 @@ const INTENTS = [
     ]
   },
   {
-    keywords: ['login', 'account', 'signup', 'sign'],
+    keywords: ['login', 'signup', 'account', 'sign'],
     responses: [
       "You can log in using your email or Google account. If signup is currently closed, please wait until it opens again.",
       "Need help with your account? 👍 You can sign in with Google or your Email. If you're having trouble signing up, we might be temporarily at capacity—just try again later!",
       "Signing in is quick! 😊 Use Google for instant access. If you can't create a new account right now, please check back soon as we open spots daily."
-    ]
-  },
-  {
-    keywords: ['not working', 'error', 'problem', 'failed', 'stuck'],
-    responses: [
-      "I understand 👍 Let’s check quickly:\n\n• Did you complete the full offer?\n• Try refreshing the page\n• Wait a few minutes\n\nIf you're still stuck, tell me where you're facing the issue.",
-      "Sorry to hear that! 😊 Usually, a quick refresh or double-checking the offer steps fixes it. Sometimes there's a small delay, so check your dashboard in a few minutes.",
-      "I'm here to help! 👍 Make sure the task was finished 100%. Most issues are fixed by just trying one more quick offer to trigger the system."
     ]
   },
   {
@@ -73,24 +64,24 @@ const INTENTS = [
     ]
   },
   {
-    keywords: ['time', 'delay', 'wait', 'slow'],
+    keywords: ['problem', 'error', 'not working', 'failed'],
+    responses: [
+      "I understand 👍 Let’s check quickly:\n\n• Did you complete the full offer?\n• Try refreshing the page\n• Wait a few minutes\n\nIf you're still stuck, tell me where you're facing the issue.",
+      "Sorry to hear that! 😊 Usually, a quick refresh or double-checking the offer steps fixes it. Sometimes there's a small delay, so check your dashboard in a few minutes.",
+      "I'm here to help! 👍 Make sure the task was finished 100%. Most issues are fixed by just trying one more quick offer to trigger the system."
+    ]
+  },
+  {
+    keywords: ['time', 'delay', 'wait'],
     responses: [
       "Some rewards take a few minutes to process. Please wait a bit and refresh your dashboard.",
       "Hang tight! 👍 Rewards are in high demand, so processing might take a minute or two. Just refresh your 'My Rewards' page shortly.",
       "Almost there! 😊 Sometimes the verification signal takes a moment. Just wait 60 seconds and give your page a quick refresh."
     ]
-  },
-  {
-    keywords: ['real', 'legit', 'safe', 'scam'],
-    responses: [
-      "It's 100% real! 😊 Thousands of users claim rewards every day. You can track all your earnings and history in your secure dashboard.",
-      "We're a verified platform. 👍 Once the task is finished, the reward is released. Check the leaderboard to see others cashing out right now!",
-      "GameFlashX is trusted by millions. 🔥 Complete the verification and you'll see your code in your vault immediately."
-    ]
   }
 ];
 
-const OUT_OF_SCOPE_RESPONSE = "I'm here to help with GameFlashX related questions 👍\nYou can ask about rewards, earning, referral, or your account.";
+const FALLBACK_RESPONSE = "I'm here to help 👍\nPlease ask about rewards, earning, referral, or your account.";
 
 export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -108,7 +99,6 @@ export function SupportChat() {
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Background scroll lock logic
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -120,7 +110,6 @@ export function SupportChat() {
     };
   }, [isOpen]);
 
-  // Listen for reward progress from other components
   useEffect(() => {
     const handleStep1 = () => setProgress(prev => Math.max(prev, 1));
     const handleStep2 = () => setProgress(prev => Math.max(prev, 2));
@@ -176,7 +165,7 @@ export function SupportChat() {
 
     setTimeout(() => {
       const lowerText = text.toLowerCase();
-      let responseText = OUT_OF_SCOPE_RESPONSE; // Default to out-of-scope message
+      let responseText = FALLBACK_RESPONSE;
 
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
