@@ -1,4 +1,3 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import {Toaster} from '@/components/ui/toaster';
@@ -9,6 +8,19 @@ import {ReferralTracker} from '@/components/referral/ReferralTracker';
 export const metadata: Metadata = {
   title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
   description: 'Join GameFlashX, the premium rewards platform where you can unlock digital gift cards for Steam, Amazon, Roblox, and more.',
+  openGraph: {
+    title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
+    description: 'Join GameFlashX, the premium rewards platform where you can unlock digital gift cards for Steam, Amazon, Roblox, and more.',
+    url: 'https://gameflashx.space',
+    siteName: 'GameFlashX',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
+    description: 'Join GameFlashX, the premium rewards platform where you can unlock digital gift cards for Steam, Amazon, Roblox, and more.',
+  },
   icons: {
     icon: '/favicon.png',
   },
