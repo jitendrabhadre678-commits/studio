@@ -10,10 +10,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 98%;
-    /* Pomegranate Red #FA4616 -> 13 96% 53% */
     --primary: 13 96% 53%;
     --primary-foreground: 0 0% 100%;
-    /* Guardsman Red #C40006 -> 358 100% 38% */
     --secondary: 358 100% 38%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 15%;
@@ -32,6 +30,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
   * {
     @apply border-border;
@@ -39,9 +38,9 @@
   body {
     @apply bg-background text-foreground min-h-screen relative overflow-x-hidden;
     background-color: #000000;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Futuristic Animated Grid Background with Pomegranate tint */
   body::before {
     content: '';
     position: fixed;
@@ -59,7 +58,6 @@
     opacity: 0.4;
   }
 
-  /* Red Glow Overlay */
   body::after {
     content: '';
     position: fixed;
@@ -85,15 +83,14 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .glass-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 0 30px rgba(250, 70, 22, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
+    @media (min-width: 1024px) {
+      transform: translateY(-6px);
+      box-shadow: 0 0 30px rgba(250, 70, 22, 0.2);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
   }
   .text-glow-pomegranate {
     text-shadow: 0 0 10px rgba(250, 70, 22, 0.5), 0 0 20px rgba(250, 70, 22, 0.3);
-  }
-  .text-glow-guardsman {
-    text-shadow: 0 0 10px rgba(196, 0, 6, 0.5), 0 0 20px rgba(196, 0, 6, 0.3);
   }
 }
 
@@ -118,4 +115,12 @@
 
 .animate-marquee-right {
   animation: marquee-right 50s linear infinite;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
