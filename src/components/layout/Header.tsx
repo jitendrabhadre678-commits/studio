@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Menu, X, LogOut, LayoutDashboard, Gift, Settings, Trophy } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, Gift, Settings, Trophy, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
@@ -35,6 +35,7 @@ export function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Rewards', href: '/#trending' },
+    { name: 'Quiz & Earn', href: '/quiz-earn', highlight: true },
     { name: 'Leaderboard', href: '/leaderboard' },
     { name: 'Blog', href: '/blog' },
   ];
@@ -58,8 +59,14 @@ export function Header() {
               <Link 
                 key={link.name} 
                 href={link.href}
-                className="text-[11px] font-black text-white/60 hover:text-primary uppercase tracking-[0.2em] transition-colors"
+                className={cn(
+                  "text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-1.5",
+                  link.highlight 
+                    ? "text-primary hover:text-white bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-lg" 
+                    : "text-white/60 hover:text-primary"
+                )}
               >
+                {link.highlight && <Sparkles className="w-3 h-3 animate-pulse" />}
                 {link.name}
               </Link>
             ))}
@@ -143,9 +150,13 @@ export function Header() {
                 key={link.name} 
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="text-xl font-black text-white/70 hover:text-primary transition-colors py-4 uppercase tracking-widest border-b border-white/5 last:border-0"
+                className={cn(
+                  "text-xl font-black transition-colors py-4 uppercase tracking-widest border-b border-white/5 last:border-0 flex items-center justify-between",
+                  link.highlight ? "text-primary" : "text-white/70 hover:text-primary"
+                )}
               >
                 {link.name}
+                {link.highlight && <Sparkles className="w-5 h-5 animate-pulse" />}
               </Link>
             ))}
             <div className="pt-8 flex flex-col gap-4">
