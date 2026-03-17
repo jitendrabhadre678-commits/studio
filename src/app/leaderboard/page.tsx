@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Trophy, Medal, Globe, Zap, ArrowUp } from 'lucide-react';
@@ -38,17 +37,9 @@ const generateStaticUsers = () => {
   return users;
 };
 
+const staticUsers = generateStaticUsers();
+
 export default function LeaderboardPage() {
-  const [users, setUsers] = useState<any[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setUsers(generateStaticUsers());
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return <div className="min-h-screen bg-black" />;
-
   return (
     <main className="min-h-screen">
       <Header />
@@ -76,7 +67,7 @@ export default function LeaderboardPage() {
             </div>
 
             <div className="divide-y divide-white/5">
-              {users.map((user, idx) => (
+              {staticUsers.map((user, idx) => (
                 <div key={user.id} className={cn(
                   "grid grid-cols-12 p-6 md:p-8 items-center transition-all hover:bg-white/[0.03] group",
                   idx === 0 && "bg-yellow-500/5",

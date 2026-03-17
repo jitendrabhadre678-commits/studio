@@ -97,7 +97,6 @@ export function RewardUnlockModal({
                     alt={card.brand} 
                     fill 
                     className="object-cover" 
-                    data-ai-hint="gift card"
                   />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <span className="text-2xl font-black text-white">{value}</span>

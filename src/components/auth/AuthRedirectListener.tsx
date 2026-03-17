@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking, errorEmitter, FirestorePermissionError } from '@/firebase';
+import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { getRedirectResult } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, increment } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
@@ -22,16 +22,9 @@ export function AuthRedirectListener() {
           const user = result.user;
           const userRef = doc(db, 'users', user.uid);
           
-          const userSnap = await getDoc(userRef).catch(serverError => {
-            const permissionError = new FirestorePermissionError({
-              path: userRef.path,
-              operation: 'get'
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            return null;
-          });
+          const userSnap = await getDoc(userRef);
 
-          if (userSnap && !userSnap.exists()) {
+          if (!userSnap.exists()) {
             const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
             const newUserCode = 'GFX-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
@@ -61,11 +54,6 @@ export function AuthRedirectListener() {
                     referralsCount: increment(1)
                   });
                 }
-              }).catch(serverError => {
-                errorEmitter.emit('permission-error', new FirestorePermissionError({
-                  path: referrerRef.path,
-                  operation: 'update'
-                }));
               });
             }
           }
@@ -76,12 +64,7 @@ export function AuthRedirectListener() {
           });
         }
       } catch (error: any) {
-        if (error.code !== 'auth/web-storage-unsupported' && error.code !== 'auth/popup-closed-by-user') {
-           errorEmitter.emit('permission-error', new FirestorePermissionError({
-             path: 'auth',
-             operation: 'write'
-           }));
-        }
+        console.error("Redirect Error:", error);
       }
     };
 
