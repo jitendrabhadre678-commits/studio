@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -14,7 +15,7 @@ import {
   signInWithRedirect,
   sendEmailVerification
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, increment, updateDoc, getDoc } from 'firebase/firestore';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -44,13 +45,11 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
-    // Always show account chooser for Google Login
     provider.setCustomParameters({
       prompt: "select_account"
     });
 
     try {
-      // Use redirect instead of popup for better mobile compatibility
       await signInWithRedirect(auth, provider);
       onClose();
     } catch (error: any) {
@@ -77,6 +76,9 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
         await sendEmailVerification(user);
 
+        // Check for referral ID in localStorage
+        const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
+
         // Initialize user profile in Firestore
         await setDoc(doc(db, 'users', user.uid), {
           id: user.uid,
@@ -91,6 +93,17 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           referralEarnings: 0,
           accountStatus: 'active'
         });
+
+        // If referred, increment referrer's count
+        if (referralId && referralId !== user.uid) {
+          const referrerRef = doc(db, 'users', referralId);
+          const referrerSnap = await getDoc(referrerRef);
+          if (referrerSnap.exists()) {
+            await updateDoc(referrerRef, {
+              referralsCount: increment(1)
+            });
+          }
+        }
 
         toast({ title: "Account Created", description: "Please check your email for verification." });
       } else {

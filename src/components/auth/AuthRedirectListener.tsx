@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useEffect } from 'react';
 import { useAuth, useFirestore } from '@/firebase';
 import { getRedirectResult } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, increment, updateDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 /**
@@ -26,6 +27,9 @@ export function AuthRedirectListener() {
 
           // If this is a new user, initialize their profile in Firestore
           if (!userSnap.exists()) {
+            // Check for referral ID in localStorage
+            const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
+
             await setDoc(userRef, {
               id: user.uid,
               email: user.email,
@@ -41,6 +45,17 @@ export function AuthRedirectListener() {
               referralEarnings: 0,
               accountStatus: 'active'
             }, { merge: true });
+
+            // If referred, increment referrer's count
+            if (referralId && referralId !== user.uid) {
+              const referrerRef = doc(db, 'users', referralId);
+              const referrerSnap = await getDoc(referrerRef);
+              if (referrerSnap.exists()) {
+                await updateDoc(referrerRef, {
+                  referralsCount: increment(1)
+                });
+              }
+            }
           }
           
           toast({ 
@@ -49,7 +64,6 @@ export function AuthRedirectListener() {
           });
         }
       } catch (error: any) {
-        // Ignore expected errors like when storage isn't available
         if (error.code !== 'auth/web-storage-unsupported') {
            console.error("Auth redirect error:", error);
            toast({ 

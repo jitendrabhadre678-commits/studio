@@ -27,6 +27,14 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const [isCopied, setIsCopied] = useState(false);
+  const [origin, setOrigin] = useState('');
+
+  // Get dynamic origin for referral links (handles system and custom domains automatically)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -58,9 +66,11 @@ export default function Dashboard() {
   const { data: referralData, isLoading: isReferralLoading } = useDoc(referralStatsRef);
   const { data: transactions } = useCollection(transactionsQuery);
 
+  const referralLink = user ? `${origin}/?ref=${user.uid}` : '';
+
   const handleCopyRef = () => {
-    const refLink = `${window.location.origin}/?ref=${user?.uid}`;
-    navigator.clipboard.writeText(refLink);
+    if (!referralLink) return;
+    navigator.clipboard.writeText(referralLink);
     setIsCopied(true);
     toast({ title: "Referral Link Copied!", description: "Share this with friends to earn rewards for their activity." });
     setTimeout(() => setIsCopied(false), 2000);
@@ -213,7 +223,7 @@ export default function Dashboard() {
                     </p>
                     <div className="relative mb-6">
                       <div className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-mono text-white/40 truncate">
-                        {`${window.location.origin}/?ref=${user?.uid}`}
+                        {referralLink || 'Generating link...'}
                       </div>
                       <button 
                         onClick={handleCopyRef}
@@ -279,7 +289,7 @@ export default function Dashboard() {
                     </p>
                     <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-4">
                       <div className="text-xs font-mono text-white/60 break-all select-all">
-                        {`${window.location.origin}/?ref=${user?.uid}`}
+                        {referralLink || 'Generating link...'}
                       </div>
                       <Button onClick={handleCopyRef} className="w-full bg-primary hover:bg-primary/90 text-white font-black h-12 rounded-xl">
                         {isCopied ? <><Check className="mr-2 w-4 h-4" /> Link Copied</> : <><Copy className="mr-2 w-4 h-4" /> Copy My Link</>}
