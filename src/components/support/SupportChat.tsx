@@ -17,43 +17,79 @@ type Message = {
   timestamp: Date;
 };
 
-// Advanced Intent Matching Data
+// Advanced Intent Matching Data with Human-like Variations
 const INTENTS = [
   {
     keywords: ['reward', 'unlock', 'gift', 'card', 'code'],
-    response: "To unlock a reward:\n\n1. Select your gift card\n2. Click Unlock Reward\n3. Complete a required offer\n4. Your reward will be prepared"
+    responses: [
+      "To unlock a reward:\n\n1. Select your gift card\n2. Click Unlock Reward\n3. Complete a required offer\n4. Your reward will be prepared",
+      "Ready to claim? Here's the process:\n\n• Pick your favorite brand\n• Hit 'Unlock Reward'\n• Finish one quick activity\n• Your code will be released!",
+      "Unlocking is easy! Just select a card, click the unlock button, and complete a sponsored task. Your digital code arrives right after verification."
+    ]
   },
   {
     keywords: ['referral', 'invite', 'refer'],
-    response: "You can earn by inviting others.\n\n1. Share your referral link from the dashboard\n2. When someone signs up using your link\n3. Your referral count increases"
+    responses: [
+      "You can earn by inviting others.\n\n1. Share your referral link from the dashboard\n2. When someone signs up using your link\n3. Your referral count increases",
+      "Want to earn more? Share your unique referral link! Every friend who joins increases your stats and unlocks future bonuses.",
+      "Invite your friends! Use the link in your dashboard. Once they sign up, you'll see your referral count grow in real-time."
+    ]
   },
   {
     keywords: ['earn', 'money', 'cash', 'income'],
-    response: "You can earn rewards by:\n\n• completing offers\n• using referral system\n• participating in activities"
+    responses: [
+      "You can earn rewards by:\n\n• completing offers\n• using referral system\n• participating in activities",
+      "Looking to make some cash? You can earn by finishing offers, referring friends, or claiming daily rewards in your dashboard.",
+      "There are several ways to earn here: complete sponsored tasks, invite your gaming friends, or grab your daily bonus!"
+    ]
   },
   {
     keywords: ['login', 'account', 'signup', 'sign'],
-    response: "You can login using email or Google.\n\nIf signup is closed, please wait until registration opens again."
+    responses: [
+      "You can login using email or Google.\n\nIf signup is closed, please wait until registration opens again.",
+      "Access your account via Google or Email. If you're having trouble signing up, please check if registrations are currently open.",
+      "Standard login supports Email and Google. If registration isn't working, we might be at temporary capacity - try again shortly!"
+    ]
   },
   {
     keywords: ['not working', 'error', 'problem', 'failed', 'issue'],
-    response: "If your reward is not showing:\n\n• ensure you completed the offer correctly\n• wait a few minutes\n• try again if needed"
+    responses: [
+      "If your reward is not showing:\n\n• ensure you completed the offer correctly\n• wait a few minutes\n• try again if needed",
+      "Having issues? Double-check that the offer was finished fully. Sometimes it takes 2-5 minutes for the system to sync your unlock.",
+      "If things aren't working as expected, try refreshing your vault after a few minutes. Most issues are caused by incomplete offer verification."
+    ]
   },
   {
     keywords: ['offer', 'task', 'complete'],
-    response: "Offers are required to verify users.\n\nYou must complete at least one offer before claiming a reward."
+    responses: [
+      "Offers are required to verify users.\n\nYou must complete at least one offer before claiming a reward.",
+      "To keep rewards free, advertisers require one quick task completion. This verifies you're a real human player!",
+      "Tasks are simple! Finish one sponsored activity to release your code. This is how we keep the platform free for everyone."
+    ]
   },
   {
     keywords: ['withdraw', 'payment', 'paypal', 'redeem'],
-    response: "Rewards are provided after successful completion of required steps.\n\nFollow instructions carefully to receive your reward."
+    responses: [
+      "Rewards are provided after successful completion of required steps.\n\nFollow instructions carefully to receive your reward.",
+      "Cashing out is simple once you meet the requirements. Follow the steps in your dashboard to initiate a withdrawal.",
+      "Payments are processed after verification. Make sure you've followed all instructions to avoid any delays in your reward delivery."
+    ]
   },
   {
     keywords: ['time', 'delay', 'wait', 'slow'],
-    response: "Some rewards may take a few minutes to process.\n\nPlease wait and refresh your dashboard."
+    responses: [
+      "Some rewards may take a few minutes to process.\n\nPlease wait and refresh your dashboard.",
+      "Patience is key! Some advertisers take a few minutes to send the verification signal. Refresh your vault in 5-10 minutes.",
+      "Digital rewards are usually instant, but can sometimes take a short while. Keep an eye on your activity log!"
+    ]
   }
 ];
 
-const FALLBACK_RESPONSE = "Please choose a topic or ask a clear question so I can help you better.";
+const FALLBACK_RESPONSES = [
+  "Please choose a topic or ask a clear question so I can help you better.",
+  "I'm not sure I understand that. Try asking about rewards, referrals, or how to earn.",
+  "I'm here to help! Could you provide more details or pick one of the quick options below?"
+];
 
 const QUICK_OPTIONS = [
   { label: "Unlock Rewards", keyword: "reward" },
@@ -89,6 +125,8 @@ export function SupportChat() {
     return () => window.removeEventListener('open-support-chat', handleOpenSupport);
   }, []);
 
+  const getRandomElement = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+
   const handleSend = (textOverride?: string) => {
     const text = textOverride || inputValue.trim();
     if (!text) return;
@@ -104,15 +142,18 @@ export function SupportChat() {
     setInputValue('');
     setIsTyping(true);
 
-    // AI Logic with Intent Matching
+    // AI Logic with Intent Matching and Random Variations
+    // Simulate thinking/typing time (1.5s to 2.5s)
+    const typingTime = 1200 + Math.random() * 800;
+
     setTimeout(() => {
       const lowerText = text.toLowerCase();
-      let responseText = FALLBACK_RESPONSE;
+      let responseText = getRandomElement(FALLBACK_RESPONSES);
 
       // Find the best intent match
       for (const intent of INTENTS) {
         if (intent.keywords.some(keyword => lowerText.includes(keyword))) {
-          responseText = intent.response;
+          responseText = getRandomElement(intent.responses);
           break;
         }
       }
@@ -126,7 +167,7 @@ export function SupportChat() {
 
       setMessages(prev => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1000);
+    }, typingTime);
   };
 
   return (
@@ -160,7 +201,7 @@ export function SupportChat() {
                   <h3 className="font-black text-white text-sm uppercase tracking-wider">Assistant</h3>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Active Support</span>
+                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Online</span>
                   </div>
                 </div>
               </div>
@@ -197,8 +238,27 @@ export function SupportChat() {
                 ))}
                 
                 {isTyping && (
-                  <div className="flex items-center gap-2 text-white/40 italic text-xs px-2">
-                    <Loader2 className="w-3 h-3 animate-spin" /> assistant is writing...
+                  <div className="flex flex-col items-start max-w-[85%]">
+                    <div className="bg-white/5 border border-white/10 px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-2">
+                      <span className="text-white/40 text-xs font-bold uppercase tracking-widest animate-pulse">Typing</span>
+                      <div className="flex gap-1">
+                        <motion.div 
+                          animate={{ scale: [1, 1.5, 1] }} 
+                          transition={{ repeat: Infinity, duration: 0.6 }} 
+                          className="w-1 h-1 bg-primary rounded-full" 
+                        />
+                        <motion.div 
+                          animate={{ scale: [1, 1.5, 1] }} 
+                          transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} 
+                          className="w-1 h-1 bg-primary rounded-full" 
+                        />
+                        <motion.div 
+                          animate={{ scale: [1, 1.5, 1] }} 
+                          transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} 
+                          className="w-1 h-1 bg-primary rounded-full" 
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -226,7 +286,7 @@ export function SupportChat() {
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask a question..."
+                  placeholder="Type a message..."
                   className="bg-white/5 border-white/10 h-14 rounded-2xl pr-14 focus-visible:ring-primary/50 text-white font-medium"
                 />
                 <button
@@ -238,7 +298,7 @@ export function SupportChat() {
                 </button>
               </form>
               <p className="text-center text-[9px] text-white/20 font-bold uppercase tracking-[0.2em] mt-4">
-                Automated Support Hub • Instant Help
+                Human-like Support • 24/7 Availability
               </p>
             </div>
           </motion.div>
