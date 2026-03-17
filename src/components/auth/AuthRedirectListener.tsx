@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { getRedirectResult } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, increment } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 /**
  * Handles the Firebase Auth redirect result when returning from Google login.
- * This component should be mounted high in the tree (e.g., RootLayout).
  */
 export function AuthRedirectListener() {
   const auth = useAuth();
@@ -23,15 +22,19 @@ export function AuthRedirectListener() {
           const user = result.user;
           const userRef = doc(db, 'users', user.uid);
           
-          // Check if this is a new user
-          const userSnap = await getDoc(userRef);
+          const userSnap = await getDoc(userRef).catch(serverError => {
+            const permissionError = new FirestorePermissionError({
+              path: userRef.path,
+              operation: 'get'
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            return null;
+          });
 
-          if (!userSnap.exists()) {
-            // Check for referral ID in localStorage
+          if (userSnap && !userSnap.exists()) {
             const referralId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
             const newUserCode = 'GFX-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
-            // Initialize profile (Non-blocking)
             setDocumentNonBlocking(userRef, {
               id: user.uid,
               email: user.email,
@@ -50,7 +53,6 @@ export function AuthRedirectListener() {
               accountStatus: 'active'
             }, { merge: true });
 
-            // If referred, increment referrer's count (Non-blocking)
             if (referralId && referralId !== user.uid) {
               const referrerRef = doc(db, 'users', referralId);
               getDoc(referrerRef).then(snap => {
@@ -59,6 +61,11 @@ export function AuthRedirectListener() {
                     referralsCount: increment(1)
                   });
                 }
+              }).catch(serverError => {
+                errorEmitter.emit('permission-error', new FirestorePermissionError({
+                  path: referrerRef.path,
+                  operation: 'update'
+                }));
               });
             }
           }
@@ -69,13 +76,11 @@ export function AuthRedirectListener() {
           });
         }
       } catch (error: any) {
-        if (error.code !== 'auth/web-storage-unsupported') {
-           console.error("Auth redirect error:", error);
-           toast({ 
-             variant: "destructive", 
-             title: "Authentication Error", 
-             description: error.message 
-           });
+        if (error.code !== 'auth/web-storage-unsupported' && error.code !== 'auth/popup-closed-by-user') {
+           errorEmitter.emit('permission-error', new FirestorePermissionError({
+             path: 'auth',
+             operation: 'write'
+           }));
         }
       }
     };

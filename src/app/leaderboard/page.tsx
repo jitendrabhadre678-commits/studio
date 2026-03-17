@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Trophy, Medal, Globe, Zap, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Static data generation for visual showcase
 const NAMES = ["Emma Walker", "Daniel Brooks", "Sophia Martinez", "Liam Thompson", "Olivia Carter", "Lucas Bennett", "Mia Anderson", "James Turner", "Noah Williams", "Ava Smith", "Isabella Garcia", "William Brown", "Sophia Miller", "James Davis", "Oliver Jones", "Charlotte Wilson", "Benjamin Moore", "Amelia Taylor", "Lucas Anderson", "Mia Thomas"];
@@ -37,9 +38,17 @@ const generateStaticUsers = () => {
   return users;
 };
 
-const STATIC_USERS = generateStaticUsers();
-
 export default function LeaderboardPage() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setUsers(generateStaticUsers());
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return <div className="min-h-screen bg-black" />;
+
   return (
     <main className="min-h-screen">
       <Header />
@@ -67,7 +76,7 @@ export default function LeaderboardPage() {
             </div>
 
             <div className="divide-y divide-white/5">
-              {STATIC_USERS.map((user, idx) => (
+              {users.map((user, idx) => (
                 <div key={user.id} className={cn(
                   "grid grid-cols-12 p-6 md:p-8 items-center transition-all hover:bg-white/[0.03] group",
                   idx === 0 && "bg-yellow-500/5",

@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ShieldCheck, Loader2, ArrowRight, Lock, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { Zap, ShieldCheck, Loader2, ArrowRight, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { GiftCard } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Logo } from '@/components/brand/Logo';
-import { cn } from '@/lib/utils';
 
 type ModalStep = 'info' | 'verifying' | 'offer' | 'checking' | 'final';
 
@@ -64,12 +63,10 @@ export function RewardUnlockModal({
   const handleOpenOffer = () => {
     window.open("https://gameflashx.space/cl/i/277ood", "_blank");
     setHasClickedOffer(true);
-    // Move to return screen after a short delay so they see the change when they switch back
     setTimeout(() => setStep('checking'), 1000);
   };
 
   const handleCheckStatus = () => {
-    // Simulate a successful check for UX purposes
     setStep('final');
   };
 
@@ -80,7 +77,6 @@ export function RewardUnlockModal({
       if (!open) onClose();
     }}>
       <DialogContent className="max-w-md bg-[#020617] border-white/10 p-0 overflow-hidden sm:rounded-[2.5rem] shadow-2xl">
-        {/* Header with Logo */}
         <div className="pt-8 px-8 flex justify-center">
           <Logo className="h-8" />
         </div>
@@ -96,7 +92,13 @@ export function RewardUnlockModal({
                 className="text-center"
               >
                 <div className="relative w-48 h-28 mx-auto mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                  <Image src={imageData.imageUrl} alt={card.brand} fill className="object-cover" />
+                  <Image 
+                    src={imageData.imageUrl} 
+                    alt={card.brand} 
+                    fill 
+                    className="object-cover" 
+                    data-ai-hint="gift card"
+                  />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <span className="text-2xl font-black text-white">{value}</span>
                   </div>
