@@ -18,6 +18,7 @@ import {
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AutoSuggestSearch } from '@/components/search/AutoSuggestSearch';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +34,6 @@ export function Header() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Rewards', href: '/#trending' },
     { name: 'Leaderboard', href: '/leaderboard' },
     { name: 'Blog', href: '/blog' },
   ];
@@ -45,10 +45,15 @@ export function Header() {
         "bg-black/85 backdrop-blur-[10px] border-b border-white/5",
         "h-14 md:h-[72px] flex items-center px-4 md:px-8"
       )}>
-        <div className="w-full flex items-center justify-between max-w-[1400px] mx-auto">
+        <div className="w-full flex items-center justify-between max-w-[1400px] mx-auto gap-8">
           <Link href="/" className="flex items-center group shrink-0 h-8 md:h-10">
             <Logo className="h-full" />
           </Link>
+
+          {/* New prominent search bar */}
+          <div className="hidden md:block flex-1 max-w-sm">
+            <AutoSuggestSearch />
+          </div>
 
           <nav className="hidden lg:flex items-center gap-10">
             {navLinks.map((link) => (
@@ -62,7 +67,7 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4 shrink-0">
             {!isUserLoading && (
               <>
                 {!user ? (
@@ -75,7 +80,7 @@ export function Header() {
                       Login
                     </Button>
                     <Button 
-                      className="bg-primary hover:bg-primary/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(250,70,22,0.3)] h-10"
+                      className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(250,70,22,0.3)] h-10 border-none"
                       onClick={() => setAuthModal({ open: true, tab: 'signup' })}
                     >
                       Sign Up
@@ -85,9 +90,9 @@ export function Header() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <div className="flex items-center gap-3 cursor-pointer group px-2 py-1 rounded-full hover:bg-white/5 transition-all">
-                        <Avatar className="h-9 w-9 border-2 border-primary">
+                        <Avatar className="h-9 w-9 border-2 border-[#FA4616]">
                           <AvatarImage src={user.photoURL || undefined} />
-                          <AvatarFallback className="bg-primary/20 text-primary font-black uppercase">
+                          <AvatarFallback className="bg-[#FA4616]/20 text-[#FA4616] font-black uppercase">
                             {user.email?.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -101,13 +106,13 @@ export function Header() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56 bg-black/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 shadow-2xl" align="end">
                       <DropdownMenuItem onClick={() => router.push('/dashboard')} className="rounded-xl cursor-pointer h-11">
-                        <LayoutDashboard className="mr-2 h-4 w-4 text-primary" /> Dashboard
+                        <LayoutDashboard className="mr-2 h-4 w-4 text-[#FA4616]" /> Dashboard
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => router.push('/account-settings')} className="rounded-xl cursor-pointer h-11">
-                        <Trophy className="mr-2 h-4 w-4 text-primary" /> Profile
+                        <Trophy className="mr-2 h-4 w-4 text-[#FA4616]" /> Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => router.push('/my-rewards')} className="rounded-xl cursor-pointer h-11">
-                        <Gift className="mr-2 h-4 w-4 text-primary" /> My Rewards
+                        <Gift className="mr-2 h-4 w-4 text-[#FA4616]" /> My Rewards
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-white/5" />
                       <DropdownMenuItem onClick={handleLogout} className="text-red-500 rounded-xl cursor-pointer h-11">
@@ -133,6 +138,9 @@ export function Header() {
           isOpen ? "max-h-screen opacity-100 py-8" : "max-h-0 opacity-0"
         )}>
           <nav className="flex flex-col px-6 gap-2">
+            <div className="mb-6">
+              <AutoSuggestSearch />
+            </div>
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
@@ -147,7 +155,7 @@ export function Header() {
               {!user ? (
                 <>
                   <Button variant="outline" className="w-full h-14 font-black uppercase text-xs rounded-xl" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'login' }); }}>Login</Button>
-                  <Button className="w-full h-14 bg-primary text-white font-black uppercase text-xs rounded-xl" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'signup' }); }}>Create Account</Button>
+                  <Button className="w-full h-14 bg-[#FA4616] text-white font-black uppercase text-xs rounded-xl" onClick={() => { setIsOpen(false); setAuthModal({ open: true, tab: 'signup' }); }}>Create Account</Button>
                 </>
               ) : (
                 <>
