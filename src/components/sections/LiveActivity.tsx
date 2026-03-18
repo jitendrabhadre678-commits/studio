@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Zap } from 'lucide-react';
 
 const names = ["Emma", "Noah", "Olivia", "James", "Sophia", "Liam", "Ava", "William", "Isabella", "Benjamin"];
@@ -11,6 +10,7 @@ const brands = ["Amazon", "Steam", "Roblox", "Netflix", "PayPal", "Fortnite"];
 
 export function LiveActivity() {
   const [notification, setNotification] = useState<any>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const showNotification = () => {
@@ -24,21 +24,23 @@ export function LiveActivity() {
       
       setNotification(data);
       
+      // Clear previous hide timeout if exists
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+      
       // Hide after 5 seconds
-      setTimeout(() => setNotification(null), 5000);
+      hideTimeoutRef.current = setTimeout(() => setNotification(null), 5000);
     };
 
     // Initial delay
     const initialTimer = setTimeout(showNotification, 3000);
     
-    // Repeat every 10-20 seconds
-    const interval = setInterval(() => {
-      showNotification();
-    }, 15000);
+    // Repeat every 15 seconds
+    const interval = setInterval(showNotification, 15000);
 
     return () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
+      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     };
   }, []);
 

@@ -21,12 +21,15 @@ export function SupportChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMessages([{
-      id: 'welcome',
-      text: "Hi 👋 How can I help you?",
-      sender: 'ai',
-      timestamp: new Date()
-    }]);
+    // Prevent hydration mismatch by adding initial message after mount
+    if (messages.length === 0) {
+      setMessages([{
+        id: 'welcome',
+        text: "Hi 👋 How can I help you?",
+        sender: 'ai',
+        timestamp: new Date()
+      }]);
+    }
 
     const handleOpenEvent = () => setIsOpen(true);
     window.addEventListener('open-support-chat', handleOpenEvent);
@@ -162,7 +165,7 @@ export function SupportChat() {
               )}
 
               {/* Quick Replies */}
-              {messages.length === 1 && !isTyping && (
+              {messages.length <= 1 && !isTyping && (
                 <div className="grid grid-cols-1 gap-2 pt-2">
                   {quickOptions.map(opt => (
                     <button 

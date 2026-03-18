@@ -98,6 +98,14 @@
     }
   }
   
+  .text-glow {
+    text-shadow: 0 0 20px rgba(250, 70, 22, 0.4);
+  }
+  
+  .text-glow-pomegranate {
+    text-shadow: 0 0 20px rgba(196, 0, 6, 0.4);
+  }
+
   /* Specialized premium text highlight without heavy glow */
   .premium-text {
     position: relative;

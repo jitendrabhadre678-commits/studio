@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { MousePointerClick, PlayCircle, ShieldCheck, Zap } from 'lucide-react';
+import { MousePointerClick, CirclePlay, ShieldCheck, Zap } from 'lucide-react';
 
 export function HowItWorks() {
   const steps = [
@@ -11,7 +11,7 @@ export function HowItWorks() {
       description: "Browse our gallery and select your favorite brand and value."
     },
     {
-      icon: <PlayCircle className="w-7 h-7 md:w-8 md:h-8 text-primary" />,
+      icon: <CirclePlay className="w-7 h-7 md:w-8 md:h-8 text-primary" />,
       title: "Watch & Engage",
       description: "Watch short clips or complete simple activities to verify your human session."
     },
@@ -36,7 +36,7 @@ export function HowItWorks() {
             whileInView={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full mb-6"
           >
-            <PlayCircle className="w-4 h-4 text-primary" />
+            <CirclePlay className="w-4 h-4 text-primary" />
             <span className="text-[10px] font-black uppercase tracking-widest text-primary">Simple 4-Step Process</span>
           </motion.div>
           <h2 className="font-headline text-3xl md:text-6xl font-black text-white mb-6 uppercase tracking-tight leading-tight">

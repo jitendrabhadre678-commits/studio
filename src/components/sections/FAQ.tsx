@@ -1,4 +1,3 @@
-
 "use client";
 
 import { 
@@ -7,7 +6,7 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from "@/components/ui/accordion";
-import { HelpCircle } from "lucide-react";
+import { CircleHelp } from "lucide-react";
 import { SupportTrigger } from "@/components/support/SupportTrigger";
 
 export function FAQ() {
@@ -39,7 +38,7 @@ export function FAQ() {
       <div className="container mx-auto max-w-3xl">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full mb-4">
-             <HelpCircle className="w-4 h-4 text-primary" />
+             <CircleHelp className="w-4 h-4 text-primary" />
              <span className="text-xs font-black uppercase tracking-widest text-primary">Support Center</span>
           </div>
           <h2 className="font-headline text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tight">
