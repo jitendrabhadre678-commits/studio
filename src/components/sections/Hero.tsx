@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -55,8 +54,8 @@ export function Hero() {
           <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-primary">Premium Reward</span>
         </div>
         
-        <h1 className="font-headline text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight md:leading-[1.1] animate-fade-in-up [animation-delay:200ms] text-white tracking-tighter uppercase">
-          UNLOCK FREE GIFT CARD & <span className="text-primary text-glow-pomegranate">PREMIUM REWARD</span>
+        <h1 className="font-headline text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight md:leading-[1.1] animate-fade-in-up [animation-delay:200ms] text-white tracking-tighter uppercase">
+          UNLOCK FREE GIFT CARD & <span className="premium-text">PREMIUM REWARDS</span>
         </h1>
 
         <p className="max-w-2xl mx-auto text-muted-foreground text-sm md:text-xl mb-10 md:mb-12 animate-fade-in-up [animation-delay:400ms] font-medium leading-relaxed px-2">
