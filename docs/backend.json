@@ -22,7 +22,11 @@
         },
         "username": {
           "type": "string",
-          "description": "Unique, permanent username chosen by the user."
+          "description": "Unique gamer tag chosen by the user."
+        },
+        "preferredGiftCard": {
+          "type": "string",
+          "description": "The user's preferred reward type."
         },
         "physicalAddress": {
           "type": "string",
@@ -34,8 +38,7 @@
         },
         "lastWalletChangeAt": {
           "type": "string",
-          "format": "date-time",
-          "description": "Timestamp of the last time the wallet was changed."
+          "format": "date-time"
         },
         "bio": {
           "type": "string"
@@ -126,8 +129,7 @@
           "format": "email"
         },
         "walletAddress": {
-          "type": "string",
-          "description": "Public wallet address for crypto withdrawals."
+          "type": "string"
         }
       },
       "required": ["id", "userId", "type", "amount", "status", "createdAt"]
