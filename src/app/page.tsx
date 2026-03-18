@@ -7,7 +7,6 @@ import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { FAQ } from '@/components/sections/FAQ';
 import { TrustBadges } from '@/components/sections/TrustBadges';
 import { Footer } from '@/components/layout/Footer';
-import { LiveActivity } from '@/components/sections/LiveActivity';
 import { CommunityHub } from '@/components/sections/CommunityHub';
 import { categories } from '@/lib/gift-cards';
 import { Zap } from 'lucide-react';
@@ -53,7 +52,6 @@ export default function Home() {
 
       <FAQ />
 
-      <LiveActivity />
       <Footer />
     </main>
   );

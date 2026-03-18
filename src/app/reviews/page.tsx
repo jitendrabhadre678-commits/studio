@@ -25,11 +25,11 @@ export default function ReviewsPage() {
               <ShieldCheck className="w-4 h-4 text-primary" />
               <span className="text-xs font-black uppercase tracking-widest text-primary">Verified Success Stories</span>
             </motion.div>
-            <h1 className="font-headline text-5xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight">
-              Community <span className="text-primary">Feedback</span>
+            <h1 className="font-headline text-5xl md:text-7xl font-black text-white mb-2 uppercase tracking-tight">
+              COMMUNITY <span className="text-primary">FEEDBACK</span>
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-              Real results from real players. We maintain transparency by showcasing authentic feedback from users who have successfully unlocked rewards.
+              Authentic reviews from our global community of earners.
             </p>
           </div>
 
@@ -41,7 +41,7 @@ export default function ReviewsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
               >
-                <Card className="bg-[#1a1a1a] border-white/5 h-full hover:border-primary/20 transition-all duration-300 shadow-xl">
+                <Card className="bg-[#1a1a1a] border-white/5 h-full hover:border-primary/20 transition-all duration-300 shadow-xl rounded-2xl overflow-hidden">
                   <CardContent className="p-8 flex flex-col h-full">
                     <div className="flex justify-between items-start mb-6">
                       <div className="flex gap-1">
