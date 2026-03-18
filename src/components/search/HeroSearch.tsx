@@ -1,20 +1,29 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Zap, ExternalLink, Gift, LayoutDashboard, User, BrainCircuit } from 'lucide-react';
+import { Search, Zap, ExternalLink, Gift, LayoutDashboard, User, BrainCircuit, BookOpen, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { giftCards } from '@/lib/gift-cards';
+import { blogPosts } from '@/lib/blog-posts';
 import { Button } from '@/components/ui/button';
 
 /**
- * @fileOverview High-impact Hero Search Bar with typing animation and trending chips.
+ * @fileOverview High-impact Hero Search Bar with typing animation and categorized routing.
  */
+
+type SearchResult = {
+  id: string;
+  title: string;
+  type: 'Reward' | 'Guide' | 'Feature';
+  href: string;
+  icon: any;
+};
 
 export function HeroSearch() {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [placeholder, setPlaceholder] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -27,9 +36,9 @@ export function HeroSearch() {
   const phrases = [
     'Search for Steam Gift Cards...',
     'Search for Amazon Vouchers...',
+    'How to unlock rewards?',
     'Find App Testing Offers...',
-    'Unlock Roblox Rewards...',
-    'Earn PayPal Cash...'
+    'Best ways to earn cash...'
   ];
 
   // Placeholder typing effect
@@ -63,7 +72,7 @@ export function HeroSearch() {
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Search Logic
+  // Dual-Source Search Logic
   useEffect(() => {
     if (debouncedQuery.length < 2) {
       setResults([]);
@@ -72,23 +81,29 @@ export function HeroSearch() {
     }
 
     const searchTerms = debouncedQuery.toLowerCase();
-    const features = [
-      { id: 'f1', title: 'Premium Offers', type: 'feature', href: '/dashboard#offers', icon: Zap },
-      { id: 'f2', title: 'App Testing & Games', type: 'feature', href: '/dashboard#offers', icon: LayoutDashboard },
-      { id: 'f3', title: 'Paid Surveys', type: 'feature', href: '/dashboard#offers', icon: LayoutDashboard },
-      { id: 'f4', title: 'Watch & Earn', type: 'feature', href: '/dashboard#offers', icon: Zap },
-      { id: 'f5', title: 'Quizzes & Earn', type: 'feature', href: '/quiz-earn', icon: BrainCircuit },
+    
+    const features: SearchResult[] = [
+      { id: 'f1', title: 'Premium Offers', type: 'Feature', href: '/dashboard#offers', icon: Zap },
+      { id: 'f2', title: 'Quizzes & Earn', type: 'Feature', href: '/quiz-earn', icon: BrainCircuit },
     ];
 
-    const rewards = giftCards.map(card => ({
-      id: card.id,
+    const rewards: SearchResult[] = giftCards.map(card => ({
+      id: `r-${card.id}`,
       title: `${card.brand} Gift Card`,
-      type: 'reward',
+      type: 'Reward',
       href: `/${card.slug}`,
       icon: Gift
     }));
 
-    const filtered = [...features, ...rewards].filter(item => 
+    const guides: SearchResult[] = blogPosts.map(post => ({
+      id: `b-${post.slug}`,
+      title: post.title,
+      type: 'Guide',
+      href: `/blog/${post.slug}`,
+      icon: BookOpen
+    }));
+
+    const filtered = [...features, ...rewards, ...guides].filter(item => 
       item.title.toLowerCase().includes(searchTerms)
     ).slice(0, 8);
 
@@ -114,8 +129,18 @@ export function HeroSearch() {
     { label: '🔥 Popular: Amazon', value: 'Amazon' },
     { label: '🎮 Steam', value: 'Steam' },
     { label: '💸 PayPal', value: 'PayPal' },
-    { label: '📦 Roblox', value: 'Roblox' }
+    { label: '📚 Guides', value: 'How to' }
   ];
+
+  const highlightMatch = (text: string, match: string) => {
+    if (!match) return text;
+    const parts = text.split(new RegExp(`(${match})`, 'gi'));
+    return parts.map((part, i) => 
+      part.toLowerCase() === match.toLowerCase() 
+        ? <span key={i} className="text-[#FA4616] font-black">{part}</span> 
+        : part
+    );
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6 relative" ref={searchRef}>
@@ -168,28 +193,35 @@ export function HeroSearch() {
                 onClick={() => handleResultClick(result.href)}
                 className="w-full flex items-center justify-between p-5 rounded-[1.5rem] hover:bg-white/5 transition-all text-left group/item"
               >
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover/item:border-[#FA4616]/40 transition-colors shadow-inner">
+                <div className="flex items-center gap-5 min-w-0">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover/item:border-[#FA4616]/40 transition-colors shadow-inner shrink-0">
                     <result.icon className="w-7 h-7 text-white/40 group-hover/item:text-[#FA4616]" />
                   </div>
-                  <div>
-                    <p className="text-xl font-black text-white group-hover/item:text-[#FA4616] transition-colors">
-                      {result.title}
+                  <div className="min-w-0">
+                    <p className="text-xl font-black text-white group-hover/item:text-[#FA4616] transition-colors truncate">
+                      {highlightMatch(result.title, debouncedQuery)}
                     </p>
-                    <p className="text-[10px] text-white/20 uppercase tracking-[0.3em] font-black mt-1">
-                      {result.type} Available
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-[0.3em] px-2 py-0.5 rounded border",
+                        result.type === 'Reward' && "text-green-500 border-green-500/20 bg-green-500/5",
+                        result.type === 'Guide' && "text-blue-500 border-blue-500/20 bg-blue-500/5",
+                        result.type === 'Feature' && "text-[#FA4616] border-[#FA4616]/20 bg-[#FA4616]/5"
+                      )}>
+                        {result.type}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all">
-                  <ExternalLink className="w-4 h-4 text-[#FA4616]" />
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all shrink-0">
+                  <ChevronRight className="w-5 h-5 text-[#FA4616]" />
                 </div>
               </button>
             ))}
           </div>
           <div className="bg-[#FA4616]/5 p-4 text-center border-t border-white/5">
             <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.4em] animate-pulse">
-              Found {results.length} Matches for "{query}"
+              Categorized routing enabled for "{query}"
             </p>
           </div>
         </div>
