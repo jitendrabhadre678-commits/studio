@@ -50,9 +50,9 @@ export function Hero() {
       <div className="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-3 animate-fade-in-up bg-white/[0.08] backdrop-blur-[12px] border border-white/[0.15] shadow-[0_4px_20px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-white/[0.12] group/premium">
-          <Zap className="w-3.5 h-3.5 text-white fill-white opacity-80 group-hover/premium:opacity-100 transition-opacity" />
-          <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.05em] text-white">Premium Reward</span>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-3 animate-fade-in-up bg-primary/10 border border-primary/20 shadow-[0_0_20px_rgba(250,70,22,0.2)]">
+          <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+          <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-primary">Premium Reward</span>
         </div>
         
         <h1 className="font-headline text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight md:leading-[1.1] animate-fade-in-up [animation-delay:200ms] text-white tracking-tighter uppercase">
