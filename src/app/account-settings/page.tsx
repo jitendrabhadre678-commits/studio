@@ -30,8 +30,9 @@ import { useToast } from '@/hooks/use-toast';
 import { giftCards } from '@/lib/gift-cards';
 
 /**
- * @fileOverview Finalized User Profile page.
- * Implements real-time fetching, auto-fill, and permanent Firestore updates.
+ * @fileOverview Refined User Profile page.
+ * Automatically extracts data from Firebase Auth for intelligent auto-fill
+ * and handles permanent Firestore persistence.
  */
 
 export default function AccountSettings() {
@@ -62,16 +63,23 @@ export default function AccountSettings() {
     }
   }, [user, isUserLoading, router]);
 
-  // Fetch and Auto-fill on Load
+  // Intelligent Auto-fill on Load
   useEffect(() => {
-    if (userData) {
-      setUsernameInput(userData.username || '');
-      setDisplayNameInput(userData.displayName || '');
-      setPreferredCard(userData.preferredGiftCard || '');
-      setWalletAddressInput(userData.walletAddress || '');
-      setPayoutEmailInput(userData.payoutEmail || '');
+    if (user) {
+      const emailPrefix = user.email?.split('@')[0] || '';
+      
+      // 1. Use Firestore data as priority (previously saved)
+      // 2. Fallback to Firebase Auth data (displayName, email)
+      // 3. Last resort fallback to email prefix
+      setUsernameInput(userData?.username || emailPrefix);
+      setDisplayNameInput(userData?.displayName || user.displayName || emailPrefix);
+      setPayoutEmailInput(userData?.payoutEmail || user.email || '');
+      
+      // Firestore-only fields
+      setPreferredCard(userData?.preferredGiftCard || '');
+      setWalletAddressInput(userData?.walletAddress || '');
     }
-  }, [userData]);
+  }, [userData, user]);
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +122,7 @@ export default function AccountSettings() {
     // Success Feedback with Branded Styling
     toast({
       title: "Profile Updated Successfully",
-      description: "Your personal and payout details have been permanently saved.",
+      description: "Your information has been permanently saved to the database.",
       className: "bg-[#FA4616] text-white border-none font-bold",
     });
   };
@@ -137,7 +145,7 @@ export default function AccountSettings() {
             <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
               User <span className="text-[#FA4616]">Profile</span>
             </h1>
-            <p className="text-muted-foreground">Manage your identity and reward delivery details in one secure location.</p>
+            <p className="text-muted-foreground">Customize your player identity and configure your reward delivery details.</p>
           </div>
 
           <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a] shadow-2xl relative min-h-[400px]">
@@ -163,7 +171,7 @@ export default function AccountSettings() {
                         value={usernameInput}
                         onChange={(e) => setUsernameInput(e.target.value.replace(/\s+/g, '').toLowerCase())}
                         className="bg-white/5 border-white/10 h-14 rounded-2xl pl-10 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
-                        placeholder="Enter username"
+                        placeholder="Choose a handle"
                         required
                       />
                     </div>
@@ -177,7 +185,7 @@ export default function AccountSettings() {
                         id="displayName" 
                         value={displayNameInput}
                         onChange={(e) => setDisplayNameInput(e.target.value)}
-                        placeholder="Enter your full name"
+                        placeholder="Your full name"
                         className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
                       />
                     </div>
@@ -236,6 +244,9 @@ export default function AccountSettings() {
                         className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
                       />
                     </div>
+                    <p className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-1 ml-1">
+                      Defaults to: {user.email}
+                    </p>
                   </div>
                 </div>
 
