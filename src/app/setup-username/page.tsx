@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function SetupUsernameRedirect() {
+export default function SetupUsername() {
   const router = useRouter();
 
   useEffect(() => {
-    // This page is no longer mandatory, redirecting to dashboard
+    // Reverted mandatory flow - redirecting to dashboard
     router.push('/dashboard');
   }, [router]);
 

@@ -32,6 +32,7 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -56,12 +57,17 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const password = formData.get('password') as string;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast({ title: "Welcome Back!", description: "Successfully logged in." });
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, email, password);
+        toast({ title: "Welcome Back!", description: "Logged in successfully." });
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+        toast({ title: "Account Created!", description: "Welcome to GameFlashX." });
+      }
       router.push('/dashboard');
       onClose();
     } catch (error: any) {
-      toast({ variant: "destructive", title: "Authentication Error", description: error.message });
+      toast({ variant: "destructive", title: "Auth Error", description: error.message });
     } finally {
       setIsLoading(false);
     }
@@ -73,10 +79,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <div className="p-10">
           <DialogHeader className="mb-8 text-center">
             <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight">
-              Welcome <span className="text-primary">Back</span>
+              {isLogin ? 'Welcome Back' : 'Join Platform'}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground mt-2">
-              Login to access your rewards.
+              {isLogin ? 'Login to access your rewards.' : 'Start earning rewards today.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -98,7 +104,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
             <form onSubmit={handleEmailAuth} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Email Address</Label>
+                <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input name="email" type="email" placeholder="name@example.com" className="h-12 pl-11 bg-white/5 border-white/10 rounded-xl" required />
@@ -112,9 +118,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </div>
               </div>
               <Button type="submit" className="w-full h-14 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl mt-4" disabled={isLoading}>
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
+                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? "Sign In" : "Sign Up")}
               </Button>
             </form>
+
+            <div className="text-center">
+              <button 
+                onClick={() => setIsLogin(!isLogin)} 
+                className="text-xs text-white/40 hover:text-primary transition-colors font-bold uppercase tracking-widest"
+              >
+                {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+              </button>
+            </div>
           </div>
         </div>
       </DialogContent>

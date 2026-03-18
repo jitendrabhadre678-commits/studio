@@ -1,13 +1,12 @@
-
 "use client";
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Menu, X, LogOut, LayoutDashboard, Gift, Trophy, Zap } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, Gift, Trophy } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
-import { useUser, useAuth, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { 
   DropdownMenu, 
@@ -19,22 +18,13 @@ import {
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { doc } from 'firebase/firestore';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [authModal, setAuthModal] = useState<{ open: boolean; tab: 'login' | 'signup' }>({ open: false, tab: 'login' });
-  const { user, isUserLoading, firestore } = useUser();
+  const [authModal, setAuthModal] = useState({ open: false, tab: 'login' as const });
+  const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
-
-  // Fetch real-time user data for username display
-  const userRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [firestore, user]);
-
-  const { data: userData } = useDoc(userRef);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -61,14 +51,6 @@ export function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-10">
-            {user && (
-              <Link 
-                href="/quiz-earn"
-                className="text-[11px] font-black uppercase tracking-[0.2em] transition-all text-primary animate-pulse flex items-center gap-1.5"
-              >
-                <Zap className="w-3 h-3 fill-primary" /> Quiz & Earn
-              </Link>
-            )}
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
@@ -102,20 +84,18 @@ export function Header() {
                 ) : (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <div className="flex items-center gap-3 cursor-pointer group px-2 py-1.5 rounded-full hover:bg-white/5 transition-all">
-                        <div className="relative h-9 w-9 rounded-full border-2 border-primary shadow-lg overflow-hidden">
-                          <Avatar className="h-full w-full">
-                            <AvatarImage src={user.photoURL || undefined} />
-                            <AvatarFallback className="bg-primary/20 text-primary font-black">
-                              {userData?.username?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                        <div className="flex flex-col items-start leading-none">
-                          <span className="text-xs font-black text-white uppercase tracking-tighter">
-                            {userData?.username ? `@${userData.username}` : user.email?.split('@')[0]}
+                      <div className="flex items-center gap-3 cursor-pointer group px-2 py-1 rounded-full hover:bg-white/5 transition-all">
+                        <Avatar className="h-9 w-9 border-2 border-primary">
+                          <AvatarImage src={user.photoURL || undefined} />
+                          <AvatarFallback className="bg-primary/20 text-primary font-black uppercase">
+                            {user.email?.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col items-start">
+                          <span className="text-[10px] font-black text-white uppercase tracking-tighter truncate max-w-[100px]">
+                            {user.displayName || user.email?.split('@')[0]}
                           </span>
-                          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-0.5">Player Profile ⌄</span>
+                          <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest">Account ⌄</span>
                         </div>
                       </div>
                     </DropdownMenuTrigger>
@@ -123,8 +103,8 @@ export function Header() {
                       <DropdownMenuItem onClick={() => router.push('/dashboard')} className="rounded-xl cursor-pointer h-11">
                         <LayoutDashboard className="mr-2 h-4 w-4 text-primary" /> Dashboard
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => router.push('/leaderboard')} className="rounded-xl cursor-pointer h-11">
-                        <Trophy className="mr-2 h-4 w-4 text-primary" /> Leaderboard
+                      <DropdownMenuItem onClick={() => router.push('/account-settings')} className="rounded-xl cursor-pointer h-11">
+                        <Trophy className="mr-2 h-4 w-4 text-primary" /> Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => router.push('/my-rewards')} className="rounded-xl cursor-pointer h-11">
                         <Gift className="mr-2 h-4 w-4 text-primary" /> My Rewards
@@ -153,15 +133,6 @@ export function Header() {
           isOpen ? "max-h-screen opacity-100 py-8" : "max-h-0 opacity-0"
         )}>
           <nav className="flex flex-col px-6 gap-2">
-            {user && (
-              <Link 
-                href="/quiz-earn"
-                onClick={() => setIsOpen(false)}
-                className="text-xl font-black transition-colors py-4 uppercase tracking-widest border-b border-white/5 text-primary flex items-center gap-2"
-              >
-                <Zap className="w-5 h-5 fill-primary" /> Quiz & Earn
-              </Link>
-            )}
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
@@ -192,7 +163,6 @@ export function Header() {
       <AuthModal 
         isOpen={authModal.open} 
         onClose={() => setAuthModal({ ...authModal, open: false })}
-        defaultTab={authModal.tab}
       />
     </>
   );
