@@ -1,12 +1,13 @@
+
 {
   "intents": [
     {
       "id": "reward",
       "keywords": ["reward", "gift", "card", "unlock", "code", "claim", "amazon", "google", "play", "roblox", "netflix", "steam", "itunes", "xbox", "nintendo", "fortnite", "paypal", "visa", "vanilla", "uber", "starbucks", "mcdonald", "target", "walmart", "best buy", "ebay", "doordash"],
       "responses": [
-        "Unlocking is easy! 😊 Just pick a card from the gallery, click 'Unlock', and finish one quick task. Your code will be ready right after! Go to the reward gallery now.",
-        "I can help! 👍 To get your card: 1. Pick a reward. 2. Click Unlock. 3. Do one simple task. Your unique code will show up in your vault instantly. Ready to start?",
-        "Getting rewards is fun! 🎁 Just choose your favorite card and complete one short activity to prove you're human. Your digital code is waiting for you!"
+        "To unlock your reward:\n\n1. Click ‘Reveal Gift Card Code’\n2. Complete one quick verification offer\n3. Return back automatically\n4. Your reward will be unlocked instantly",
+        "It's very simple! 😊 Just pick a card from the gallery and click ‘Reveal Gift Card Code’. After finishing one quick task, your code is ready. Check the gallery now!",
+        "Getting rewards is fast! 🎁 Choose your favorite card and complete one short activity to prove you're human. Your code will be released right after!"
       ]
     },
     {

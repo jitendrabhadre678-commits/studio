@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -150,7 +151,7 @@ export function SupportChat() {
                   )}
                 >
                   <div className={cn(
-                    "p-3.5 px-4 rounded-[18px] text-[13px] leading-relaxed shadow-sm",
+                    "p-3.5 px-4 rounded-[18px] text-[13px] leading-relaxed shadow-sm whitespace-pre-wrap",
                     msg.sender === 'user' 
                       ? "bg-primary text-white font-bold rounded-tr-none" 
                       : "bg-white border border-gray-100 text-gray-800 rounded-tl-none"
