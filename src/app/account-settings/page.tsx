@@ -11,7 +11,8 @@ import {
   IdCard,
   Check,
   Gift,
-  User as UserIcon
+  User as UserIcon,
+  Wallet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,7 +30,7 @@ import { giftCards } from '@/lib/gift-cards';
 
 /**
  * @fileOverview Refined User Profile page.
- * Collects Gamer Tag, Full Name, and Preferred Gift Card.
+ * Collects Gamer Tag, Full Name, Preferred Gift Card, and Payout Wallet.
  */
 
 export default function AccountSettings() {
@@ -42,6 +43,7 @@ export default function AccountSettings() {
   const [usernameInput, setUsernameInput] = useState('');
   const [displayNameInput, setDisplayNameInput] = useState('');
   const [preferredCard, setPreferredCard] = useState('');
+  const [walletAddressInput, setWalletAddressInput] = useState('');
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -63,6 +65,7 @@ export default function AccountSettings() {
       if (userData.username) setUsernameInput(userData.username);
       if (userData.displayName) setDisplayNameInput(userData.displayName);
       if (userData.preferredGiftCard) setPreferredCard(userData.preferredGiftCard);
+      if (userData.walletAddress) setWalletAddressInput(userData.walletAddress);
     }
   }, [userData]);
 
@@ -77,12 +80,13 @@ export default function AccountSettings() {
         username: usernameInput,
         displayName: displayNameInput,
         preferredGiftCard: preferredCard,
+        walletAddress: walletAddressInput,
         updatedAt: serverTimestamp()
       }, { merge: true });
       
       toast({
         title: "Profile Updated",
-        description: "Your gaming details have been saved successfully.",
+        description: "Your gaming and payout details have been saved successfully.",
       });
     } catch (err) {
       console.error("Save Error:", err);
@@ -114,7 +118,7 @@ export default function AccountSettings() {
             <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
               Player <span className="text-[#FA4616]">Profile</span>
             </h1>
-            <p className="text-muted-foreground">Customize your gaming identity and reward preferences.</p>
+            <p className="text-muted-foreground">Customize your gaming identity and payout preferences.</p>
           </div>
 
           <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a]">
@@ -172,6 +176,30 @@ export default function AccountSettings() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="pt-4 border-t border-white/5">
+                <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tight">
+                  <Wallet className="w-5 h-5 text-[#FA4616]" /> Payout Configuration
+                </h3>
+
+                {/* Wallet Address */}
+                <div className="space-y-2">
+                  <Label htmlFor="walletAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Wallet Address (For Payouts)</Label>
+                  <div className="relative">
+                    <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <Input 
+                      id="walletAddress" 
+                      value={walletAddressInput}
+                      onChange={(e) => setWalletAddressInput(e.target.value)}
+                      placeholder="Enter your crypto wallet address (e.g. 0x...)"
+                      className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                    />
+                  </div>
+                  <p className="text-[9px] text-white/20 font-medium uppercase tracking-widest mt-2 ml-1">
+                    * Ensure the address is correct. Payouts are irreversible once processed.
+                  </p>
+                </div>
               </div>
 
               <Button 
