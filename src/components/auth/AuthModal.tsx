@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { useAuth, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -15,7 +14,7 @@ import {
   signInWithRedirect,
   sendEmailVerification
 } from 'firebase/auth';
-import { doc, serverTimestamp, increment, getDoc } from 'firebase/firestore';
+import { doc, serverTimestamp } from 'firebase/firestore';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -45,12 +44,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({
-      prompt: "select_account"
-    });
+    provider.setCustomParameters({ prompt: "select_account" });
 
     try {
-      onClose(); // Close modal before redirect to prevent UI artifacts
+      onClose();
       await signInWithRedirect(auth, provider);
     } catch (error: any) {
       toast({ variant: "destructive", title: "Login Failed", description: error.message });
@@ -68,20 +65,13 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
     try {
       if (mode === 'signup') {
         const confirmPassword = formData.get('confirmPassword') as string;
-
-        if (password !== confirmPassword) {
-          throw new Error("Passwords do not match");
-        }
+        if (password !== confirmPassword) throw new Error("Passwords do not match");
 
         const result = await createUserWithEmailAndPassword(auth, email, password);
         const user = result.user;
 
         await sendEmailVerification(user);
 
-        // Check for referral ID in localStorage (link tracking)
-        const linkReferrerId = typeof window !== 'undefined' ? localStorage.getItem('referralId') : null;
-
-        // Initialize user profile in Firestore (Non-blocking)
         setDocumentNonBlocking(doc(db, 'users', user.uid), {
           id: user.uid,
           email: user.email,
@@ -90,31 +80,12 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
           totalEarnings: 0,
           offersCompleted: 0,
           rewardsUnlocked: 0,
-          points: 0,
-          referralsCount: 0,
-          referralEarnings: 0,
-          referredBy: linkReferrerId || null,
           accountStatus: 'active'
         }, { merge: true });
 
-        // If referred, increment referrer's count (Non-blocking)
-        if (linkReferrerId && linkReferrerId !== user.uid) {
-          const referrerRef = doc(db, 'users', linkReferrerId);
-          getDoc(referrerRef).then(snap => {
-            if (snap.exists()) {
-              updateDocumentNonBlocking(referrerRef, {
-                referralsCount: increment(1)
-              });
-            }
-          });
-        }
-
         toast({ title: "Account Created", description: "Please check your email for verification." });
       } else {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        if (!result.user.emailVerified) {
-          toast({ variant: "destructive", title: "Email not verified", description: "Please verify your email to access all features." });
-        }
+        await signInWithEmailAndPassword(auth, email, password);
         toast({ title: "Welcome Back!", description: "Successfully logged in." });
         router.push('/dashboard');
       }
@@ -131,84 +102,82 @@ export function AuthModal({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 p-0 overflow-hidden rounded-[2rem]">
-        <div className="p-8">
-          <DialogHeader className="mb-6">
-            <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight text-center">
-              Welcome to <span className="text-primary">GameFlashX</span>
+      <DialogContent className="sm:max-w-[450px] bg-[#0a0a0a] border-white/10 p-0 overflow-hidden rounded-[2rem] shadow-2xl">
+        <div className="p-10">
+          <DialogHeader className="mb-8 text-center">
+            <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight">
+              Welcome <span className="text-primary">Back</span>
             </DialogTitle>
-            <DialogDescription className="text-center text-muted-foreground">
-              Unlock premium rewards and gaming gift cards instantly.
+            <DialogDescription className="text-muted-foreground mt-2">
+              Login to access your rewards and dashboard.
             </DialogDescription>
           </DialogHeader>
 
-          <Tabs defaultValue={defaultTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-white/5 rounded-xl mb-8">
-              <TabsTrigger value="login" className="data-[state=active]:bg-primary rounded-lg transition-all font-bold">Login</TabsTrigger>
-              <TabsTrigger value="signup" className="data-[state=active]:bg-primary rounded-lg transition-all font-bold">Sign Up</TabsTrigger>
-            </TabsList>
+          <div className="space-y-6">
+            <Button 
+              onClick={handleGoogleLogin} 
+              variant="outline" 
+              className="w-full h-14 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition-all"
+              disabled={isLoading}
+            >
+              <GoogleIcon className="mr-3 h-5 w-5" />
+              Continue with Google
+            </Button>
 
-            <TabsContent value="login" className="space-y-4">
-              <form onSubmit={(e) => handleEmailAuth(e, 'login')} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="login-email" name="email" type="email" placeholder="name@example.com" className="pl-10 bg-white/5 border-white/10" required />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="login-password" name="password" type="password" placeholder="••••••••" className="pl-10 bg-white/5 border-white/10" required />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="signup" className="space-y-4">
-              <form onSubmit={(e) => handleEmailAuth(e, 'signup')} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="signup-email" name="email" type="email" placeholder="name@example.com" className="pl-10 bg-white/5 border-white/10" required />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="signup-password" name="password" type="password" placeholder="••••••••" className="pl-10 bg-white/5 border-white/10" required />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="confirm-password" name="confirmPassword" type="password" placeholder="••••••••" className="pl-10 bg-white/5 border-white/10" required />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create Account"}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <div className="relative my-8">
-              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10"></span></div>
-              <div className="relative flex justify-center text-xs uppercase"><span className="bg-black px-2 text-muted-foreground">Or continue with</span></div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/5"></span></div>
+              <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-black"><span className="bg-[#0a0a0a] px-4 text-white/20">Or use email</span></div>
             </div>
 
-            <Button onClick={handleGoogleLogin} variant="outline" className="w-full h-12 border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl" disabled={isLoading}>
-              {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon className="mr-2 h-5 w-5" />}
-              {isLoading ? "Redirecting..." : "Google"}
-            </Button>
-          </Tabs>
+            <Tabs defaultValue={defaultTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-white/5 rounded-xl mb-6 p-1 h-12">
+                <TabsTrigger value="login" className="data-[state=active]:bg-primary rounded-lg font-bold text-xs uppercase tracking-widest">Login</TabsTrigger>
+                <TabsTrigger value="signup" className="data-[state=active]:bg-primary rounded-lg font-bold text-xs uppercase tracking-widest">Sign Up</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="login">
+                <form onSubmit={(e) => handleEmailAuth(e, 'login')} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Email Address</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input name="email" type="email" placeholder="name@example.com" className="h-12 pl-11 bg-white/5 border-white/10 rounded-xl" required />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input name="password" type="password" placeholder="••••••••" className="h-12 pl-11 bg-white/5 border-white/10 rounded-xl" required />
+                    </div>
+                  </div>
+                  <Button type="submit" className="w-full h-14 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl mt-4" disabled={isLoading}>
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="signup">
+                <form onSubmit={(e) => handleEmailAuth(e, 'signup')} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Email Address</Label>
+                    <Input name="email" type="email" placeholder="name@example.com" className="h-12 bg-white/5 border-white/10 rounded-xl" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Password</Label>
+                    <Input name="password" type="password" placeholder="••••••••" className="h-12 bg-white/5 border-white/10 rounded-xl" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-white/40 tracking-widest ml-1">Confirm Password</Label>
+                    <Input name="confirmPassword" type="password" placeholder="••••••••" className="h-12 bg-white/5 border-white/10 rounded-xl" required />
+                  </div>
+                  <Button type="submit" className="w-full h-14 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl mt-4" disabled={isLoading}>
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create Account"}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
