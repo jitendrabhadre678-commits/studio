@@ -90,10 +90,10 @@
     }
   }
   .text-glow-pomegranate {
-    text-shadow: 0 0 10px rgba(250, 70, 22, 0.5), 0 0 20px rgba(250, 70, 22, 0.3);
+    text-shadow: none;
   }
 
-  /* Refined Glass Text Effect */
+  /* Refined Glass Text Effect - Subtle Left Highlight */
   .premium-text {
     position: relative;
     color: #FA4616;

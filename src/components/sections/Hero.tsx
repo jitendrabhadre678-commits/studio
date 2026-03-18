@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, Zap, ArrowRight, PlayCircle } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { giftCards } from '@/lib/gift-cards';
 import { cn } from '@/lib/utils';
@@ -44,69 +44,68 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative pt-24 md:pt-32 pb-16 md:pb-24 px-4 overflow-visible">
+    <section className="relative pt-10 md:pt-24 pb-10 px-4 text-center">
+      {/* Background Decorative Ambient Glows */}
       <div className="absolute top-1/4 -left-20 w-64 md:w-96 h-64 md:h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="container mx-auto text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-3 animate-fade-in-up bg-primary/10 border border-primary/20 shadow-[0_0_20px_rgba(250,70,22,0.2)]">
-          <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
-          <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-primary">Premium Reward</span>
+      <div className="container mx-auto relative z-10 flex flex-col items-center">
+        {/* Top Badge (Pill Style) */}
+        <div className="inline-flex items-center gap-2 px-[14px] py-[6px] rounded-full mb-4 bg-white/5 backdrop-blur-[10px] border border-white/10 transition-all hover:bg-white/10 animate-fade-in-up">
+          <span className="text-[12px] font-semibold text-white tracking-[0.5px]">⚡ PREMIUM REWARDS NETWORK</span>
         </div>
         
-        <h1 className="font-headline text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight md:leading-[1.1] animate-fade-in-up [animation-delay:200ms] text-white tracking-tighter uppercase">
-          UNLOCK FREE GIFT CARD & <span className="premium-text">PREMIUM REWARDS</span>
+        {/* Hero Heading */}
+        <h1 className="font-headline text-[28px] md:text-[48px] font-bold mb-3 leading-[1.2] text-white uppercase tracking-tighter animate-fade-in-up [animation-delay:200ms]">
+          UNLOCK FREE GIFT CARD & <br />
+          <span className="text-[#FA4616]">PREMIUM REWARD</span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-muted-foreground text-sm md:text-xl mb-10 md:mb-12 animate-fade-in-up [animation-delay:400ms] font-medium leading-relaxed px-2">
+        {/* Hero Subtext */}
+        <p className="max-w-2xl mx-auto text-[#B0B0B0] text-sm md:text-base mb-8 leading-[1.6] animate-fade-in-up [animation-delay:400ms] px-4">
           The most reliable platform for gamers to earn and redeem digital gift cards. 
-          Complete tasks and unlock the rewards you deserve instantly.
+          Complete tasks, watch clips, and unlock rewards instantly.
         </p>
 
-        <div className="mb-12 md:mb-16 flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up [animation-delay:500ms]">
+        {/* CTA Buttons */}
+        <div className="flex flex-col md:flex-row justify-center gap-3 mb-12 w-full md:w-auto animate-fade-in-up [animation-delay:500ms] px-4">
           <Button 
             onClick={() => handleScrollToSection('trending')}
-            size="lg" 
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-black px-10 h-14 md:h-16 rounded-xl text-base md:text-lg group shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95"
+            className="w-full md:w-auto bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-semibold h-[52px] md:h-[56px] px-10 rounded-[12px] text-base transition-all active:scale-95 shadow-lg shadow-primary/20"
           >
             Unlock Now
-            <Zap className="ml-2 w-5 h-5 group-hover:scale-125 transition-transform" />
           </Button>
           <Button 
             onClick={() => handleScrollToSection('how-it-works')}
-            size="lg" 
             variant="outline" 
-            className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 px-10 h-14 md:h-16 rounded-xl text-base md:text-lg backdrop-blur-md transition-all active:scale-95"
+            className="w-full md:w-auto border-white/20 text-white hover:bg-white/10 bg-transparent h-[52px] md:h-[56px] px-10 rounded-[12px] text-base transition-all active:scale-95"
           >
             How it Works
-            <PlayCircle className="ml-2 w-5 h-5 opacity-60" />
           </Button>
         </div>
 
-        <div className="max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms] px-0" ref={dropdownRef}>
+        {/* Search Suggestion Input (Integrated) */}
+        <div className="w-full max-w-2xl mx-auto relative animate-fade-in-up [animation-delay:600ms] px-4" ref={dropdownRef}>
           <div className="relative group">
             <div className={cn(
               "absolute inset-0 bg-primary/10 blur-xl transition-all rounded-2xl",
               isFocused ? "bg-primary/20 opacity-100" : "opacity-0"
             )} />
-            <div className="relative glass-card flex items-center px-4 rounded-2xl border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
-              <Search className="text-muted-foreground w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3 shrink-0" />
+            <div className="relative glass-card flex items-center px-4 rounded-[16px] border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
+              <Search className="text-white/40 w-5 h-5 mr-3 shrink-0" />
               <Input 
                 placeholder="Search rewards..." 
-                className="bg-transparent border-none text-white text-sm md:text-lg h-14 md:h-16 focus-visible:ring-0 placeholder:text-muted-foreground font-medium"
+                className="bg-transparent border-none text-white text-sm md:text-base h-14 focus-visible:ring-0 placeholder:text-white/20 font-medium"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 onFocus={() => setIsFocused(true)}
               />
-              <Button className="hidden sm:flex bg-primary hover:bg-primary/90 text-white font-black h-10 px-6 rounded-xl shadow-lg uppercase tracking-widest text-[10px]">
-                Search
-              </Button>
             </div>
           </div>
 
           {isFocused && searchValue.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-3 bg-[#0a0a0a] backdrop-blur-[24px] border border-white/10 rounded-2xl p-3 z-[60] shadow-[0_20px_60px_rgba(0,0,0,0.9)] animate-in fade-in zoom-in-95 duration-300">
-              <div className="text-[10px] font-black text-primary uppercase tracking-[0.25em] mb-3 px-3 text-left">Live Results</div>
+            <div className="absolute top-full left-4 right-4 mt-3 bg-[#0a0a0a] backdrop-blur-[24px] border border-white/10 rounded-2xl p-3 z-[60] shadow-[0_20px_60px_rgba(0,0,0,0.9)] animate-in fade-in zoom-in-95 duration-300">
+              <div className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.25em] mb-3 px-3 text-left">Real-time Results</div>
               <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                 {suggestions.length > 0 ? (
                   suggestions.map(card => (
@@ -116,7 +115,7 @@ export function Hero() {
                       className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-left text-white transition-all duration-300 border border-white/5"
                     >
                       <div 
-                        className="relative w-14 aspect-[16/9] rounded-lg overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-1"
+                        className="relative w-12 aspect-[16/9] rounded-lg overflow-hidden shrink-0 border border-white/10 flex items-center justify-center p-1"
                         style={{ background: card.gradient }}
                       >
                          <span className="relative z-10 font-headline font-black text-white text-[6px] uppercase tracking-tighter text-center leading-none">
@@ -125,14 +124,14 @@ export function Hero() {
                       </div>
                       <div className="flex-grow min-w-0">
                         <div className="font-bold truncate text-sm">{card.brand}</div>
-                        <div className="text-[10px] text-muted-foreground truncate">{card.category} Reward</div>
+                        <div className="text-[10px] text-white/40 truncate">{card.category} Reward</div>
                       </div>
                       <ArrowRight className="w-4 h-4 text-white/20 shrink-0" />
                     </button>
                   ))
                 ) : (
                   <div className="p-6 text-center">
-                    <p className="text-xs text-muted-foreground">No matches found</p>
+                    <p className="text-xs text-white/20">No matches found</p>
                   </div>
                 )}
               </div>
