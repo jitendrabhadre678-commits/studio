@@ -33,7 +33,7 @@ export function FeaturedRewards() {
   const flags = ["🇺🇸", "🇬🇧", "🇨🇦", "🇦🇺", "🇳🇿", "🇫🇷", "🇮🇹", "🇲🇦"];
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-[#0f172a] to-[#020617] overflow-hidden">
+    <section className="py-24 px-4 bg-black/20 overflow-hidden border-y border-white/5">
       <div className="container mx-auto">
         <div className="text-center mb-16 space-y-4">
           <motion.div

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Menu, X, LogOut, LayoutDashboard, Gift, Trophy } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, Gift, Trophy, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
@@ -41,8 +41,8 @@ export function Header() {
   return (
     <>
       <header className={cn(
-        "fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300",
-        "bg-black/80 backdrop-blur-[12px] border-b border-white/5",
+        "fixed top-0 left-0 right-0 z-[9999] w-full transition-all duration-300",
+        "bg-black/85 backdrop-blur-[10px] border-b border-white/5",
         "h-14 md:h-[72px] flex items-center px-4 md:px-8"
       )}>
         <div className="w-full flex items-center justify-between max-w-[1400px] mx-auto">
@@ -51,6 +51,12 @@ export function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-10">
+            <Link 
+              href="/quiz-earn"
+              className="text-[11px] font-black uppercase tracking-[0.2em] transition-all text-primary animate-pulse flex items-center gap-1.5"
+            >
+              <Zap className="w-3 h-3 fill-primary" /> Quiz & Earn
+            </Link>
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
@@ -132,6 +138,13 @@ export function Header() {
           isOpen ? "max-h-screen opacity-100 py-8" : "max-h-0 opacity-0"
         )}>
           <nav className="flex flex-col px-6 gap-2">
+            <Link 
+              href="/quiz-earn"
+              onClick={() => setIsOpen(false)}
+              className="text-xl font-black transition-colors py-4 uppercase tracking-widest border-b border-white/5 text-primary flex items-center gap-2"
+            >
+              <Zap className="w-5 h-5 fill-primary" /> Quiz & Earn
+            </Link>
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
