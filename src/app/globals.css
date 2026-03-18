@@ -89,55 +89,11 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
   }
-  .text-glow-pomegranate {
-    text-shadow: none;
-  }
-
-  /* Refined Glass Text Effect - Subtle Left Highlight */
-  .premium-text {
-    position: relative;
-    color: #FA4616;
-    text-shadow: none;
-    display: inline-block;
-  }
-
-  .premium-text::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 0;
-    width: 40%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 6px;
-    pointer-events: none;
-    z-index: -1;
-  }
 }
 
 @keyframes grid-move {
   0% { transform: translate(0, 0); }
   100% { transform: translate(-60px, 60px); }
-}
-
-@keyframes marquee-left {
-  from { transform: translateX(0); }
-  to { transform: translateX(-33.33%); }
-}
-
-@keyframes marquee-right {
-  from { transform: translateX(-33.33%); }
-  to { transform: translateX(0); }
-}
-
-.animate-marquee-left {
-  animation: marquee-left 50s linear infinite;
-}
-
-.animate-marquee-right {
-  animation: marquee-right 50s linear infinite;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

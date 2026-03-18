@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Menu, X, LogOut, LayoutDashboard, Gift, Settings, Trophy, Sparkles } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, Gift, Trophy } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
@@ -12,7 +12,6 @@ import {
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
-  DropdownMenuLabel, 
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
@@ -35,7 +34,6 @@ export function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Rewards', href: '/#trending' },
-    { name: 'Quiz & Earn', href: '/quiz-earn', highlight: true },
     { name: 'Leaderboard', href: '/leaderboard' },
     { name: 'Blog', href: '/blog' },
   ];
@@ -48,31 +46,22 @@ export function Header() {
         "h-14 md:h-[72px] flex items-center px-4 md:px-8"
       )}>
         <div className="w-full flex items-center justify-between max-w-[1400px] mx-auto">
-          {/* Logo Section */}
           <Link href="/" className="flex items-center group shrink-0 h-8 md:h-10">
             <Logo className="h-full" />
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 href={link.href}
-                className={cn(
-                  "text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-1.5",
-                  link.highlight 
-                    ? "text-primary hover:text-white bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-lg" 
-                    : "text-white/60 hover:text-primary"
-                )}
+                className="text-[11px] font-black uppercase tracking-[0.2em] transition-all text-white/60 hover:text-primary"
               >
-                {link.highlight && <Sparkles className="w-3 h-3 animate-pulse" />}
                 {link.name}
               </Link>
             ))}
           </nav>
 
-          {/* User Profile / Desktop Actions */}
           <div className="hidden lg:flex items-center gap-4">
             {!isUserLoading && (
               <>
@@ -130,7 +119,6 @@ export function Header() {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button 
             className="lg:hidden text-white p-2" 
             onClick={() => setIsOpen(!isOpen)}
@@ -139,7 +127,6 @@ export function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation Dropdown */}
         <div className={cn(
           "lg:hidden fixed top-14 left-0 right-0 overflow-hidden transition-all duration-500 ease-in-out bg-black/95 backdrop-blur-2xl border-b border-white/5 shadow-2xl z-40",
           isOpen ? "max-h-screen opacity-100 py-8" : "max-h-0 opacity-0"
@@ -150,13 +137,9 @@ export function Header() {
                 key={link.name} 
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={cn(
-                  "text-xl font-black transition-colors py-4 uppercase tracking-widest border-b border-white/5 last:border-0 flex items-center justify-between",
-                  link.highlight ? "text-primary" : "text-white/70 hover:text-primary"
-                )}
+                className="text-xl font-black transition-colors py-4 uppercase tracking-widest border-b border-white/5 last:border-0"
               >
                 {link.name}
-                {link.highlight && <Sparkles className="w-5 h-5 animate-pulse" />}
               </Link>
             ))}
             <div className="pt-8 flex flex-col gap-4">
