@@ -6,14 +6,12 @@ import { useUser, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { doc, collection, query, where, orderBy, limit, increment, serverTimestamp, setDoc, getDocs } from 'firebase/firestore';
+import { doc, collection, query, where, orderBy, limit, serverTimestamp, setDoc } from 'firebase/firestore';
 import { 
   Trophy, 
   DollarSign, CheckCircle, Users, Sparkles, 
   History, Wallet, Share2, Copy, Check, MousePointer2, 
-  ArrowRight, Clock, IdCard, CreditCard, 
-  AlertTriangle, CheckCircle2, AlertCircle, ExternalLink, 
-  RefreshCw, Loader2, Settings, Zap, ShieldCheck
+  ArrowRight, Clock, IdCard, Loader2, Settings, Zap, ShieldCheck, User
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -27,17 +25,6 @@ import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
@@ -46,9 +33,8 @@ export default function Dashboard() {
   const [isCopied, setIsCopied] = useState(false);
   const [origin, setOrigin] = useState('');
   
-  // Settings States
+  // Profile States
   const [isSaving, setIsSaving] = useState(false);
-  const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
   const [displayNameInput, setDisplayNameInput] = useState('');
   const [addressInput, setAddressInput] = useState('');
@@ -108,102 +94,50 @@ export default function Dashboard() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleSaveProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userRef || !firestore || isSaving) return;
 
     setError(null);
-    setIsSaving(true);
-
     const cleanUsername = usernameInput.trim().toLowerCase();
     
+    // Validation
     if (!cleanUsername) {
       setError("Username is required");
-      setIsSaving(false);
       return;
     }
-
     if (cleanUsername.length < 4) {
       setError("Username must be at least 4 characters");
-      setIsSaving(false);
+      return;
+    }
+    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
+      setError("Username must be alphanumeric (letters and numbers only)");
       return;
     }
 
-    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
-      setError("Username must be alphanumeric");
-      setIsSaving(false);
-      return;
-    }
+    setIsSaving(true);
 
     try {
-      if (!userData?.username || userData.username !== cleanUsername) {
-        const q = query(collection(firestore, 'users'), where('username', '==', cleanUsername), limit(1));
-        const snap = await getDocs(q);
-        if (!snap.empty) {
-          setError("Username already taken");
-          setIsSaving(false);
-          return;
-        }
-      }
-
       await setDoc(userRef, {
         username: cleanUsername,
         displayName: displayNameInput,
         physicalAddress: addressInput,
-        updatedAt: new Date().toISOString()
+        updatedAt: serverTimestamp()
       }, { merge: true });
       
       toast({
         title: "Profile Saved",
-        description: "Your information has been updated.",
+        description: "Your information has been updated successfully.",
       });
     } catch (err) {
+      console.error(err);
       toast({
         variant: "destructive",
         title: "Save Error",
-        description: "Could not save profile details.",
+        description: "Could not save profile details. Please try again.",
       });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleConnectWallet = async () => {
-    if (!userRef) return;
-
-    if (userData?.lastWalletChangeAt) {
-      const lastChange = new Date(userData.lastWalletChangeAt).getTime();
-      const now = new Date().getTime();
-      if (now - lastChange < 24 * 60 * 60 * 1000) {
-        toast({ 
-          variant: "destructive", 
-          title: "Cooldown Active", 
-          description: "You can only change your wallet once every 24 hours." 
-        });
-        return;
-      }
-    }
-
-    setIsConnectingWallet(true);
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const mockAddress = `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`;
-      
-      await setDoc(userRef, {
-        walletAddress: mockAddress,
-        lastWalletChangeAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
-
-      toast({ 
-        title: "Wallet Connected", 
-        description: `Address ${mockAddress} is now set for payouts.` 
-      });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Connection Failed", description: "Wallet connection was cancelled." });
-    } finally {
-      setIsConnectingWallet(false);
     }
   };
 
@@ -235,7 +169,7 @@ export default function Dashboard() {
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mb-4">
                 <Trophy className="w-3.5 h-3.5 text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                  {userData?.username ? `PLAYER: ${userData.username}` : 'Set your identity'}
+                  {userData?.username ? `PLAYER: ${userData.username}` : 'Set your profile'}
                 </span>
               </div>
               <h1 className="font-headline text-3xl sm:text-4xl md:text-6xl font-black text-white mb-2 uppercase tracking-tight leading-none">
@@ -254,7 +188,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full">
                 <ShieldCheck className="w-3 h-3 text-green-500" />
                 <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em]">
-                  Fast payouts • Most within 1 hr • Max 24 hrs
+                  Fast payouts • Secure Rewards • Verified Safe
                 </span>
               </div>
             </div>
@@ -393,20 +327,55 @@ export default function Dashboard() {
                     </Button>
                   </div>
 
+                  {/* Simplified User Profile Section */}
                   <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/5 bg-white/[0.01]">
-                    <h3 className="text-lg md:text-xl font-black text-white mb-6 uppercase tracking-tight">Status</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                        <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">Account</span>
-                        <span className="text-[9px] font-black text-green-500 uppercase tracking-widest flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Verified
-                        </span>
+                    <h3 className="text-lg md:text-xl font-black text-white mb-6 uppercase tracking-tight flex items-center gap-3">
+                      <User className="w-5 h-5 text-primary" /> User Profile
+                    </h3>
+                    
+                    <form onSubmit={handleSaveProfile} className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Username (Required)</Label>
+                        <Input 
+                          id="username"
+                          value={usernameInput}
+                          onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                          placeholder="Enter username"
+                          className="bg-white/5 border-white/10 h-12 rounded-xl text-white font-bold"
+                        />
+                        {error && <p className="text-[10px] text-red-500 font-bold uppercase">{error}</p>}
                       </div>
-                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                        <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">Withdrawals</span>
-                        <span className="text-[9px] font-black text-primary uppercase tracking-widest">Enabled</span>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Full Name</Label>
+                        <Input 
+                          id="displayName"
+                          value={displayNameInput}
+                          onChange={(e) => setDisplayNameInput(e.target.value)}
+                          placeholder="John Doe"
+                          className="bg-white/5 border-white/10 h-12 rounded-xl text-white font-bold"
+                        />
                       </div>
-                    </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="address" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Address</Label>
+                        <Textarea 
+                          id="address"
+                          value={addressInput}
+                          onChange={(e) => setAddressInput(e.target.value)}
+                          placeholder="Mailing address..."
+                          className="bg-white/5 border-white/10 rounded-xl text-white h-24"
+                        />
+                      </div>
+
+                      <Button 
+                        type="submit" 
+                        disabled={isSaving}
+                        className="w-full bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest h-12 rounded-xl"
+                      >
+                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Profile"}
+                      </Button>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -465,180 +434,6 @@ export default function Dashboard() {
               </div>
             </TabsContent>
           </Tabs>
-
-          {/* Account Settings Section */}
-          <div className="mt-20 scroll-mt-24" id="settings">
-            <div className="flex items-center gap-3 mb-10">
-              <div className="p-2.5 bg-white/5 rounded-xl border border-white/10">
-                <Settings className="w-5 h-5 text-white/60" />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Account <span className="text-primary">Settings</span></h2>
-                <p className="text-muted-foreground text-xs uppercase font-bold tracking-widest">Manage your identity and payout methods</p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Profile Card */}
-              <div className="glass-card rounded-[2.5rem] p-8 md:p-10 border-white/5 bg-[#0a0a0a]">
-                <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tight">
-                  <IdCard className="w-5 h-5 text-primary" /> Profile Node
-                </h3>
-                
-                <form onSubmit={handleSaveProfile} className="space-y-8">
-                  {/* Username Section */}
-                  <div className="pb-8 border-b border-white/5 space-y-4">
-                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Unique Handle</Label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
-                      <Input 
-                        value={usernameInput}
-                        onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                        disabled={!!userData?.username}
-                        className={cn(
-                          "bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold transition-all",
-                          error && "border-red-500/50 focus-visible:ring-red-500/20",
-                          !!userData?.username && "opacity-50 grayscale"
-                        )} 
-                        placeholder="choose_handle"
-                      />
-                    </div>
-                    {error && (
-                      <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
-                        <AlertCircle className="w-3.5 h-3.5" /> {error}
-                      </p>
-                    )}
-                    {!userData?.username ? (
-                      <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mt-3 flex items-center gap-2">
-                        <AlertTriangle className="w-3.5 h-3.5" /> This handle is permanent.
-                      </p>
-                    ) : (
-                      <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-3 flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Identity Locked
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
-                      <Input 
-                        id="displayName" 
-                        value={displayNameInput}
-                        onChange={(e) => setDisplayNameInput(e.target.value)}
-                        placeholder="Your real name"
-                        className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address</Label>
-                      <Textarea 
-                        id="physicalAddress"
-                        value={addressInput}
-                        onChange={(e) => setAddressInput(e.target.value)}
-                        className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
-                        placeholder="For potential physical reward delivery..."
-                      />
-                    </div>
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    disabled={isSaving}
-                    className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full shadow-xl transition-all"
-                  >
-                    {isSaving ? (
-                      <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
-                    ) : (
-                      <><Check className="w-4 h-4 mr-2" /> Save Profile</>
-                    )}
-                  </Button>
-                </form>
-              </div>
-
-              {/* Payout Card */}
-              <div className="glass-card rounded-[2.5rem] p-8 md:p-10 border-white/5 bg-[#0a0a0a]">
-                <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tight">
-                  <CreditCard className="w-5 h-5 text-primary" /> Payout Method
-                </h3>
-
-                <div className="space-y-6">
-                  {/* Method Status */}
-                  <div className="p-8 rounded-[2rem] bg-primary/5 border-2 border-primary/20 relative overflow-hidden group">
-                    <div className="flex flex-col gap-6 relative z-10">
-                      <div className="flex items-center gap-5">
-                        <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-2xl">
-                          <Wallet className="w-8 h-8 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-xl font-black text-white uppercase tracking-tight">Web3 Wallet</p>
-                          {userData?.walletAddress ? (
-                            <p className="text-[10px] text-green-500 uppercase font-black tracking-widest flex items-center gap-2 mt-1 bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20 w-fit">
-                              <CheckCircle2 className="w-3 h-3" /> {userData.walletAddress}
-                            </p>
-                          ) : (
-                            <span className="text-[10px] text-primary uppercase font-black tracking-[0.3em]">Ready to Connect</span>
-                          )}
-                        </div>
-                      </div>
-
-                      {!userData?.walletAddress ? (
-                        <Button 
-                          onClick={handleConnectWallet}
-                          disabled={isConnectingWallet}
-                          className="w-full bg-primary hover:bg-primary/90 text-white font-black h-14 rounded-xl shadow-xl shadow-primary/20 uppercase tracking-widest"
-                        >
-                          {isConnectingWallet ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <ExternalLink className="w-5 h-5 mr-2" />}
-                          Connect Wallet
-                        </Button>
-                      ) : (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" className="w-full border-white/10 hover:bg-white/5 text-white font-black uppercase tracking-widest h-14 rounded-xl transition-all">
-                              <RefreshCw className="w-4 h-4 mr-2" /> Change Payout Wallet
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-[#020617] border-white/10 rounded-[2.5rem] p-10 shadow-2xl">
-                            <AlertDialogHeader className="mb-6">
-                              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                                <AlertCircle className="w-8 h-8 text-primary" />
-                              </div>
-                              <AlertDialogTitle className="text-3xl font-black text-white uppercase tracking-tight text-center">Replace Wallet?</AlertDialogTitle>
-                              <AlertDialogDescription className="text-muted-foreground text-center text-base">
-                                Your current payout address will be completely removed and replaced. This cannot be undone. 
-                                <br /><br />
-                                <span className="text-yellow-500 font-bold uppercase text-xs tracking-widest">Note: max 1 change per 24 hours.</span>
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter className="sm:justify-center gap-4">
-                              <AlertDialogCancel className="bg-white/5 border-white/10 text-white font-bold rounded-xl px-8 h-14 hover:bg-white/10">Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={handleConnectWallet}
-                                className="bg-primary hover:bg-primary/90 text-white font-black rounded-xl px-10 h-14 uppercase tracking-widest"
-                              >
-                                Confirm & Replace
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      )}
-                    </div>
-                    <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-                      <Wallet className="w-48 h-48" />
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-white/[0.02] rounded-2xl border border-white/5">
-                    <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-3">Notice</h4>
-                    <p className="text-[10px] text-white/30 leading-relaxed italic">
-                      * Withdrawals are processed manually via the Ethereum (ERC-20) network. Ensure your address is correct; GameFlashX is not responsible for misdirected funds.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

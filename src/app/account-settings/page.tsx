@@ -8,18 +8,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { 
   User as UserIcon, 
-  Mail, 
-  Shield, 
-  Bell, 
   Loader2, 
-  CreditCard, 
-  Wallet, 
-  AlertTriangle,
-  CheckCircle2,
-  AlertCircle,
-  ExternalLink,
-  RefreshCw,
-  MapPin,
   IdCard,
   Check
 } from 'lucide-react';
@@ -27,30 +16,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
-import { doc, setDoc, query, collection, where, getDocs, limit } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-type SettingsTab = 'profile' | 'payout';
 
 export default function AccountSettings() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   const [isSaving, setIsSaving] = useState(false);
-  const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   
   // Input states
   const [usernameInput, setUsernameInput] = useState('');
@@ -79,106 +52,50 @@ export default function AccountSettings() {
     }
   }, [userData]);
 
-  const handleSaveProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userRef || !firestore || isSaving) return;
 
     setError(null);
-    setIsSaving(true);
-
     const cleanUsername = usernameInput.trim().toLowerCase();
     
-    // 1. Validation
+    // Validation
     if (!cleanUsername) {
       setError("Username is required");
-      setIsSaving(false);
       return;
     }
-
     if (cleanUsername.length < 4) {
       setError("Username must be at least 4 characters");
-      setIsSaving(false);
+      return;
+    }
+    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
+      setError("Username must be alphanumeric (letters and numbers only)");
       return;
     }
 
-    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
-      setError("Username can only contain letters and numbers");
-      setIsSaving(false);
-      return;
-    }
+    setIsSaving(true);
 
     try {
-      // 2. Uniqueness Check (Only if username is being set for the first time or changed)
-      if (!userData?.username || userData.username !== cleanUsername) {
-        const q = query(collection(firestore, 'users'), where('username', '==', cleanUsername), limit(1));
-        const snap = await getDocs(q);
-        if (!snap.empty) {
-          setError("This username is already taken");
-          setIsSaving(false);
-          return;
-        }
-      }
-
-      // 3. Save everything
       await setDoc(userRef, {
         username: cleanUsername,
         displayName: displayNameInput,
         physicalAddress: addressInput,
-        updatedAt: new Date().toISOString()
+        updatedAt: serverTimestamp()
       }, { merge: true });
       
       toast({
         title: "Profile Saved",
-        description: "Your account details have been updated successfully.",
+        description: "Your information has been updated successfully.",
       });
     } catch (err) {
       console.error(err);
       toast({
         variant: "destructive",
-        title: "Save Failed",
-        description: "There was an error saving your changes. Please try again.",
+        title: "Save Error",
+        description: "Could not save profile details. Please try again.",
       });
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleConnectWallet = async () => {
-    if (!userRef) return;
-
-    if (userData?.lastWalletChangeAt) {
-      const lastChange = new Date(userData.lastWalletChangeAt).getTime();
-      const now = new Date().getTime();
-      if (now - lastChange < 24 * 60 * 60 * 1000) {
-        toast({ 
-          variant: "destructive", 
-          title: "Cooldown Active", 
-          description: "You can only change your wallet once every 24 hours." 
-        });
-        return;
-      }
-    }
-
-    setIsConnectingWallet(true);
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const mockAddress = `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`;
-      
-      await setDoc(userRef, {
-        walletAddress: mockAddress,
-        lastWalletChangeAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
-
-      toast({ 
-        title: "Wallet Connected", 
-        description: `Address ${mockAddress} is now set for payouts.` 
-      });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Connection Failed", description: "Wallet connection was cancelled." });
-    } finally {
-      setIsConnectingWallet(false);
     }
   };
 
@@ -189,230 +106,79 @@ export default function AccountSettings() {
       <Header />
       
       <div className="pt-32 pb-20 px-4">
-        <div className="container mx-auto max-w-5xl">
+        <div className="container mx-auto max-w-2xl">
           <div className="mb-12">
             <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
-              My <span className="text-primary">Account</span>
+              User <span className="text-primary">Profile</span>
             </h1>
-            <p className="text-muted-foreground">Manage your identity, payout methods, and profile details.</p>
+            <p className="text-muted-foreground">Manage your personal identity and reward delivery details.</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-8">
-            <aside className="md:col-span-1 space-y-2">
-              {[
-                { id: 'profile', name: 'Profile', icon: <UserIcon className="w-4 h-4" /> },
-                { id: 'payout', name: 'Payout Settings', icon: <CreditCard className="w-4 h-4" /> },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as SettingsTab)}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-4 py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
-                    activeTab === item.id ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-white/40 hover:bg-white/5 hover:text-white"
-                  )}
-                >
-                  {item.icon}
-                  {item.name}
-                </button>
-              ))}
-            </aside>
-
-            <div className="md:col-span-3 space-y-8">
-              {activeTab === 'profile' && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/10 bg-[#0a0a0a]">
-                    <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tight">
-                      <IdCard className="w-5 h-5 text-primary" /> Personal Details
-                    </h3>
-                    
-                    <form onSubmit={handleSaveProfile} className="space-y-8">
-                      {/* Username Section */}
-                      <div className="space-y-4">
-                        <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Unique Username</Label>
-                        <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
-                          <Input 
-                            id="username" 
-                            value={usernameInput}
-                            onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                            disabled={!!userData?.username}
-                            className={cn(
-                              "bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold transition-all",
-                              error && "border-red-500/50 focus-visible:ring-red-500/20",
-                              !!userData?.username && "opacity-50 grayscale"
-                            )} 
-                            placeholder="choose_your_handle"
-                          />
-                        </div>
-                        {error && (
-                          <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
-                            <AlertCircle className="w-3.5 h-3.5" /> {error}
-                          </p>
-                        )}
-                        {!userData?.username ? (
-                          <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mt-3 flex items-center gap-2">
-                            <AlertTriangle className="w-3.5 h-3.5" /> This is permanent and cannot be changed later.
-                          </p>
-                        ) : (
-                          <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-3 flex items-center gap-2">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Identity locked
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="space-y-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
-                          <Input 
-                            id="displayName" 
-                            value={displayNameInput}
-                            onChange={(e) => setDisplayNameInput(e.target.value)}
-                            placeholder="John Doe"
-                            className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address (Optional)</Label>
-                          <Textarea 
-                            id="physicalAddress"
-                            value={addressInput}
-                            onChange={(e) => setAddressInput(e.target.value)}
-                            className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
-                            placeholder="Enter your address for potential physical rewards..."
-                          />
-                        </div>
-                      </div>
-
-                      <Button 
-                        type="submit" 
-                        disabled={isSaving}
-                        className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full md:w-auto shadow-xl transition-all"
-                      >
-                        {isSaving ? (
-                          <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
-                        ) : (
-                          <><Check className="w-4 h-4 mr-2" /> Save Profile</>
-                        )}
-                      </Button>
-                    </form>
-                  </div>
+          <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/10 bg-[#0a0a0a]">
+            <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tight">
+              <IdCard className="w-5 h-5 text-primary" /> Personal Details
+            </h3>
+            
+            <form onSubmit={handleSaveProfile} className="space-y-8">
+              {/* Username Section */}
+              <div className="space-y-4">
+                <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Username (Required)</Label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
+                  <Input 
+                    id="username" 
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                    className={cn(
+                      "bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold transition-all",
+                      error && "border-red-500/50 focus-visible:ring-red-500/20"
+                    )} 
+                    placeholder="Enter username"
+                  />
                 </div>
-              )}
+                {error && (
+                  <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2">
+                    {error}
+                  </p>
+                )}
+              </div>
 
-              {activeTab === 'payout' && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/10 bg-[#0a0a0a]">
-                    <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 uppercase tracking-tight">
-                      <CreditCard className="w-5 h-5 text-primary" /> Payout Settings
-                    </h3>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 opacity-30 grayscale pointer-events-none">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
-                            <span className="font-black text-white italic">PP</span>
-                          </div>
-                          <div>
-                            <p className="font-bold text-white uppercase tracking-tight">PayPal</p>
-                            <span className="text-[9px] text-white/40 uppercase font-black tracking-[0.2em]">Currently Unavailable</span>
-                          </div>
-                        </div>
-                        <div className="px-3 py-1 rounded-full border border-white/10 text-[8px] font-black text-white/20 uppercase tracking-widest">
-                          Inactive
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 opacity-30 grayscale pointer-events-none">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
-                            <span className="font-black text-white">$</span>
-                          </div>
-                          <div>
-                            <p className="font-bold text-white uppercase tracking-tight">Cash App</p>
-                            <span className="text-[9px] text-white/40 uppercase font-black tracking-[0.2em]">Currently Unavailable</span>
-                          </div>
-                        </div>
-                        <div className="px-3 py-1 rounded-full border border-white/10 text-[8px] font-black text-white/20 uppercase tracking-widest">
-                          Inactive
-                        </div>
-                      </div>
-
-                      <div className="p-8 rounded-[2rem] bg-primary/5 border-2 border-primary/20 relative overflow-hidden group">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 relative z-10">
-                          <div className="flex items-center gap-5">
-                            <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-2xl">
-                              <Wallet className="w-8 h-8 text-primary" />
-                            </div>
-                            <div>
-                              <p className="text-xl font-black text-white uppercase tracking-tight">Crypto Wallet (Web3)</p>
-                              {userData?.walletAddress ? (
-                                <p className="text-[10px] text-green-500 uppercase font-black tracking-widest flex items-center gap-2 mt-1 bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20 w-fit">
-                                  <CheckCircle2 className="w-3 h-3" /> Connected: {userData.walletAddress}
-                                </p>
-                              ) : (
-                                <span className="text-[10px] text-primary uppercase font-black tracking-[0.3em]">Method Available</span>
-                              )}
-                            </div>
-                          </div>
-
-                          {!userData?.walletAddress ? (
-                            <Button 
-                              onClick={handleConnectWallet}
-                              disabled={isConnectingWallet}
-                              className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-14 rounded-xl shadow-xl shadow-primary/20 uppercase tracking-widest"
-                            >
-                              {isConnectingWallet ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <ExternalLink className="w-5 h-5 mr-2" />}
-                              Connect Wallet
-                            </Button>
-                          ) : (
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button variant="outline" className="border-white/10 hover:bg-white/5 text-white font-black uppercase tracking-widest h-14 rounded-xl px-8 transition-all">
-                                  <RefreshCw className="w-4 h-4 mr-2" /> Change Wallet
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="bg-[#020617] border-white/10 rounded-[2.5rem] p-10 shadow-2xl">
-                                <AlertDialogHeader className="mb-6">
-                                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                                    <AlertCircle className="w-8 h-8 text-primary" />
-                                  </div>
-                                  <AlertDialogTitle className="text-3xl font-black text-white uppercase tracking-tight text-center">Change Payout Wallet?</AlertDialogTitle>
-                                  <AlertDialogDescription className="text-muted-foreground text-center text-base">
-                                    Your current wallet will be removed and replaced with a new one. This action cannot be undone. 
-                                    <br /><br />
-                                    <span className="text-yellow-500 font-bold uppercase text-xs tracking-widest">Note: max 1 change every 24 hours.</span>
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter className="sm:justify-center gap-4">
-                                  <AlertDialogCancel className="bg-white/5 border-white/10 text-white font-bold rounded-xl px-8 h-14 hover:bg-white/10">Cancel</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={handleConnectWallet}
-                                    className="bg-primary hover:bg-primary/90 text-white font-black rounded-xl px-10 h-14 uppercase tracking-widest"
-                                  >
-                                    Confirm & Replace
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
-                        </div>
-                        <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-                          <Wallet className="w-48 h-48" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-10 p-6 bg-white/[0.02] rounded-2xl border border-white/5">
-                      <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-3">Security & Processing</h4>
-                      <p className="text-[10px] text-white/30 leading-relaxed italic">
-                        * Withdrawal requests are processed manually within 24-48 hours. Crypto transfers use the Ethereum (ERC-20) network. Ensure your address is accurate; GameFlashX is not responsible for funds sent to incorrect addresses.
-                      </p>
-                    </div>
-                  </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
+                  <Input 
+                    id="displayName" 
+                    value={displayNameInput}
+                    onChange={(e) => setDisplayNameInput(e.target.value)}
+                    placeholder="John Doe"
+                    className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
+                  />
                 </div>
-              )}
-            </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address</Label>
+                  <Textarea 
+                    id="physicalAddress"
+                    value={addressInput}
+                    onChange={(e) => setAddressInput(e.target.value)}
+                    className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
+                    placeholder="Enter your address for reward delivery..."
+                  />
+                </div>
+              </div>
+
+              <Button 
+                type="submit" 
+                disabled={isSaving}
+                className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full shadow-xl transition-all"
+              >
+                {isSaving ? (
+                  <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
+                ) : (
+                  <><Check className="w-4 h-4 mr-2" /> Save Profile</>
+                )}
+              </Button>
+            </form>
           </div>
         </div>
       </div>
