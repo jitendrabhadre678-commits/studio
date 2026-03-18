@@ -5,17 +5,16 @@ import { useAuth, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { getRedirectResult } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 /**
- * Handles Firebase Auth redirect results and enforces mandatory username setup.
+ * Handles Firebase Auth redirect results and basic user initialization.
  */
 export function AuthRedirectListener() {
   const auth = useAuth();
   const db = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     const handleRedirect = async () => {
@@ -38,13 +37,6 @@ export function AuthRedirectListener() {
               offersCompleted: 0,
               accountStatus: 'active'
             }, { merge: true });
-            
-            router.push('/setup-username');
-          } else {
-            const data = userSnap.data();
-            if (!data.username && pathname !== '/setup-username') {
-              router.push('/setup-username');
-            }
           }
           
           toast({ 
@@ -58,21 +50,7 @@ export function AuthRedirectListener() {
     };
 
     handleRedirect();
-  }, [auth, db, toast, router, pathname]);
-
-  // Global username check guard
-  useEffect(() => {
-    const checkUsername = async () => {
-      if (auth.currentUser && pathname !== '/setup-username' && pathname !== '/' && !pathname.startsWith('/blog') && !pathname.startsWith('/reviews')) {
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists() && !userSnap.data().username) {
-          router.push('/setup-username');
-        }
-      }
-    };
-    checkUsername();
-  }, [auth.currentUser, pathname, db, router]);
+  }, [auth, db, toast, router]);
 
   return null;
 }

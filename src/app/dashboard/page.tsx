@@ -9,8 +9,7 @@ import { doc, collection, query, where, orderBy, limit } from 'firebase/firestor
 import { 
   Trophy, 
   DollarSign, CheckCircle, Users, Sparkles, 
-  History, Wallet, Share2, Copy, Check, MousePointer2, 
-  ArrowRight, Clock, Zap, ShieldCheck
+  History, Wallet, Share2, Copy, Check, Clock, Zap, ShieldCheck
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -46,14 +45,7 @@ export default function Dashboard() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
-
-  // Redirect if username is missing
-  useEffect(() => {
-    if (userData && !userData.username && !isUserDataLoading) {
-      router.push('/setup-username');
-    }
-  }, [userData, isUserDataLoading, router]);
+  const { data: userData } = useDoc(userRef);
 
   const transactionsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -83,7 +75,7 @@ export default function Dashboard() {
     return isNaN(date.getTime()) ? '...' : date.toLocaleDateString();
   };
 
-  if (isUserLoading || !user || !userData?.username) return null;
+  if (isUserLoading || !user) return null;
 
   const balance = userData?.balance || 0;
   const totalEarnings = userData?.totalEarnings || 0;
@@ -102,14 +94,14 @@ export default function Dashboard() {
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mb-4">
                 <Trophy className="w-3.5 h-3.5 text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                  PLAYER: {userData.username}
+                  PLAYER CENTER
                 </span>
               </div>
               <h1 className="font-headline text-3xl sm:text-4xl md:text-6xl font-black text-white mb-2 uppercase tracking-tight leading-none">
-                Welcome, {userData.username}
+                Welcome back
               </h1>
               <p className="text-muted-foreground text-sm font-bold uppercase tracking-widest text-primary">
-                Level: {offersCompleted > 10 ? 'Elite Pro' : 'Rookie'}
+                {user.email}
               </p>
             </div>
             
@@ -128,12 +120,12 @@ export default function Dashboard() {
           </div>
 
           <Tabs defaultValue="overview" className="space-y-8">
-            <TabsList className="bg-white/5 border border-white/10 p-1 h-12 md:h-14 rounded-2xl w-full md:w-auto overflow-x-auto scrollbar-hide">
-              <TabsTrigger value="overview" className="rounded-xl px-6 md:px-8 font-black uppercase tracking-widest text-[9px] md:text-[10px] data-[state=active]:bg-primary transition-all">Overview</TabsTrigger>
-              <TabsTrigger value="activity" className="rounded-xl px-6 md:px-8 font-black uppercase tracking-widest text-[9px] md:text-[10px] data-[state=active]:bg-primary transition-all">Activity</TabsTrigger>
+            <TabsList className="bg-white/5 border border-white/10 p-1 h-12 md:h-14 rounded-2xl w-full md:w-auto">
+              <TabsTrigger value="overview" className="rounded-xl px-6 md:px-8 font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-primary transition-all">Overview</TabsTrigger>
+              <TabsTrigger value="activity" className="rounded-xl px-6 md:px-8 font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-primary transition-all">Activity</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500">
+            <TabsContent value="overview" className="space-y-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {[
                   { label: 'Balance', val: `$${balance.toFixed(2)}`, icon: <Wallet className="text-primary" />, sub: 'Available' },
@@ -167,8 +159,8 @@ export default function Dashboard() {
                       </div>
                       <Progress value={((offersCompleted % 10) / 10) * 100} className="h-3 bg-white/5 rounded-full" />
                     </div>
-                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white font-black h-14 rounded-2xl shadow-xl shadow-primary/20">
-                      <Link href="/#trending">Start New Tasks <ArrowRight className="ml-2 w-5 h-5" /></Link>
+                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white font-black h-14 rounded-2xl shadow-xl">
+                      <Link href="/#trending">Start New Tasks</Link>
                     </Button>
                   </div>
                 </div>
