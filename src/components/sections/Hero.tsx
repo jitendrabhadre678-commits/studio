@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,13 @@ export function Hero() {
       <div className="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto relative z-10">
+        {/* Premium Badge */}
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-[10px] border border-white/10 mb-4 animate-fade-in-up">
+          <span className="text-[10px] md:text-[12px] font-semibold text-white tracking-[0.5px] uppercase">
+            ⚡ Premium Rewards Network
+          </span>
+        </div>
+
         <h1 className="font-headline text-4xl md:text-7xl font-black mb-6 leading-none text-white uppercase tracking-tight">
           UNLOCK FREE GIFT CARD & <br />
           <span className="text-primary">PREMIUM REWARD</span>
