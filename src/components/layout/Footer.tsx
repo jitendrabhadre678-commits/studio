@@ -95,6 +95,7 @@ export function Footer() {
               <div className="space-y-4">
                 <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6">Community</h4>
                 <Link href="/blog" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Blog</Link>
+                <Link href="/reviews" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Reviews</Link>
                 <Link href="/leaderboard" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Winners</Link>
                 <Link href="/#faq" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Support</Link>
               </div>
