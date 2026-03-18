@@ -12,7 +12,8 @@ import {
   Check,
   Gift,
   User as UserIcon,
-  Wallet
+  Wallet,
+  Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,7 +31,7 @@ import { giftCards } from '@/lib/gift-cards';
 
 /**
  * @fileOverview Refined User Profile page.
- * Collects Gamer Tag, Full Name, Preferred Gift Card, and Payout Wallet.
+ * Collects Gamer Tag, Full Name, Preferred Gift Card, Payout Wallet, and Delivery Email.
  */
 
 export default function AccountSettings() {
@@ -44,6 +45,7 @@ export default function AccountSettings() {
   const [displayNameInput, setDisplayNameInput] = useState('');
   const [preferredCard, setPreferredCard] = useState('');
   const [walletAddressInput, setWalletAddressInput] = useState('');
+  const [payoutEmailInput, setPayoutEmailInput] = useState('');
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -66,6 +68,7 @@ export default function AccountSettings() {
       if (userData.displayName) setDisplayNameInput(userData.displayName);
       if (userData.preferredGiftCard) setPreferredCard(userData.preferredGiftCard);
       if (userData.walletAddress) setWalletAddressInput(userData.walletAddress);
+      if (userData.payoutEmail) setPayoutEmailInput(userData.payoutEmail);
     }
   }, [userData]);
 
@@ -81,6 +84,7 @@ export default function AccountSettings() {
         displayName: displayNameInput,
         preferredGiftCard: preferredCard,
         walletAddress: walletAddressInput,
+        payoutEmail: payoutEmailInput,
         updatedAt: serverTimestamp()
       }, { merge: true });
       
@@ -184,7 +188,7 @@ export default function AccountSettings() {
                 </h3>
 
                 {/* Wallet Address */}
-                <div className="space-y-2">
+                <div className="space-y-2 mb-6">
                   <Label htmlFor="walletAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Wallet Address (For Payouts)</Label>
                   <div className="relative">
                     <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
@@ -198,6 +202,25 @@ export default function AccountSettings() {
                   </div>
                   <p className="text-[9px] text-white/20 font-medium uppercase tracking-widest mt-2 ml-1">
                     * Ensure the address is correct. Payouts are irreversible once processed.
+                  </p>
+                </div>
+
+                {/* Payout Email */}
+                <div className="space-y-2">
+                  <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email for Digital Codes</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <Input 
+                      id="payoutEmail" 
+                      type="email"
+                      value={payoutEmailInput}
+                      onChange={(e) => setPayoutEmailInput(e.target.value)}
+                      placeholder="e.g. delivery@example.com"
+                      className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                    />
+                  </div>
+                  <p className="text-[9px] text-white/20 font-medium uppercase tracking-widest mt-2 ml-1">
+                    * Digital reward codes will be sent to this verified address.
                   </p>
                 </div>
               </div>
