@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useFirestore } from '@/firebase';
 import { collection, serverTimestamp, increment } from 'firebase/firestore';
@@ -12,15 +11,18 @@ import { cn } from '@/lib/utils';
 
 export function DailyBonus({ userRef, userData }: { userRef: any, userData: any }) {
   const [isClaiming, setIsClaiming] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const firestore = useFirestore();
   const { toast } = useToast();
 
   useEffect(() => {
-    setIsClient(true);
+    setMounted(true);
   }, []);
 
-  if (!isClient) return <div className="h-12 w-48 bg-white/5 animate-pulse rounded-xl" />;
+  // Prevent hydration mismatch by not rendering time-dependent UI until mounted
+  if (!mounted || !userData) {
+    return <div className="h-12 w-48 bg-white/5 rounded-xl animate-pulse" />;
+  }
 
   const lastLogin = userData?.lastLoginAt ? (userData.lastLoginAt.toDate ? userData.lastLoginAt.toDate() : new Date(userData.lastLoginAt)) : null;
   const today = new Date();

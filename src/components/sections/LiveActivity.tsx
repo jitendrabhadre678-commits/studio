@@ -11,9 +11,14 @@ const brands = ["Amazon", "Steam", "Roblox", "Netflix", "PayPal", "Fortnite"];
 export function LiveActivity() {
   const [notification, setNotification] = useState<any>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
+    
     const showNotification = () => {
+      if (!isMounted.current) return;
+
       const data = {
         name: names[Math.floor(Math.random() * names.length)],
         location: locations[Math.floor(Math.random() * locations.length)],
@@ -24,20 +29,18 @@ export function LiveActivity() {
       
       setNotification(data);
       
-      // Clear previous hide timeout if exists
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
       
-      // Hide after 5 seconds
-      hideTimeoutRef.current = setTimeout(() => setNotification(null), 5000);
+      hideTimeoutRef.current = setTimeout(() => {
+        if (isMounted.current) setNotification(null);
+      }, 5000);
     };
 
-    // Initial delay
     const initialTimer = setTimeout(showNotification, 3000);
-    
-    // Repeat every 15 seconds
     const interval = setInterval(showNotification, 15000);
 
     return () => {
+      isMounted.current = false;
       clearTimeout(initialTimer);
       clearInterval(interval);
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);

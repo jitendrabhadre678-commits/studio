@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,18 +18,18 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 const SEGMENTS = [
-  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, // 0
-  { label: '$0.05', value: 0.05, color: '#3b82f6', type: 'win' }, // 1
-  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, // 2
-  { label: '$0.10', value: 0.10, color: '#10b981', type: 'win' }, // 3
-  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, // 4
-  { label: '$0.25', value: 0.25, color: '#f59e0b', type: 'win' }, // 5
-  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, // 6
-  { label: '$0.50', value: 0.50, color: '#8b5cf6', type: 'win' }, // 7
-  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, // 8
-  { label: '$0.75', value: 0.75, color: '#ec4899', type: 'win' }, // 9
-  { label: '$0', value: 0, color: '#64748b', type: 'zero' },      // 10
-  { label: '$1.00', value: 1.00, color: '#fbbf24', type: 'jackpot' }, // 11
+  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, 
+  { label: '$0.05', value: 0.05, color: '#3b82f6', type: 'win' }, 
+  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, 
+  { label: '$0.10', value: 0.10, color: '#10b981', type: 'win' }, 
+  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, 
+  { label: '$0.25', value: 0.25, color: '#f59e0b', type: 'win' }, 
+  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, 
+  { label: '$0.50', value: 0.50, color: '#8b5cf6', type: 'win' }, 
+  { label: 'BAD LUCK', value: 0, color: '#ef4444', type: 'bad' }, 
+  { label: '$0.75', value: 0.75, color: '#ec4899', type: 'win' }, 
+  { label: '$0', value: 0, color: '#64748b', type: 'zero' },      
+  { label: '$1.00', value: 1.00, color: '#fbbf24', type: 'jackpot' }, 
 ];
 
 export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }) {
@@ -38,17 +37,19 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
   const [showResult, setShowResult] = useState(false);
   const [winningPrize, setWinningPrize] = useState<any>(null);
   const [currentRotation, setCurrentRotation] = useState(0);
-  const [isClient, setIsClient] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const controls = useAnimation();
   const firestore = useFirestore();
   const { toast } = useToast();
 
   useEffect(() => {
-    setIsClient(true);
+    setMounted(true);
   }, []);
 
-  if (!isClient) return <div className="h-96 w-full glass-card animate-pulse rounded-[2.5rem]" />;
+  if (!mounted || !userData) {
+    return <div className="h-96 w-full glass-card animate-pulse rounded-[2.5rem]" />;
+  }
 
   const lastSpin = userData?.lastSpinAt ? (userData.lastSpinAt.toDate ? userData.lastSpinAt.toDate() : new Date(userData.lastSpinAt)) : null;
   const today = new Date();
@@ -59,13 +60,13 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
     if (p < 70) {
       const badIndices = [0, 2, 4, 6, 8];
       return badIndices[Math.floor(Math.random() * badIndices.length)];
-    } else if (p < 80) return 10; // $0 (10%)
-    else if (p < 87) return 1;  // $0.05 (7%)
-    else if (p < 92) return 3;  // $0.10 (5%)
-    else if (p < 96) return 5;  // $0.25 (4%)
-    else if (p < 98) return 7;  // $0.50 (2%)
-    else if (p < 99) return 9;  // $0.75 (1%)
-    else return 11;             // $1.00 (1%)
+    } else if (p < 80) return 10; 
+    else if (p < 87) return 1;  
+    else if (p < 92) return 3;  
+    else if (p < 96) return 5;  
+    else if (p < 98) return 7;  
+    else if (p < 99) return 9;  
+    else return 11;             
   };
 
   const handleSpin = async () => {
