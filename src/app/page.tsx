@@ -3,7 +3,6 @@ import { Hero } from '@/components/sections/Hero';
 import { FeaturedRewards } from '@/components/sections/FeaturedRewards';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
 import { HowItWorks } from '@/components/sections/HowItWorks';
-import { Testimonials } from '@/components/sections/Testimonials';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { FAQ } from '@/components/sections/FAQ';
 import { TrustBadges } from '@/components/sections/TrustBadges';
@@ -49,8 +48,6 @@ export default function Home() {
       <TrendingRewards />
 
       <ReviewsSection />
-
-      <Testimonials />
 
       <CommunityHub />
 
