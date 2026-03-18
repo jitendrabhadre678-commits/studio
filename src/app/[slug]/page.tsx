@@ -110,7 +110,13 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
           <section id="coupons" className="scroll-mt-32 max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 block">Claim Center</span>
-              <h2 className="font-headline text-4xl md:text-5xl font-black text-white uppercase tracking-tight">Available <span className="text-primary">Reward Values</span></h2>
+              <h2 className="font-headline text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">Available <span className="text-primary">Reward Values</span></h2>
+              <p className="text-muted-foreground max-w-xl mx-auto mb-4">
+                Explore top gift cards and claim your rewards by completing quick and easy tasks. Fast, simple, and accessible anytime.
+              </p>
+              <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+                Secure process • Instant access • Verified rewards
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -119,7 +125,7 @@ export default async function GiftCardPage({ params }: { params: Promise<{ slug:
                   key={val}
                   brand={card.brand}
                   value={val}
-                  description={`Generate a unique digital reward code for ${card.brand} valued at ${val}.`}
+                  description={`Unlock your ${val} ${card.brand} gift card by completing a quick activity.`}
                 />
               ))}
             </div>

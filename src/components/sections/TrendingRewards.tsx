@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -31,8 +32,11 @@ export function TrendingRewards() {
             <h2 className="font-headline text-3xl md:text-6xl font-black mb-6 text-white leading-tight uppercase tracking-tight">
               Explore Our <span className="text-primary text-glow-pomegranate">Reward Gallery</span>
             </h2>
-            <p className="text-muted-foreground text-sm md:text-lg leading-relaxed">
-              Browse through our collection. Choose your brand, select your value, and start unlocking rewards instantly.
+            <p className="text-muted-foreground text-sm md:text-lg leading-relaxed mb-4">
+              Choose from a wide range of digital gift cards and premium rewards. Complete simple tasks and unlock your favorite brands in just a few steps.
+            </p>
+            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-4">
+              Trusted platform • Fast rewards • Easy steps
             </p>
           </div>
           
