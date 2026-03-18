@@ -24,6 +24,10 @@
           "type": "string",
           "description": "Unique, permanent username chosen by the user."
         },
+        "physicalAddress": {
+          "type": "string",
+          "description": "User's physical address for potential physical reward delivery."
+        },
         "walletAddress": {
           "type": "string",
           "description": "Connected crypto wallet address for payouts."
