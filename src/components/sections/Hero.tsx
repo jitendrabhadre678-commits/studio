@@ -16,7 +16,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative pt-12 md:pt-24 pb-20 px-4 text-center overflow-hidden">
+    <section className="relative pt-12 md:pt-24 pb-20 px-4 text-center">
       {/* Decorative Ambient Glows */}
       <div className="absolute top-1/4 -left-20 w-64 md:w-96 h-64 md:h-96 bg-[#FA4616]/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
