@@ -30,8 +30,8 @@ import { useToast } from '@/hooks/use-toast';
 import { giftCards } from '@/lib/gift-cards';
 
 /**
- * @fileOverview Refined User Profile page.
- * Merges personal identity and payout preferences into a single, reliable hub.
+ * @fileOverview Finalized User Profile page.
+ * Implements real-time fetching, auto-fill, and permanent Firestore updates.
  */
 
 export default function AccountSettings() {
@@ -46,28 +46,30 @@ export default function AccountSettings() {
   const [walletAddressInput, setWalletAddressInput] = useState('');
   const [payoutEmailInput, setPayoutEmailInput] = useState('');
 
+  // Memoize user reference for the useDoc hook
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
+  // Real-time document subscription
   const { data: userData, isLoading: isDataLoading } = useDoc(userRef);
 
-  // Redirect to home if not logged in
+  // Redirect unauthorized users
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.push('/');
     }
   }, [user, isUserLoading, router]);
 
-  // Sync database values to local state on load to ensure data is always visible
+  // Fetch and Auto-fill on Load
   useEffect(() => {
     if (userData) {
-      if (userData.username !== undefined) setUsernameInput(userData.username || '');
-      if (userData.displayName !== undefined) setDisplayNameInput(userData.displayName || '');
-      if (userData.preferredGiftCard !== undefined) setPreferredCard(userData.preferredGiftCard || '');
-      if (userData.walletAddress !== undefined) setWalletAddressInput(userData.walletAddress || '');
-      if (userData.payoutEmail !== undefined) setPayoutEmailInput(userData.payoutEmail || '');
+      setUsernameInput(userData.username || '');
+      setDisplayNameInput(userData.displayName || '');
+      setPreferredCard(userData.preferredGiftCard || '');
+      setWalletAddressInput(userData.walletAddress || '');
+      setPayoutEmailInput(userData.payoutEmail || '');
     }
   }, [userData]);
 
@@ -75,18 +77,28 @@ export default function AccountSettings() {
     e.preventDefault();
     if (!userRef || !firestore) return;
 
-    // Basic Email Validation for reward delivery
+    // Validation: Gamer Tag
+    if (usernameInput && usernameInput.length < 4) {
+      toast({
+        variant: "destructive",
+        title: "Username Too Short",
+        description: "Gamer Tag must be at least 4 characters.",
+      });
+      return;
+    }
+
+    // Validation: Email Format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (payoutEmailInput && !emailRegex.test(payoutEmailInput)) {
       toast({
         variant: "destructive",
         title: "Invalid Email Format",
-        description: "Please enter a valid email address for digital code delivery.",
+        description: "Please enter a valid email address for reward delivery.",
       });
       return;
     }
 
-    // Prepare data for permanent storage
+    // Prepare data for permanent storage (setDoc with merge)
     const updateData = {
       username: usernameInput,
       displayName: displayNameInput,
@@ -96,12 +108,14 @@ export default function AccountSettings() {
       updatedAt: serverTimestamp()
     };
 
-    // Use non-blocking utility for resilient background saving
+    // Permanent Update Logic
     setDocumentNonBlocking(userRef, updateData, { merge: true });
     
+    // Success Feedback with Branded Styling
     toast({
-      title: "Profile Updated",
-      description: "Your gaming identity and reward preferences have been permanently saved.",
+      title: "Profile Updated Successfully",
+      description: "Your personal and payout details have been permanently saved.",
+      className: "bg-[#FA4616] text-white border-none font-bold",
     });
   };
 
@@ -126,111 +140,113 @@ export default function AccountSettings() {
             <p className="text-muted-foreground">Manage your identity and reward delivery details in one secure location.</p>
           </div>
 
-          <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a] shadow-2xl">
-            <form onSubmit={handleSaveProfile} className="space-y-8">
-              {/* Identity Section */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
-                  <IdCard className="w-5 h-5 text-[#FA4616]" /> Personal Identity
-                </h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Gamer Tag / Username</Label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">@</span>
-                    <Input 
-                      id="username" 
-                      value={usernameInput}
-                      onChange={(e) => setUsernameInput(e.target.value.replace(/\s+/g, '').toLowerCase())}
-                      className="bg-white/5 border-white/10 h-14 rounded-2xl pl-10 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
-                      placeholder="Enter username"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Full Name</Label>
-                  <div className="relative">
-                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                    <Input 
-                      id="displayName" 
-                      value={displayNameInput}
-                      onChange={(e) => setDisplayNameInput(e.target.value)}
-                      placeholder="Enter your full name"
-                      className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Preferred Gift Card</Label>
-                  <Select value={preferredCard} onValueChange={setPreferredCard}>
-                    <SelectTrigger className="bg-white/5 border-white/10 h-14 rounded-2xl text-white font-bold focus:border-[#FA4616] focus:ring-0">
-                      <div className="flex items-center gap-3">
-                        <Gift className="w-4 h-4 text-white/20" />
-                        <SelectValue placeholder="Select a reward type" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#0a0a0a] border-white/10 rounded-xl">
-                      {giftCards.map((card) => (
-                        <SelectItem key={card.id} value={card.brand} className="text-white focus:bg-[#FA4616] focus:text-white rounded-lg">
-                          {card.brand}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+          <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a] shadow-2xl relative min-h-[400px]">
+            {isDataLoading && !userData ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm z-10 rounded-[2.5rem]">
+                <Loader2 className="w-10 h-10 text-[#FA4616] animate-spin" />
+                <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Syncing with database...</p>
               </div>
+            ) : (
+              <form onSubmit={handleSaveProfile} className="space-y-8 animate-in fade-in duration-500">
+                {/* Identity Section */}
+                <div className="space-y-6">
+                  <h3 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
+                    <IdCard className="w-5 h-5 text-[#FA4616]" /> Personal Identity
+                  </h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Gamer Tag / Username</Label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">@</span>
+                      <Input 
+                        id="username" 
+                        value={usernameInput}
+                        onChange={(e) => setUsernameInput(e.target.value.replace(/\s+/g, '').toLowerCase())}
+                        className="bg-white/5 border-white/10 h-14 rounded-2xl pl-10 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                        placeholder="Enter username"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              {/* Payout Section */}
-              <div className="pt-8 border-t border-white/5 space-y-6">
-                <h3 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
-                  <Wallet className="w-5 h-5 text-[#FA4616]" /> Payout Configuration
-                </h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Full Name</Label>
+                    <div className="relative">
+                      <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                      <Input 
+                        id="displayName" 
+                        value={displayNameInput}
+                        onChange={(e) => setDisplayNameInput(e.target.value)}
+                        placeholder="Enter your full name"
+                        className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                      />
+                    </div>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="walletAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Wallet Address (For Payouts)</Label>
-                  <div className="relative">
-                    <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                    <Input 
-                      id="walletAddress" 
-                      value={walletAddressInput}
-                      onChange={(e) => setWalletAddressInput(e.target.value)}
-                      placeholder="Enter your crypto wallet address"
-                      className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
-                    />
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Preferred Gift Card</Label>
+                    <Select value={preferredCard} onValueChange={setPreferredCard}>
+                      <SelectTrigger className="bg-white/5 border-white/10 h-14 rounded-2xl text-white font-bold focus:border-[#FA4616] focus:ring-0">
+                        <div className="flex items-center gap-3">
+                          <Gift className="w-4 h-4 text-white/20" />
+                          <SelectValue placeholder="Select a reward type" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0a0a0a] border-white/10 rounded-xl">
+                        {giftCards.map((card) => (
+                          <SelectItem key={card.id} value={card.brand} className="text-white focus:bg-[#FA4616] focus:text-white rounded-lg">
+                            {card.brand}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email Address (For receiving digital gift cards and codes)</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                    <Input 
-                      id="payoutEmail" 
-                      type="email"
-                      value={payoutEmailInput}
-                      onChange={(e) => setPayoutEmailInput(e.target.value)}
-                      placeholder="delivery@example.com"
-                      className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
-                    />
+                {/* Payout Section */}
+                <div className="pt-8 border-t border-white/5 space-y-6">
+                  <h3 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
+                    <Wallet className="w-5 h-5 text-[#FA4616]" /> Payout Configuration
+                  </h3>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="walletAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Wallet Address (For Payouts)</Label>
+                    <div className="relative">
+                      <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                      <Input 
+                        id="walletAddress" 
+                        value={walletAddressInput}
+                        onChange={(e) => setWalletAddressInput(e.target.value)}
+                        placeholder="Enter your crypto wallet address"
+                        className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email Address (For receiving digital gift cards and codes)</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                      <Input 
+                        id="payoutEmail" 
+                        type="email"
+                        value={payoutEmailInput}
+                        onChange={(e) => setPayoutEmailInput(e.target.value)}
+                        placeholder="delivery@example.com"
+                        className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <Button 
-                type="submit" 
-                disabled={isDataLoading}
-                className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl w-full shadow-2xl shadow-[#FA4616]/20 transition-all active:scale-[0.98] mt-4"
-              >
-                {isDataLoading ? (
-                  <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Syncing...</>
-                ) : (
-                  <><Check className="w-5 h-5 mr-2" /> Save Profile</>
-                )}
-              </Button>
-            </form>
+                <Button 
+                  type="submit" 
+                  className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl w-full shadow-2xl shadow-[#FA4616]/20 transition-all active:scale-[0.98] mt-4"
+                >
+                  <Check className="w-5 h-5 mr-2" /> Save Profile
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </div>
