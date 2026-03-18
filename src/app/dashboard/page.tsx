@@ -11,7 +11,7 @@ import {
   Trophy, 
   DollarSign, CheckCircle, Users, Sparkles, 
   History, Wallet, Share2, Copy, Check, MousePointer2, 
-  ArrowRight, Clock, IdCard, Loader2, Settings, Zap, ShieldCheck, User
+  ArrowRight, Clock, Loader2, Zap, ShieldCheck, User
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -35,10 +35,8 @@ export default function Dashboard() {
   
   // Profile States
   const [isSaving, setIsSaving] = useState(false);
-  const [usernameInput, setUsernameInput] = useState('');
   const [displayNameInput, setDisplayNameInput] = useState('');
   const [addressInput, setAddressInput] = useState('');
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -76,9 +74,15 @@ export default function Dashboard() {
   const { data: referralData, isLoading: isReferralLoading } = useDoc(referralStatsRef);
   const { data: transactions } = useCollection(transactionsQuery);
 
+  // Redirect if username is missing
+  useEffect(() => {
+    if (userData && !userData.username && !isUserDataLoading) {
+      router.push('/setup-username');
+    }
+  }, [userData, isUserDataLoading, router]);
+
   useEffect(() => {
     if (userData) {
-      if (userData.username) setUsernameInput(userData.username);
       if (userData.displayName) setDisplayNameInput(userData.displayName);
       if (userData.physicalAddress) setAddressInput(userData.physicalAddress);
     }
@@ -98,28 +102,10 @@ export default function Dashboard() {
     e.preventDefault();
     if (!userRef || !firestore || isSaving) return;
 
-    setError(null);
-    const cleanUsername = usernameInput.trim().toLowerCase();
-    
-    // Validation
-    if (!cleanUsername) {
-      setError("Username is required");
-      return;
-    }
-    if (cleanUsername.length < 4) {
-      setError("Username must be at least 4 characters");
-      return;
-    }
-    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
-      setError("Username must be alphanumeric (letters and numbers only)");
-      return;
-    }
-
     setIsSaving(true);
 
     try {
       await setDoc(userRef, {
-        username: cleanUsername,
         displayName: displayNameInput,
         physicalAddress: addressInput,
         updatedAt: serverTimestamp()
@@ -148,7 +134,7 @@ export default function Dashboard() {
     return date.toLocaleDateString();
   };
 
-  if (isUserLoading || !user) return null;
+  if (isUserLoading || !user || !userData?.username) return null;
 
   const balance = userData?.balance || 0;
   const totalEarnings = userData?.totalEarnings || 0;
@@ -169,11 +155,11 @@ export default function Dashboard() {
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mb-4">
                 <Trophy className="w-3.5 h-3.5 text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                  {userData?.username ? `PLAYER: ${userData.username}` : 'Set your profile'}
+                  PLAYER: {userData.username}
                 </span>
               </div>
               <h1 className="font-headline text-3xl sm:text-4xl md:text-6xl font-black text-white mb-2 uppercase tracking-tight leading-none">
-                {userData?.username ? `Welcome, ${userData.username}` : 'Dashboard'}
+                Welcome, {userData.username}
               </h1>
               <p className="text-muted-foreground text-sm font-bold uppercase tracking-widest text-primary">
                 Level: {offersCompleted > 50 ? 'Gamer Legend' : offersCompleted > 10 ? 'Elite Pro' : 'Rookie'}
@@ -327,7 +313,7 @@ export default function Dashboard() {
                     </Button>
                   </div>
 
-                  {/* Simplified User Profile Section */}
+                  {/* User Profile Section */}
                   <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/5 bg-white/[0.01]">
                     <h3 className="text-lg md:text-xl font-black text-white mb-6 uppercase tracking-tight flex items-center gap-3">
                       <User className="w-5 h-5 text-primary" /> User Profile
@@ -335,15 +321,17 @@ export default function Dashboard() {
                     
                     <form onSubmit={handleSaveProfile} className="space-y-6">
                       <div className="space-y-2">
-                        <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Username (Required)</Label>
-                        <Input 
-                          id="username"
-                          value={usernameInput}
-                          onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                          placeholder="Enter username"
-                          className="bg-white/5 border-white/10 h-12 rounded-xl text-white font-bold"
-                        />
-                        {error && <p className="text-[10px] text-red-500 font-bold uppercase">{error}</p>}
+                        <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Username (Permanent)</Label>
+                        <div className="relative">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">@</span>
+                          <Input 
+                            id="username"
+                            value={userData.username}
+                            disabled
+                            className="bg-white/5 border-white/10 h-12 rounded-xl pl-8 text-white/40 font-bold cursor-not-allowed"
+                          />
+                        </div>
+                        <p className="text-[8px] text-white/20 font-bold uppercase">This username is permanent</p>
                       </div>
 
                       <div className="space-y-2">
@@ -358,12 +346,12 @@ export default function Dashboard() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="address" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Address</Label>
+                        <Label htmlFor="address" className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Mailing Address</Label>
                         <Textarea 
                           id="address"
                           value={addressInput}
                           onChange={(e) => setAddressInput(e.target.value)}
-                          placeholder="Mailing address..."
+                          placeholder="Mailing address for physical rewards..."
                           className="bg-white/5 border-white/10 rounded-xl text-white h-24"
                         />
                       </div>

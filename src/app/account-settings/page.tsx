@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { 
-  User as UserIcon, 
   Loader2, 
   IdCard,
   Check
@@ -26,17 +25,15 @@ export default function AccountSettings() {
   const [isSaving, setIsSaving] = useState(false);
   
   // Input states
-  const [usernameInput, setUsernameInput] = useState('');
   const [displayNameInput, setDisplayNameInput] = useState('');
   const [addressInput, setAddressInput] = useState('');
-  const [error, setError] = useState<string | null>(null);
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userData } = useDoc(userRef);
+  const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -44,9 +41,15 @@ export default function AccountSettings() {
     }
   }, [user, isUserLoading, router]);
 
+  // Redirect if username is missing
+  useEffect(() => {
+    if (userData && !userData.username && !isUserDataLoading) {
+      router.push('/setup-username');
+    }
+  }, [userData, isUserDataLoading, router]);
+
   useEffect(() => {
     if (userData) {
-      if (userData.username) setUsernameInput(userData.username);
       if (userData.displayName) setDisplayNameInput(userData.displayName);
       if (userData.physicalAddress) setAddressInput(userData.physicalAddress);
     }
@@ -56,28 +59,10 @@ export default function AccountSettings() {
     e.preventDefault();
     if (!userRef || !firestore || isSaving) return;
 
-    setError(null);
-    const cleanUsername = usernameInput.trim().toLowerCase();
-    
-    // Validation
-    if (!cleanUsername) {
-      setError("Username is required");
-      return;
-    }
-    if (cleanUsername.length < 4) {
-      setError("Username must be at least 4 characters");
-      return;
-    }
-    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
-      setError("Username must be alphanumeric (letters and numbers only)");
-      return;
-    }
-
     setIsSaving(true);
 
     try {
       await setDoc(userRef, {
-        username: cleanUsername,
         displayName: displayNameInput,
         physicalAddress: addressInput,
         updatedAt: serverTimestamp()
@@ -99,7 +84,7 @@ export default function AccountSettings() {
     }
   };
 
-  if (isUserLoading || !user) return null;
+  if (isUserLoading || !user || !userData?.username) return null;
 
   return (
     <main className="min-h-screen bg-[#000000]">
@@ -120,27 +105,21 @@ export default function AccountSettings() {
             </h3>
             
             <form onSubmit={handleSaveProfile} className="space-y-8">
-              {/* Username Section */}
+              {/* Username Section (Read-only) */}
               <div className="space-y-4">
-                <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Username (Required)</Label>
+                <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Username (Permanent)</Label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 font-bold">@</span>
                   <Input 
                     id="username" 
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                    className={cn(
-                      "bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold transition-all",
-                      error && "border-red-500/50 focus-visible:ring-red-500/20"
-                    )} 
-                    placeholder="Enter username"
+                    value={userData.username}
+                    disabled
+                    className="bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white/40 font-bold cursor-not-allowed" 
                   />
                 </div>
-                {error && (
-                  <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2">
-                    {error}
-                  </p>
-                )}
+                <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest mt-2">
+                  This handle is your permanent platform identity.
+                </p>
               </div>
 
               <div className="space-y-6">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -6,7 +7,7 @@ import { Menu, X, LogOut, LayoutDashboard, Gift, Trophy, Zap } from 'lucide-reac
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/brand/Logo';
-import { useUser, useAuth } from '@/firebase';
+import { useUser, useAuth, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { 
   DropdownMenu, 
@@ -18,13 +19,22 @@ import {
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { doc } from 'firebase/firestore';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [authModal, setAuthModal] = useState<{ open: boolean; tab: 'login' | 'signup' }>({ open: false, tab: 'login' });
-  const { user, isUserLoading } = useUser();
+  const { user, isUserLoading, firestore } = useUser();
   const auth = useAuth();
   const router = useRouter();
+
+  // Fetch real-time user data for username display
+  const userRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userData } = useDoc(userRef);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -97,13 +107,16 @@ export function Header() {
                           <Avatar className="h-full w-full">
                             <AvatarImage src={user.photoURL || undefined} />
                             <AvatarFallback className="bg-primary/20 text-primary font-black">
-                              {user.email?.charAt(0).toUpperCase()}
+                              {userData?.username?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         </div>
-                        <span className="text-sm font-bold text-white/90">
-                          {user.displayName || user.email?.split('@')[0]} ⌄
-                        </span>
+                        <div className="flex flex-col items-start leading-none">
+                          <span className="text-xs font-black text-white uppercase tracking-tighter">
+                            {userData?.username ? `@${userData.username}` : user.email?.split('@')[0]}
+                          </span>
+                          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-0.5">Player Profile ⌄</span>
+                        </div>
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56 bg-black/95 backdrop-blur-2xl border-white/10 rounded-2xl p-2 shadow-2xl" align="end">
