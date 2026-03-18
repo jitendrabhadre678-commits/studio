@@ -4,8 +4,10 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { reviews } from '@/lib/reviews';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Star, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ReviewsPage() {
   return (
