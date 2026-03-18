@@ -99,10 +99,10 @@ export function Hero() {
           </Button>
         </div>
 
-        {/* Smart Search Bar */}
+        {/* Smart Search Bar Container */}
         <div className="w-full max-w-2xl mx-auto relative px-4" ref={dropdownRef}>
           <div className={cn(
-            "relative glass-card flex items-center px-6 rounded-2xl border-white/10 shadow-2xl transition-all duration-300",
+            "relative glass-card flex items-center px-6 rounded-2xl border-white/10 shadow-2xl transition-all duration-300 z-[100]",
             isFocused && "border-primary/40 ring-1 ring-primary/20 bg-black/40"
           )}>
             <Search className={cn("w-6 h-6 mr-4 shrink-0 transition-colors", isFocused ? "text-primary" : "text-muted-foreground")} />
@@ -123,7 +123,7 @@ export function Hero() {
             )}
           </div>
 
-          {/* Search Dropdown - Absolute Positioned */}
+          {/* Search Dropdown - Absolute Positioned Floating Result */}
           <AnimatePresence>
             {isFocused && (
               <motion.div
@@ -131,9 +131,9 @@ export function Hero() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.98 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full left-4 right-4 mt-3 bg-[#0a0a0a] border border-white/10 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-[1000] overflow-hidden backdrop-blur-3xl"
+                className="absolute top-full left-4 right-4 mt-3 bg-[#0a0a0a] border border-white/10 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-[9999] overflow-hidden backdrop-blur-3xl"
               >
-                <div className="p-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+                <div className="p-2 max-h-[350px] overflow-y-auto custom-scrollbar">
                   {query.trim() === '' ? (
                     <div className="py-4 px-4">
                       <div className="flex items-center gap-2 mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
@@ -144,7 +144,7 @@ export function Hero() {
                           <button
                             key={card.id}
                             onClick={() => handleSelectReward(card.slug)}
-                            className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all text-left group"
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all text-left group border-b border-white/5 last:border-0"
                           >
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black" style={{ background: card.gradient }}>
@@ -164,7 +164,7 @@ export function Hero() {
                           <button
                             key={card.id}
                             onClick={() => handleSelectReward(card.slug)}
-                            className="flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-all text-left group"
+                            className="flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-all text-left group border-b border-white/5 last:border-0"
                           >
                             <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black" style={{ background: card.gradient }}>
