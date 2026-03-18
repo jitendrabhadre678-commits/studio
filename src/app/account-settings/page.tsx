@@ -76,6 +76,17 @@ export default function AccountSettings() {
     e.preventDefault();
     if (!userRef || !firestore || isSaving) return;
 
+    // Basic Email Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (payoutEmailInput && !emailRegex.test(payoutEmailInput)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Email Format",
+        description: "Please enter a valid email address for digital code delivery.",
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -90,7 +101,7 @@ export default function AccountSettings() {
       
       toast({
         title: "Profile Updated",
-        description: "Your gaming and payout details have been saved successfully.",
+        description: "Your gaming identity and payout preferences have been saved.",
       });
     } catch (err) {
       console.error("Save Error:", err);
@@ -118,11 +129,11 @@ export default function AccountSettings() {
       
       <div className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-2xl">
-          <div className="mb-12">
+          <div className="mb-12 text-center md:text-left">
             <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
               Player <span className="text-[#FA4616]">Profile</span>
             </h1>
-            <p className="text-muted-foreground">Customize your gaming identity and payout preferences.</p>
+            <p className="text-muted-foreground">Customize your gaming identity and reward delivery preferences.</p>
           </div>
 
           <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a]">
@@ -207,9 +218,9 @@ export default function AccountSettings() {
 
                 {/* Payout Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email for Digital Codes</Label>
+                  <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email Address (For receiving digital gift cards and codes)</Label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FA4616]" />
                     <Input 
                       id="payoutEmail" 
                       type="email"
@@ -220,7 +231,7 @@ export default function AccountSettings() {
                     />
                   </div>
                   <p className="text-[9px] text-white/20 font-medium uppercase tracking-widest mt-2 ml-1">
-                    * Digital reward codes will be sent to this verified address.
+                    * Digital reward codes will be sent to this verified delivery address.
                   </p>
                 </div>
               </div>
