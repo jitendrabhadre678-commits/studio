@@ -115,7 +115,7 @@
         },
         "status": {
           "type": "string",
-          "enum": ["completed", "pending", "failed"]
+          "enum": ["completed", "pending", "processing", "failed"]
         },
         "createdAt": {
           "type": "string",
@@ -124,6 +124,10 @@
         "recipientEmail": {
           "type": "string",
           "format": "email"
+        },
+        "walletAddress": {
+          "type": "string",
+          "description": "Public wallet address for crypto withdrawals."
         }
       },
       "required": ["id", "userId", "type", "amount", "status", "createdAt"]

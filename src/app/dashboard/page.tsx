@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -10,9 +11,9 @@ import {
   Trophy, 
   DollarSign, CheckCircle, Users, Sparkles, 
   History, Wallet, Share2, Copy, Check, MousePointer2, 
-  ArrowRight, Clock, IdCard, MapPin, CreditCard, 
+  ArrowRight, Clock, IdCard, CreditCard, 
   AlertTriangle, CheckCircle2, AlertCircle, ExternalLink, 
-  RefreshCw, Loader2, Settings
+  RefreshCw, Loader2, Settings, Zap, ShieldCheck
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -162,7 +163,6 @@ export default function Dashboard() {
 
     setIsConnectingWallet(true);
     
-    // Simulate wallet connection (MetaMask style)
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       const mockAddress = `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`;
@@ -223,9 +223,17 @@ export default function Dashboard() {
               </p>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-              <DailyBonus userRef={userRef} userData={userData} />
-              <WithdrawalModal balance={balance} userRef={userRef} />
+            <div className="flex flex-col items-center gap-4 w-full md:w-auto">
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                <DailyBonus userRef={userRef} userData={userData} />
+                <WithdrawalModal balance={balance} userRef={userRef} walletAddress={userData?.walletAddress} />
+              </div>
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full">
+                <ShieldCheck className="w-3 h-3 text-green-500" />
+                <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em]">
+                  Fast payouts • Most within 1 hr • Max 24 hrs
+                </span>
+              </div>
             </div>
           </div>
 
@@ -305,7 +313,19 @@ export default function Dashboard() {
                                 <p className="text-[11px] md:text-sm font-black text-white uppercase tracking-widest truncate">
                                   {tx.type === 'offer' ? `${tx.rewardName || 'Offer'}` : tx.type.replace('_', ' ')}
                                 </p>
-                                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">{formatDate(tx.createdAt)}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">{formatDate(tx.createdAt)}</p>
+                                  {tx.type === 'withdrawal' && (
+                                    <span className={cn(
+                                      "text-[8px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest border",
+                                      tx.status === 'completed' ? "bg-green-500/10 text-green-500 border-green-500/20" : 
+                                      tx.status === 'processing' ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" :
+                                      "bg-red-500/10 text-red-500 border-red-500/20"
+                                    )}>
+                                      {tx.status}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                             <span className={cn(
