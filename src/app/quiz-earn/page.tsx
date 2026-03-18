@@ -1,18 +1,37 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { QuizGame } from '@/components/quiz/QuizGame';
 
 /**
  * @fileOverview The main page for the Quiz & Earn feature.
- * Provides a highly engaging, gamified path to reward verification.
+ * Protected route: Only visible to authenticated users.
  */
 
-export const metadata = {
-  title: 'Quiz & Earn | GameFlashX Rewards',
-  description: 'Answer a few quick questions to qualify for premium gift cards and rewards.',
-};
-
 export default function QuizEarnPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect unauthorized users to home
+    if (!isUserLoading && !user) {
+      router.push('/');
+    }
+  }, [user, isUserLoading, router]);
+
+  // Prevent UI leak during loading or if unauthorized
+  if (isUserLoading || !user) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#000000] relative overflow-hidden">
       {/* Background Decorative Ambient Glows */}
