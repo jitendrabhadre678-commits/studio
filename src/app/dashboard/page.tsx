@@ -6,7 +6,7 @@ import { useUser, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { doc, collection, query, where, orderBy, limit, increment, serverTimestamp } from 'firebase/firestore';
+import { doc, collection, query, where, orderBy, limit, increment, serverTimestamp, setDoc, getDocs } from 'firebase/firestore';
 import { 
   Trophy, 
   DollarSign, CheckCircle, Users, Sparkles, 
@@ -27,7 +27,6 @@ import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,6 +50,9 @@ export default function Dashboard() {
   const [isSaving, setIsSaving] = useState(false);
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
+  const [displayNameInput, setDisplayNameInput] = useState('');
+  const [addressInput, setAddressInput] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -89,8 +91,10 @@ export default function Dashboard() {
   const { data: transactions } = useCollection(transactionsQuery);
 
   useEffect(() => {
-    if (userData?.username) {
-      setUsernameInput(userData.username);
+    if (userData) {
+      if (userData.username) setUsernameInput(userData.username);
+      if (userData.displayName) setDisplayNameInput(userData.displayName);
+      if (userData.physicalAddress) setAddressInput(userData.physicalAddress);
     }
   }, [userData]);
 
@@ -106,48 +110,67 @@ export default function Dashboard() {
 
   const handleSaveProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!userRef) return;
+    if (!userRef || !firestore || isSaving) return;
 
+    setError(null);
     setIsSaving(true);
-    const formData = new FormData(e.currentTarget);
-    const displayName = formData.get('displayName') as string;
-    const physicalAddress = formData.get('physicalAddress') as string;
 
-    updateDocumentNonBlocking(userRef, {
-      displayName,
-      physicalAddress,
-      updatedAt: new Date().toISOString()
-    });
+    const cleanUsername = usernameInput.trim().toLowerCase();
     
-    toast({
-      title: "Profile Updated",
-      description: "Your personal details have been saved.",
-    });
-    
-    setTimeout(() => setIsSaving(false), 800);
-  };
-
-  const handleSetUsername = async () => {
-    if (!userRef || userData?.username) return;
-    
-    if (usernameInput.length < 4) {
-      toast({ variant: "destructive", title: "Invalid Username", description: "Username must be at least 4 characters." });
+    if (!cleanUsername) {
+      setError("Username is required");
+      setIsSaving(false);
       return;
     }
 
-    setIsSaving(true);
-    updateDocumentNonBlocking(userRef, {
-      username: usernameInput,
-      updatedAt: new Date().toISOString()
-    });
-    toast({ title: "Username Set", description: `Your identity is now @${usernameInput}.` });
-    setIsSaving(false);
+    if (cleanUsername.length < 4) {
+      setError("Username must be at least 4 characters");
+      setIsSaving(false);
+      return;
+    }
+
+    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
+      setError("Username must be alphanumeric");
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      if (!userData?.username || userData.username !== cleanUsername) {
+        const q = query(collection(firestore, 'users'), where('username', '==', cleanUsername), limit(1));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setError("Username already taken");
+          setIsSaving(false);
+          return;
+        }
+      }
+
+      await setDoc(userRef, {
+        username: cleanUsername,
+        displayName: displayNameInput,
+        physicalAddress: addressInput,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+      
+      toast({
+        title: "Profile Saved",
+        description: "Your information has been updated.",
+      });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Save Error",
+        description: "Could not save profile details.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleConnectWallet = async () => {
     if (!userRef) return;
 
-    // Check 24h limit
     if (userData?.lastWalletChangeAt) {
       const lastChange = new Date(userData.lastWalletChangeAt).getTime();
       const now = new Date().getTime();
@@ -167,11 +190,11 @@ export default function Dashboard() {
       await new Promise(resolve => setTimeout(resolve, 1500));
       const mockAddress = `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`;
       
-      updateDocumentNonBlocking(userRef, {
+      await setDoc(userRef, {
         walletAddress: mockAddress,
         lastWalletChangeAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
+      }, { merge: true });
 
       toast({ 
         title: "Wallet Connected", 
@@ -462,31 +485,29 @@ export default function Dashboard() {
                   <IdCard className="w-5 h-5 text-primary" /> Profile Node
                 </h3>
                 
-                <div className="space-y-8">
+                <form onSubmit={handleSaveProfile} className="space-y-8">
                   {/* Username Section */}
-                  <div className="pb-8 border-b border-white/5">
-                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4 block">Unique Handle</Label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-grow">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
-                        <Input 
-                          value={usernameInput}
-                          onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                          disabled={!!userData?.username}
-                          className="bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold" 
-                          placeholder="choose_handle"
-                        />
-                      </div>
-                      {!userData?.username && (
-                        <Button 
-                          onClick={handleSetUsername}
-                          disabled={isSaving || usernameInput.length < 4}
-                          className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-14 rounded-xl uppercase tracking-widest"
-                        >
-                          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Set"}
-                        </Button>
-                      )}
+                  <div className="pb-8 border-b border-white/5 space-y-4">
+                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Unique Handle</Label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
+                      <Input 
+                        value={usernameInput}
+                        onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                        disabled={!!userData?.username}
+                        className={cn(
+                          "bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold transition-all",
+                          error && "border-red-500/50 focus-visible:ring-red-500/20",
+                          !!userData?.username && "opacity-50 grayscale"
+                        )} 
+                        placeholder="choose_handle"
+                      />
                     </div>
+                    {error && (
+                      <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                        <AlertCircle className="w-3.5 h-3.5" /> {error}
+                      </p>
+                    )}
                     {!userData?.username ? (
                       <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mt-3 flex items-center gap-2">
                         <AlertTriangle className="w-3.5 h-3.5" /> This handle is permanent.
@@ -498,41 +519,42 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* Profile Form */}
-                  <form onSubmit={handleSaveProfile} className="space-y-6">
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
-                        <Input 
-                          id="displayName" 
-                          name="displayName" 
-                          defaultValue={userData?.displayName || ''} 
-                          placeholder="Your real name"
-                          className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address</Label>
-                        <Textarea 
-                          id="physicalAddress"
-                          name="physicalAddress"
-                          defaultValue={userData?.physicalAddress || ''}
-                          className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
-                          placeholder="For potential physical reward delivery..."
-                        />
-                      </div>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
+                      <Input 
+                        id="displayName" 
+                        value={displayNameInput}
+                        onChange={(e) => setDisplayNameInput(e.target.value)}
+                        placeholder="Your real name"
+                        className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
+                      />
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      disabled={isSaving}
-                      className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full shadow-xl transition-all"
-                    >
-                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Profile"}
-                    </Button>
-                  </form>
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address</Label>
+                      <Textarea 
+                        id="physicalAddress"
+                        value={addressInput}
+                        onChange={(e) => setAddressInput(e.target.value)}
+                        className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
+                        placeholder="For potential physical reward delivery..."
+                      />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    disabled={isSaving}
+                    className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full shadow-xl transition-all"
+                  >
+                    {isSaving ? (
+                      <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
+                    ) : (
+                      <><Check className="w-4 h-4 mr-2" /> Save Profile</>
+                    )}
+                  </Button>
+                </form>
               </div>
 
               {/* Payout Card */}

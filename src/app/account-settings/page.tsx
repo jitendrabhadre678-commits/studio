@@ -20,15 +20,15 @@ import {
   ExternalLink,
   RefreshCw,
   MapPin,
-  IdCard
+  IdCard,
+  Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { doc } from 'firebase/firestore';
-import { updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { doc, setDoc, query, collection, where, getDocs, limit } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -51,7 +51,12 @@ export default function AccountSettings() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   const [isSaving, setIsSaving] = useState(false);
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
+  
+  // Input states
   const [usernameInput, setUsernameInput] = useState('');
+  const [displayNameInput, setDisplayNameInput] = useState('');
+  const [addressInput, setAddressInput] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -67,59 +72,72 @@ export default function AccountSettings() {
   }, [user, isUserLoading, router]);
 
   useEffect(() => {
-    if (userData?.username) {
-      setUsernameInput(userData.username);
+    if (userData) {
+      if (userData.username) setUsernameInput(userData.username);
+      if (userData.displayName) setDisplayNameInput(userData.displayName);
+      if (userData.physicalAddress) setAddressInput(userData.physicalAddress);
     }
   }, [userData]);
 
   const handleSaveProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!userRef) return;
+    if (!userRef || !firestore || isSaving) return;
 
+    setError(null);
     setIsSaving(true);
-    const formData = new FormData(e.currentTarget);
-    const displayName = formData.get('displayName') as string;
-    const physicalAddress = formData.get('physicalAddress') as string;
 
-    try {
-      updateDocumentNonBlocking(userRef, {
-        displayName,
-        physicalAddress,
-        updatedAt: new Date().toISOString()
-      });
-      
-      toast({
-        title: "Profile Updated",
-        description: "Your personal details have been saved.",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description: "There was an error saving your changes.",
-      });
-    } finally {
-      setTimeout(() => setIsSaving(false), 800);
-    }
-  };
-
-  const handleSetUsername = async () => {
-    if (!userRef || userData?.username) return;
+    const cleanUsername = usernameInput.trim().toLowerCase();
     
-    if (usernameInput.length < 4) {
-      toast({ variant: "destructive", title: "Invalid Username", description: "Username must be at least 4 characters." });
+    // 1. Validation
+    if (!cleanUsername) {
+      setError("Username is required");
+      setIsSaving(false);
       return;
     }
 
-    setIsSaving(true);
+    if (cleanUsername.length < 4) {
+      setError("Username must be at least 4 characters");
+      setIsSaving(false);
+      return;
+    }
+
+    if (!/^[a-z0-9]+$/.test(cleanUsername)) {
+      setError("Username can only contain letters and numbers");
+      setIsSaving(false);
+      return;
+    }
+
     try {
-      updateDocumentNonBlocking(userRef, {
-        username: usernameInput,
+      // 2. Uniqueness Check (Only if username is being set for the first time or changed)
+      if (!userData?.username || userData.username !== cleanUsername) {
+        const q = query(collection(firestore, 'users'), where('username', '==', cleanUsername), limit(1));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          setError("This username is already taken");
+          setIsSaving(false);
+          return;
+        }
+      }
+
+      // 3. Save everything
+      await setDoc(userRef, {
+        username: cleanUsername,
+        displayName: displayNameInput,
+        physicalAddress: addressInput,
         updatedAt: new Date().toISOString()
+      }, { merge: true });
+      
+      toast({
+        title: "Profile Saved",
+        description: "Your account details have been updated successfully.",
       });
-      toast({ title: "Username Set", description: `Your identity is now @${usernameInput}.` });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Could not set username." });
+    } catch (err) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "There was an error saving your changes. Please try again.",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -128,7 +146,6 @@ export default function AccountSettings() {
   const handleConnectWallet = async () => {
     if (!userRef) return;
 
-    // Check 24h limit
     if (userData?.lastWalletChangeAt) {
       const lastChange = new Date(userData.lastWalletChangeAt).getTime();
       const now = new Date().getTime();
@@ -144,16 +161,15 @@ export default function AccountSettings() {
 
     setIsConnectingWallet(true);
     
-    // Simulate wallet connection (MetaMask style)
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       const mockAddress = `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`;
       
-      updateDocumentNonBlocking(userRef, {
+      await setDoc(userRef, {
         walletAddress: mockAddress,
         lastWalletChangeAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
+      }, { merge: true });
 
       toast({ 
         title: "Wallet Connected", 
@@ -202,7 +218,6 @@ export default function AccountSettings() {
             </aside>
 
             <div className="md:col-span-3 space-y-8">
-              {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/10 bg-[#0a0a0a]">
@@ -210,33 +225,30 @@ export default function AccountSettings() {
                       <IdCard className="w-5 h-5 text-primary" /> Personal Details
                     </h3>
                     
-                    <div className="space-y-8">
+                    <form onSubmit={handleSaveProfile} className="space-y-8">
                       {/* Username Section */}
-                      <div className="pb-8 border-b border-white/5">
-                        <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4 block">Unique Username</Label>
-                        <div className="flex gap-2">
-                          <div className="relative flex-grow">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
-                            <Input 
-                              id="username" 
-                              value={usernameInput}
-                              onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
-                              disabled={!!userData?.username}
-                              className="bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold" 
-                              placeholder="choose_your_handle"
-                            />
-                          </div>
-                          {!userData?.username && (
-                            <Button 
-                              type="button" 
-                              onClick={handleSetUsername}
-                              disabled={isSaving || usernameInput.length < 4}
-                              className="bg-primary hover:bg-primary/90 text-white font-black px-8 h-14 rounded-xl uppercase tracking-widest"
-                            >
-                              Set
-                            </Button>
-                          )}
+                      <div className="space-y-4">
+                        <Label htmlFor="username" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] block">Unique Username</Label>
+                        <div className="relative">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">@</span>
+                          <Input 
+                            id="username" 
+                            value={usernameInput}
+                            onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                            disabled={!!userData?.username}
+                            className={cn(
+                              "bg-white/5 border-white/10 h-14 rounded-xl pl-8 text-white font-bold transition-all",
+                              error && "border-red-500/50 focus-visible:ring-red-500/20",
+                              !!userData?.username && "opacity-50 grayscale"
+                            )} 
+                            placeholder="choose_your_handle"
+                          />
                         </div>
+                        {error && (
+                          <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                            <AlertCircle className="w-3.5 h-3.5" /> {error}
+                          </p>
+                        )}
                         {!userData?.username ? (
                           <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mt-3 flex items-center gap-2">
                             <AlertTriangle className="w-3.5 h-3.5" /> This is permanent and cannot be changed later.
@@ -248,50 +260,46 @@ export default function AccountSettings() {
                         )}
                       </div>
 
-                      {/* Main Profile Form */}
-                      <form onSubmit={handleSaveProfile} className="space-y-6">
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
-                            <Input 
-                              id="displayName" 
-                              name="displayName" 
-                              defaultValue={userData?.displayName || ''} 
-                              placeholder="John Doe"
-                              className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address (Optional)</Label>
-                            <Textarea 
-                              id="physicalAddress"
-                              name="physicalAddress"
-                              defaultValue={userData?.physicalAddress || ''}
-                              className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
-                              placeholder="Enter your address for potential physical rewards..."
-                            />
-                          </div>
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="displayName" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Full Name</Label>
+                          <Input 
+                            id="displayName" 
+                            value={displayNameInput}
+                            onChange={(e) => setDisplayNameInput(e.target.value)}
+                            placeholder="John Doe"
+                            className="bg-white/5 border-white/10 h-14 rounded-xl text-white font-bold" 
+                          />
                         </div>
 
-                        <Button 
-                          type="submit" 
-                          disabled={isSaving}
-                          className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full md:w-auto shadow-xl transition-all"
-                        >
-                          {isSaving ? (
-                            <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
-                          ) : (
-                            "Save Profile"
-                          )}
-                        </Button>
-                      </form>
-                    </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="physicalAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Mailing Address (Optional)</Label>
+                          <Textarea 
+                            id="physicalAddress"
+                            value={addressInput}
+                            onChange={(e) => setAddressInput(e.target.value)}
+                            className="w-full h-32 bg-white/5 border-white/10 rounded-xl p-4 text-white font-medium focus:ring-primary/50 transition-all"
+                            placeholder="Enter your address for potential physical rewards..."
+                          />
+                        </div>
+                      </div>
+
+                      <Button 
+                        type="submit" 
+                        disabled={isSaving}
+                        className="bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest px-10 h-14 rounded-xl w-full md:w-auto shadow-xl transition-all"
+                      >
+                        {isSaving ? (
+                          <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
+                        ) : (
+                          <><Check className="w-4 h-4 mr-2" /> Save Profile</>
+                        )}
+                      </Button>
+                    </form>
                   </div>
                 </div>
               )}
 
-              {/* Payout Tab */}
               {activeTab === 'payout' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="glass-card rounded-[2rem] p-8 md:p-10 border-white/10 bg-[#0a0a0a]">
@@ -300,7 +308,6 @@ export default function AccountSettings() {
                     </h3>
 
                     <div className="space-y-4">
-                      {/* PayPal - Unavailable */}
                       <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 opacity-30 grayscale pointer-events-none">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
@@ -316,7 +323,6 @@ export default function AccountSettings() {
                         </div>
                       </div>
 
-                      {/* Cash App - Unavailable */}
                       <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 opacity-30 grayscale pointer-events-none">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
@@ -332,7 +338,6 @@ export default function AccountSettings() {
                         </div>
                       </div>
 
-                      {/* Crypto Wallet - Available */}
                       <div className="p-8 rounded-[2rem] bg-primary/5 border-2 border-primary/20 relative overflow-hidden group">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 relative z-10">
                           <div className="flex items-center gap-5">
