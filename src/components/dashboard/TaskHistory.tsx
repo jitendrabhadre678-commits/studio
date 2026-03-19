@@ -2,7 +2,7 @@
 
 import { useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit, Firestore } from 'firebase/firestore';
-import { Clock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -17,17 +17,15 @@ interface TaskHistoryProps {
 }
 
 export function TaskHistory({ userId, firestore }: TaskHistoryProps) {
-  // Memoize the real-time query for task completions
   const historyQuery = useMemoFirebase(() => {
     if (!firestore || !userId) return null;
     return query(
-      collection(firestore, 'users', userId, 'taskCompletions'),
+      collection(firestore, 'users', userId, 'rewards'),
       orderBy('createdAt', 'desc'),
       limit(15)
     );
   }, [firestore, userId]);
 
-  // Real-time collection subscription
   const { data: tasks, isLoading } = useCollection(historyQuery);
 
   if (isLoading) {
@@ -67,7 +65,7 @@ export function TaskHistory({ userId, firestore }: TaskHistoryProps) {
           ? format(task.createdAt.toDate ? task.createdAt.toDate() : new Date(task.createdAt), 'MMM dd, HH:mm') 
           : 'Syncing...';
 
-        const isVerified = task.status === 'Verified' || task.status === 'Completed';
+        const isVerified = task.status === 'completed' || task.status === 'Verified' || task.status === 'Completed';
 
         return (
           <div 
@@ -88,7 +86,7 @@ export function TaskHistory({ userId, firestore }: TaskHistoryProps) {
               </div>
               <div className="min-w-0">
                 <h4 className="font-bold text-white truncate uppercase tracking-tight text-sm">
-                  {task.title || 'Reward Activity'}
+                  {task.description || 'Reward Activity'}
                 </h4>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[10px] text-white/40 font-bold uppercase">{dateStr}</span>
@@ -108,7 +106,7 @@ export function TaskHistory({ userId, firestore }: TaskHistoryProps) {
                 "text-lg font-black tabular-nums transition-colors duration-500",
                 isVerified ? "text-green-500" : "text-white/20"
               )}>
-                {task.rewardAmount > 0 ? `+$${task.rewardAmount.toFixed(2)}` : '$0.00'}
+                {task.amount > 0 ? `+$${task.amount.toFixed(2)}` : '$0.00'}
               </p>
               <p className="text-[8px] text-white/20 font-black uppercase tracking-[0.2em]">
                 {isVerified ? 'Added to Wallet' : 'Verification Pending'}

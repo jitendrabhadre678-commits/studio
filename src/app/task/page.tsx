@@ -11,11 +11,10 @@ import {
   Zap, 
   ShieldCheck, 
   ArrowRight,
-  ExternalLink,
   Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { doc, collection, query, where, getDocs, serverTimestamp, increment } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, increment, collection } from 'firebase/firestore';
 
 type TaskStep = 'connecting' | 'checking' | 'eligible' | 'redirecting';
 
@@ -23,7 +22,6 @@ export default function TaskPage() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
   const [step, setStep] = useState<TaskStep>('connecting');
-  const [progress, setProgress] = useState(0);
 
   const steps = [
     { id: 'connecting', text: "Connecting to secure offer node...", time: 2000 },
@@ -37,12 +35,10 @@ export default function TaskPage() {
       return;
     }
 
-    let currentStepIdx = 0;
     const runSequence = async () => {
       for (const s of steps) {
         setStep(s.id as TaskStep);
-        await new Promise(r => setTimeout(runSequence, s.time));
-        currentStepIdx++;
+        await new Promise(resolve => setTimeout(resolve, s.time));
       }
       setStep('eligible');
     };
@@ -53,63 +49,55 @@ export default function TaskPage() {
   const handleCompleteTask = async () => {
     if (!firestore || !user) return;
 
-    // Simulate task completion data
-    const rewardAmount = 1.50; // Example reward
+    const rewardAmount = 1.50; 
     const userRef = doc(firestore, 'users', user.uid);
-    const rewardRef = collection(firestore, 'users', user.uid, 'rewards');
+    const rewardsRef = collection(firestore, 'users', user.uid, 'rewards');
 
     // 1. Add reward record
-    addDocumentNonBlocking(rewardRef, {
+    addDocumentNonBlocking(rewardsRef, {
       userId: user.uid,
-      rewardName: "Premium Task Reward",
+      description: "Premium Task Reward",
       amount: rewardAmount,
       status: "completed",
-      createdAt: serverTimestamp()
+      type: "taskCompletion",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
 
-    // 2. Update user balance
-    const userSnap = await getDocs(query(collection(firestore, 'users'), where('id', '==', user.uid)));
-    const userData = userSnap.docs[0]?.data();
+    // 2. Fetch user for referral logic
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
 
-    // 3. Referral Logic: Check for referral bonus
+    // 3. Referral Logic
     if (userData && userData.referredBy && !userData.hasCompletedFirstTask) {
       const referralBonus = 0.10;
-      
-      // Find Referrer
-      const referrersQuery = query(collection(firestore, 'users'), where('referralCode', '==', userData.referredBy));
-      const referrerSnap = await getDocs(referrersQuery);
-      
-      if (!referrerSnap.empty) {
-        const referrerDoc = referrerSnap.docs[0];
-        const referrerRef = doc(firestore, 'users', referrerDoc.id);
+      const referrerRef = doc(firestore, 'users', userData.referredBy); // Using the stored ID
 
-        // Award Referrer
-        updateDocumentNonBlocking(referrerRef, {
-          balance: increment(referralBonus),
-          referralEarnings: increment(referralBonus),
-          totalReferrals: increment(1),
-          updatedAt: serverTimestamp()
-        });
+      updateDocumentNonBlocking(referrerRef, {
+        availableBalance: increment(referralBonus),
+        referralEarnings: increment(referralBonus),
+        totalReferrals: increment(1),
+        updatedAt: serverTimestamp()
+      });
 
-        // Add referral reward record
-        addDocumentNonBlocking(collection(firestore, 'users', referrerDoc.id, 'rewards'), {
-          userId: referrerDoc.id,
-          rewardName: `Referral Bonus: ${userData.username}`,
-          amount: referralBonus,
-          status: "completed",
-          createdAt: serverTimestamp()
-        });
-      }
+      addDocumentNonBlocking(collection(firestore, 'users', userData.referredBy, 'rewards'), {
+        userId: userData.referredBy,
+        description: `Referral Bonus: ${userData.username}`,
+        amount: referralBonus,
+        status: "completed",
+        type: "referralSignupBonus",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
     }
 
-    // Mark task as completed for referral tracking
+    // Mark task as completed
     updateDocumentNonBlocking(userRef, {
-      balance: increment(rewardAmount),
+      availableBalance: increment(rewardAmount),
       hasCompletedFirstTask: true,
       updatedAt: serverTimestamp()
     });
 
-    // Redirect to final CPA link
     window.location.href = "https://gameflashx.space/sl/zy1x8";
   };
 
@@ -174,7 +162,6 @@ export default function TaskPage() {
               </div>
             )}
 
-            {/* Decorative background accent */}
             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
           </div>
         </div>

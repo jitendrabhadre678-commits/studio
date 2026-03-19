@@ -31,9 +31,7 @@ export function AuthRedirectListener() {
           const defaultUsername = loginEmail ? loginEmail.split('@')[0] : `player_${user.uid.slice(0, 5)}`;
 
           if (!userSnap.exists()) {
-            // Generate unique referral code
             const referralCode = `GF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-            // Get referral ID from tracker
             const referredBy = localStorage.getItem('referralId') || null;
 
             setDocumentNonBlocking(userRef, {
@@ -41,7 +39,7 @@ export function AuthRedirectListener() {
               email: loginEmail,
               photoURL: user.photoURL || '',
               createdAt: serverTimestamp(),
-              balance: 0,
+              availableBalance: 0,
               totalEarnings: 0,
               referralEarnings: 0,
               totalReferrals: 0,
@@ -51,7 +49,8 @@ export function AuthRedirectListener() {
               referralCode: referralCode,
               referredBy: referredBy,
               hasCompletedFirstTask: false,
-              isAdmin: false
+              isAdmin: false,
+              updatedAt: serverTimestamp()
             }, { merge: true });
           }
           

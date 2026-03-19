@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/dialog';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { TaskHistory } from '@/components/dashboard/TaskHistory';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
@@ -62,7 +63,6 @@ export default function Dashboard() {
     }
   }, [user, isUserLoading, router]);
 
-  // Handle return message detection & generate random stats
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hasStartedTask = sessionStorage.getItem('task_started');
@@ -71,7 +71,6 @@ export default function Dashboard() {
         sessionStorage.removeItem('task_started');
       }
 
-      // Generate random counts once on mount
       setTaskStats({
         apps: Math.floor(Math.random() * (600 - 200 + 1)) + 200,
         games: Math.floor(Math.random() * (600 - 200 + 1)) + 200,
@@ -87,7 +86,7 @@ export default function Dashboard() {
     );
   }
 
-  const balance = userData?.balance || 0;
+  const balance = userData?.availableBalance || 0;
   const referralEarnings = userData?.referralEarnings || 0;
   const username = userData?.username || user.email?.split('@')[0] || 'Player';
   const MIN_WITHDRAWAL = 5;
@@ -105,7 +104,6 @@ export default function Dashboard() {
       title: 'Test Apps & Earn Cash',
       description: 'Get paid to test new mobile applications and share your feedback.',
       icon: Smartphone,
-      rewardRange: '$0.50 - $25',
       statKey: 'apps'
     },
     {
@@ -113,7 +111,6 @@ export default function Dashboard() {
       title: 'Play Games & Earn Cash',
       description: 'Earn rewards for playing and reaching milestones in top-rated games.',
       icon: Gamepad2,
-      rewardRange: '$1.00 - $50',
       statKey: 'games'
     }
   ];
@@ -140,22 +137,13 @@ export default function Dashboard() {
     
     toast({
       title: "Success!",
-      description: "Withdrawal request submitted 💸",
+      description: "Withdrawal request submitted successfully 💸",
       className: "bg-green-600 text-white border-none font-bold shadow-[0_0_30px_rgba(22,163,74,0.4)]",
     });
   };
 
   return (
     <div className="flex min-h-screen bg-black text-white">
-      {/* Mobile Toggle */}
-      <button 
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-primary rounded-lg text-white"
-      >
-        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
-      {/* Sidebar Navigation */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-40 w-64 bg-[#0a0a0a] border-r border-white/5 transition-transform duration-300 lg:translate-x-0 lg:static",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -173,10 +161,6 @@ export default function Dashboard() {
               <Link 
                 key={item.id}
                 href={item.href}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  if (item.href === '/dashboard') setIsSidebarOpen(false);
-                }}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all duration-300 group",
                   activeTab === item.id 
@@ -197,8 +181,9 @@ export default function Dashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-black truncate">@{username}</p>
-                <div className="flex items-center gap-1 text-[8px] text-green-500 font-bold uppercase tracking-widest">
-                  <ShieldCheck className="w-2.5 h-2.5" /> Verified
+                <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+                  <div className="w-1 h-1 rounded-full bg-green-500" />
+                  <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified</span>
                 </div>
               </div>
             </div>
@@ -208,7 +193,6 @@ export default function Dashboard() {
 
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-          {/* Header Stats */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 animate-in fade-in duration-700">
             <div className="w-full">
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
@@ -259,16 +243,6 @@ export default function Dashboard() {
             </div>
           </header>
 
-          {/* Motivational Message */}
-          {balance === 0 && (
-            <div className="mb-12 text-center p-10 glass-card rounded-[2.5rem] border-primary/10 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-10 transition-opacity" />
-              <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Complete 1 offer and unlock your first withdrawal 💸</h2>
-              <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Just one step away — start now and claim your reward</p>
-            </div>
-          )}
-
-          {/* Offers Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-primary rounded-full" />
@@ -287,7 +261,7 @@ export default function Dashboard() {
                         <offer.icon className="w-7 h-7" />
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Active Now</p>
+                        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Activity</p>
                         <p className="text-lg font-black text-white">
                           {taskStats[offer.statKey] || '...'} This Month
                         </p>
@@ -314,10 +288,17 @@ export default function Dashboard() {
               ))}
             </div>
           </section>
+
+          <section id="history" className="mb-20">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-1.5 bg-primary rounded-full" />
+              <h2 className="text-2xl font-black uppercase tracking-tight">Recent Activity</h2>
+            </div>
+            {firestore && user && <TaskHistory userId={user.uid} firestore={firestore} />}
+          </section>
         </div>
       </main>
 
-      {/* Partner Offer Modal */}
       <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
         <DialogContent className="sm:max-w-[500px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
           <div className="p-8 md:p-10">
@@ -357,7 +338,6 @@ export default function Dashboard() {
         </DialogContent>
       </Dialog>
 
-      {/* Return Welcome Modal */}
       <Dialog open={isReturnModalOpen} onOpenChange={setIsReturnModalOpen}>
         <DialogContent className="sm:max-w-[450px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
           <div className="p-8 md:p-10 text-center">
