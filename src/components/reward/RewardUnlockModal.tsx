@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ShieldCheck, Loader2, ArrowRight, ExternalLink, CheckCircle2, X } from 'lucide-react';
+import { Zap, ShieldCheck, Loader2, ArrowRight, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { GiftCard } from '@/lib/gift-cards';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Logo } from '@/components/brand/Logo';
+import { useRouter } from 'next/navigation';
 
 type ModalStep = 'info' | 'verifying' | 'offer' | 'checking' | 'final';
 
@@ -25,7 +26,7 @@ export function RewardUnlockModal({
 }) {
   const [step, setStep] = useState<ModalStep>('info');
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
-  const [hasClickedOffer, setHasClickedOffer] = useState(false);
+  const router = useRouter();
 
   const loadingMessages = [
     "Checking availability...",
@@ -36,10 +37,6 @@ export function RewardUnlockModal({
   useEffect(() => {
     if (!isOpen) {
       setStep('info');
-      setHasClickedOffer(false);
-    } else {
-      // Dispatch Step 1 Progress
-      window.dispatchEvent(new CustomEvent('reward-step-1'));
     }
   }, [isOpen]);
 
@@ -59,25 +56,22 @@ export function RewardUnlockModal({
         clearTimeout(timeout);
       };
     }
-    
-    if (step === 'final') {
-      // Dispatch Step 3 Progress
-      window.dispatchEvent(new CustomEvent('reward-step-3'));
-    }
   }, [step]);
 
   const handleContinue = () => setStep('verifying');
   
   const handleOpenOffer = () => {
     window.open("https://gameflashx.space/sl/zy1x8", "_blank");
-    setHasClickedOffer(true);
-    // Dispatch Step 2 Progress
-    window.dispatchEvent(new CustomEvent('reward-step-2'));
     setTimeout(() => setStep('checking'), 1000);
   };
 
   const handleCheckStatus = () => {
     setStep('final');
+  };
+
+  const handleFinalize = () => {
+    router.push('/my-rewards');
+    onClose();
   };
 
   const imageData = PlaceHolderImages.find(img => img.id === card.image) || PlaceHolderImages[0];
@@ -245,9 +239,9 @@ export function RewardUnlockModal({
 
                 <Button 
                   className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/30 transition-all"
-                  onClick={() => window.location.reload()}
+                  onClick={handleFinalize}
                 >
-                  Finalize & Reveal Full Code
+                  Finalize & View My Rewards
                 </Button>
               </motion.div>
             )}

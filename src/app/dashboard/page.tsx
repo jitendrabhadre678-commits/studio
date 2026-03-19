@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -20,9 +19,8 @@ import {
   ArrowUpRight,
   Loader2,
   Home,
-  AlertCircle,
   ShieldCheck,
-  CheckCircle2
+  Star
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -30,6 +28,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { TaskHistory } from '@/components/dashboard/TaskHistory';
+import { DailyBonus } from '@/components/dashboard/DailyBonus';
+import { SpinWheel } from '@/components/dashboard/SpinWheel';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
@@ -142,7 +142,6 @@ export default function Dashboard() {
   const handleWithdraw = () => {
     if (balance < MIN_WITHDRAWAL) return;
 
-    // Payout Validation: PayPal email check
     if (!userData?.paypalEmail) {
       toast({
         variant: "destructive",
@@ -229,7 +228,7 @@ export default function Dashboard() {
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {/* Real-time Header Stats */}
-          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div className="w-full">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
@@ -248,7 +247,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+            <div className="flex flex-col items-end gap-4 w-full md:w-auto">
               <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center justify-between gap-12 shadow-2xl relative min-w-[280px] w-full md:w-auto">
                 {isDataLoading && <div className="absolute top-2 right-4"><Loader2 className="w-3 h-3 text-[#FA4616] animate-spin" /></div>}
                 <div>
@@ -271,33 +270,40 @@ export default function Dashboard() {
                   </Button>
                   {balance < MIN_WITHDRAWAL && (
                     <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">
-                      Min. withdrawal $5.00
+                      Min. $5.00
                     </span>
                   )}
                 </div>
               </div>
+              <DailyBonus userRef={userRef} userData={userData} />
             </div>
           </header>
 
-          {/* Zero Balance Motivation */}
-          {balance === 0 && (
-            <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
-              <div className="glass-card bg-gradient-to-r from-[#FA4616]/5 to-transparent border-[#FA4616]/10 p-8 rounded-[2rem] text-center flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full translate-y-1/2" />
-                <div className="relative z-10">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 animate-bounce">
-                    <Trophy className="text-primary w-8 h-8" />
-                  </div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
-                    Complete 1 offer and unlock your first withdrawal 💸
-                  </h3>
-                  <p className="text-muted-foreground font-medium text-sm">
-                    Just one step away — start now and claim your reward
-                  </p>
-                </div>
-              </div>
+          {/* Daily Perks & Lucky Games */}
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-1.5 bg-yellow-500 rounded-full" />
+              <h2 className="text-2xl font-black uppercase tracking-tight">Daily Perks</h2>
             </div>
-          )}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <SpinWheel userRef={userRef} userData={userData} />
+              </div>
+              <Card className="glass-card bg-[#0a0a0a] border-white/5 p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
+                  <Star className="w-8 h-8 text-blue-500" />
+                </div>
+                <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">More Rewards</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  Come back every 24 hours to claim your daily bonus and spin the lucky wheel for extra cash.
+                </p>
+                <div className="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                  Active Streak: {userData?.loginStreak || 0} Days
+                </div>
+              </Card>
+            </div>
+          </section>
 
           {/* Offers Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
@@ -365,7 +371,7 @@ export default function Dashboard() {
           {/* Real-time Activity Log */}
           <section id="history" className="scroll-mt-10">
             <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1.5 bg-yellow-500 rounded-full" />
+              <div className="h-8 w-1.5 bg-green-500 rounded-full" />
               <h2 className="text-2xl font-black uppercase tracking-tight">Activity Log</h2>
             </div>
             <TaskHistory userId={user.uid} firestore={firestore} />

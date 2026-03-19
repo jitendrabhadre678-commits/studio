@@ -2,8 +2,13 @@
 
 import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking, errorEmitter, FirestorePermissionError } from '@/firebase';
+import { useFirestore, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { doc, increment, serverTimestamp, getDoc } from 'firebase/firestore';
+
+/**
+ * @fileOverview Background tracker for referral clicks.
+ * Handled gracefully to prevent guest users from seeing permission errors.
+ */
 
 function ReferralTrackerContent() {
   const searchParams = useSearchParams();
@@ -23,6 +28,7 @@ function ReferralTrackerContent() {
       const trackClick = async () => {
         const referralRef = doc(db, 'referrals', ref);
         try {
+          // Check existence first to choose set vs update
           const docSnap = await getDoc(referralRef);
           
           if (docSnap.exists()) {
@@ -41,12 +47,8 @@ function ReferralTrackerContent() {
           // Prevent multiple counts from same device for this specific referrer
           localStorage.setItem(`refCounted_${ref}`, 'true');
         } catch (serverError: any) {
-          // Emit contextual permission error for better debugging
-          const permissionError = new FirestorePermissionError({
-            path: referralRef.path,
-            operation: 'write'
-          });
-          errorEmitter.emit('permission-error', permissionError);
+          // Background task error - handled silently to avoid disrupting visitor experience
+          console.warn("Referral tracking background sync paused:", serverError.message);
         }
       };
 
