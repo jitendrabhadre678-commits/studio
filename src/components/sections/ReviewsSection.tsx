@@ -26,7 +26,7 @@ export function ReviewsSection() {
             TRUSTED BY <span className="text-primary">THOUSANDS</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Community Feedback & Reviews
+            Real players, real rewards. Verified by the community.
           </p>
         </div>
 
@@ -47,7 +47,10 @@ export function ReviewsSection() {
                         <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                       ))}
                     </div>
-                    <span className="text-[9px] text-white/20 font-bold uppercase tracking-widest">{review.date}</span>
+                    <div className="flex items-center gap-1">
+                      <CheckCircle2 className="w-2.5 h-2.5 text-green-500" />
+                      <span className="text-[8px] text-green-500 font-black uppercase tracking-widest">{review.date}</span>
+                    </div>
                   </div>
 
                   <p className="text-sm text-white/80 leading-relaxed mb-6 flex-grow italic">

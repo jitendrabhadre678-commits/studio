@@ -51,7 +51,7 @@ export default function ReviewsPage() {
                       </div>
                       <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
                         <CheckCircle2 className="w-2.5 h-2.5 text-green-500" />
-                        <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified Claim</span>
+                        <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">{review.date}</span>
                       </div>
                     </div>
 
@@ -65,12 +65,12 @@ export default function ReviewsPage() {
                       </div>
                       <div>
                         <p className="font-black text-white uppercase tracking-tight text-sm">{review.name}</p>
-                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{review.country} • {review.date}</p>
+                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{review.country} • Verified Player</p>
                       </div>
                     </div>
                     
                     <div className="mt-6 p-3 rounded-xl bg-black/40 border border-white/5 text-center">
-                      <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Reward: </span>
+                      <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Reward Claimed: </span>
                       <span className="text-[10px] font-black text-white uppercase tracking-widest">{review.value} {review.rewardBrand} Code</span>
                     </div>
                   </CardContent>

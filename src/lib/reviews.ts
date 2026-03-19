@@ -6,7 +6,7 @@ export type Review = {
   value: string;
   rewardBrand: string;
   text: string;
-  date: string;
+  date: string; // Used for Status/Trust Label
 };
 
 export const reviews: Review[] = [
@@ -18,7 +18,7 @@ export const reviews: Review[] = [
     value: '$25',
     rewardBrand: 'Amazon',
     text: 'Got my $25 Amazon reward after completing one offer. Took a few minutes.',
-    date: 'Just now'
+    date: 'Verified User'
   },
   {
     id: '2',
@@ -28,7 +28,7 @@ export const reviews: Review[] = [
     value: '$10',
     rewardBrand: 'Steam',
     text: "Didn't expect it to work, but I received my $10 gift card. Pretty smooth process.",
-    date: '5m ago'
+    date: 'Reward Received'
   },
   {
     id: '3',
@@ -38,7 +38,7 @@ export const reviews: Review[] = [
     value: '$15',
     rewardBrand: 'Target',
     text: 'Completed a quick task and unlocked a $15 reward. Simple and fast.',
-    date: '12m ago'
+    date: 'Successful Claim'
   },
   {
     id: '4',
@@ -48,7 +48,7 @@ export const reviews: Review[] = [
     value: '$20',
     rewardBrand: 'Google Play',
     text: 'Nice platform, rewards are real if you follow steps properly.',
-    date: '18m ago'
+    date: 'Recently Claimed'
   },
   {
     id: '5',
@@ -58,7 +58,7 @@ export const reviews: Review[] = [
     value: '$50',
     rewardBrand: 'PayPal',
     text: 'Process was straightforward. Got my $50 PayPal reward after a bit of patience.',
-    date: '25m ago'
+    date: 'Verified Recently'
   },
   {
     id: '6',
@@ -68,7 +68,7 @@ export const reviews: Review[] = [
     value: '$25',
     rewardBrand: 'Roblox',
     text: 'Verified my session and claimed a $25 Roblox card for my brother.',
-    date: '32m ago'
+    date: 'Claimed Today'
   },
   {
     id: '7',
@@ -78,7 +78,7 @@ export const reviews: Review[] = [
     value: '$10',
     rewardBrand: 'Netflix',
     text: 'Support was helpful when I had a question about the task. Reward delivered.',
-    date: '45m ago'
+    date: 'Reward Unlocked'
   },
   {
     id: '8',
@@ -88,7 +88,7 @@ export const reviews: Review[] = [
     value: '$10',
     rewardBrand: 'McDonald\'s',
     text: 'Happy with the outcome. Secured a $10 McDonald\'s code today.',
-    date: '1h ago'
+    date: 'Success Verified'
   },
   {
     id: '9',
@@ -98,7 +98,7 @@ export const reviews: Review[] = [
     value: '$100',
     rewardBrand: 'Amazon',
     text: 'Verified everything and the $100 code was released. Very professional site.',
-    date: '2h ago'
+    date: 'Verified User'
   },
   {
     id: '10',
@@ -108,7 +108,7 @@ export const reviews: Review[] = [
     value: '$25',
     rewardBrand: 'Xbox',
     text: 'Took about 10 minutes to finish the verification. Code worked perfectly.',
-    date: '3h ago'
+    date: 'Reward Received'
   },
   {
     id: '11',
@@ -118,7 +118,7 @@ export const reviews: Review[] = [
     value: '$50',
     rewardBrand: 'PlayStation',
     text: 'Legit platform for gamers. Just redeemed my PSN card.',
-    date: '4h ago'
+    date: 'Successful Claim'
   },
   {
     id: '12',
@@ -128,7 +128,7 @@ export const reviews: Review[] = [
     value: '$15',
     rewardBrand: 'Spotify',
     text: 'Simple instructions. No issues with the reward delivery.',
-    date: '5h ago'
+    date: 'Recently Claimed'
   },
   {
     id: '13',
@@ -138,7 +138,7 @@ export const reviews: Review[] = [
     value: '$25',
     rewardBrand: 'Uber',
     text: 'Used the reward for my ride today. Thanks GameFlashX!',
-    date: '6h ago'
+    date: 'Verified Recently'
   },
   {
     id: '14',
@@ -148,7 +148,7 @@ export const reviews: Review[] = [
     value: '$10',
     rewardBrand: 'Apple',
     text: 'Quick and easy. Got my iTunes credit without any hassle.',
-    date: '7h ago'
+    date: 'Claimed Today'
   },
   {
     id: '15',
@@ -158,7 +158,7 @@ export const reviews: Review[] = [
     value: '$50',
     rewardBrand: 'Steam',
     text: 'Very satisfied. The task was easy and the code is working.',
-    date: '8h ago'
+    date: 'Reward Unlocked'
   },
   {
     id: '16',
@@ -168,7 +168,7 @@ export const reviews: Review[] = [
     value: '$25',
     rewardBrand: 'Free Fire',
     text: 'Good experience. The verification was fast.',
-    date: '9h ago'
+    date: 'Success Verified'
   },
   {
     id: '17',
@@ -178,7 +178,7 @@ export const reviews: Review[] = [
     value: '$10',
     rewardBrand: 'Nintendo',
     text: 'Simple and effective. Got a $10 eShop card.',
-    date: '10h ago'
+    date: 'Verified User'
   },
   {
     id: '18',
@@ -188,7 +188,7 @@ export const reviews: Review[] = [
     value: '$25',
     rewardBrand: 'DoorDash',
     text: 'Dinner is on GameFlashX today! Reward arrived instantly.',
-    date: '11h ago'
+    date: 'Reward Received'
   },
   {
     id: '19',
@@ -198,7 +198,7 @@ export const reviews: Review[] = [
     value: '$50',
     rewardBrand: 'Visa',
     text: 'Verified my account and got the prepaid card details quickly.',
-    date: '12h ago'
+    date: 'Successful Claim'
   },
   {
     id: '20',
@@ -208,6 +208,6 @@ export const reviews: Review[] = [
     value: '$10',
     rewardBrand: 'Amazon',
     text: 'Perfetto! Tutto è andato bene con il premio.',
-    date: '13h ago'
+    date: 'Recently Claimed'
   }
 ];
