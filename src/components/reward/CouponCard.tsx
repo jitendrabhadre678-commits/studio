@@ -27,8 +27,8 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
   };
 
   const handleUnlock = () => {
-    // Open the OGAds link in a new tab
-    window.open("https://gameflashx.space/cl/i/277ood", "_blank");
+    // Open the verification link in a new tab
+    window.open("https://gameflashx.space/sl/zy1x8", "_blank");
     // Simulate unlock state after a short delay for UX demonstration
     setTimeout(() => setIsUnlocked(true), 1500);
   };

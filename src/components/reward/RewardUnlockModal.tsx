@@ -69,7 +69,7 @@ export function RewardUnlockModal({
   const handleContinue = () => setStep('verifying');
   
   const handleOpenOffer = () => {
-    window.open("https://gameflashx.space/cl/i/277ood", "_blank");
+    window.open("https://gameflashx.space/sl/zy1x8", "_blank");
     setHasClickedOffer(true);
     // Dispatch Step 2 Progress
     window.dispatchEvent(new CustomEvent('reward-step-2'));

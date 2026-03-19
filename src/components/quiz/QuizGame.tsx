@@ -93,7 +93,7 @@ export function QuizGame() {
   };
 
   const handleOpenVerification = () => {
-    window.open("https://gameflashx.space/cl/i/277ood", "_blank");
+    window.open("https://gameflashx.space/sl/zy1x8", "_blank");
   };
 
   return (
@@ -246,7 +246,7 @@ export function QuizGame() {
 
             <Button 
               onClick={() => setStep('loading')}
-              className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-lg rounded-2xl shadow-2xl shadow-primary/30"
+              className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-lg rounded-2xl shadow-xl shadow-primary/30"
             >
               Unlock Reward Now
             </Button>
