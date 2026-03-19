@@ -10,29 +10,19 @@ import {
   Loader2, 
   IdCard,
   Check,
-  Gift,
   User as UserIcon,
-  Wallet,
-  Mail
+  Mail,
+  Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
 import { doc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
-import { giftCards } from '@/lib/gift-cards';
 
 /**
  * @fileOverview Refined User Profile page.
- * Automatically extracts data from Firebase Auth for intelligent auto-fill
- * and handles permanent Firestore persistence.
+ * Simplified to focus on identity and essential delivery details.
  */
 
 export default function AccountSettings() {
@@ -43,8 +33,6 @@ export default function AccountSettings() {
   // Local state for form inputs
   const [usernameInput, setUsernameInput] = useState('');
   const [displayNameInput, setDisplayNameInput] = useState('');
-  const [preferredCard, setPreferredCard] = useState('');
-  const [walletAddressInput, setWalletAddressInput] = useState('');
   const [payoutEmailInput, setPayoutEmailInput] = useState('');
 
   // Memoize user reference for the useDoc hook
@@ -68,16 +56,9 @@ export default function AccountSettings() {
     if (user) {
       const emailPrefix = user.email?.split('@')[0] || '';
       
-      // 1. Use Firestore data as priority (previously saved)
-      // 2. Fallback to Firebase Auth data (displayName, email)
-      // 3. Last resort fallback to email prefix
       setUsernameInput(userData?.username || emailPrefix);
       setDisplayNameInput(userData?.displayName || user.displayName || emailPrefix);
       setPayoutEmailInput(userData?.payoutEmail || user.email || '');
-      
-      // Firestore-only fields
-      setPreferredCard(userData?.preferredGiftCard || '');
-      setWalletAddressInput(userData?.walletAddress || '');
     }
   }, [userData, user]);
 
@@ -106,12 +87,10 @@ export default function AccountSettings() {
       return;
     }
 
-    // Prepare data for permanent storage (setDoc with merge)
+    // Prepare data for permanent storage
     const updateData = {
       username: usernameInput,
       displayName: displayNameInput,
-      preferredGiftCard: preferredCard,
-      walletAddress: walletAddressInput,
       payoutEmail: payoutEmailInput,
       updatedAt: serverTimestamp()
     };
@@ -119,10 +98,9 @@ export default function AccountSettings() {
     // Permanent Update Logic
     setDocumentNonBlocking(userRef, updateData, { merge: true });
     
-    // Success Feedback with Branded Styling
     toast({
-      title: "Profile Updated Successfully",
-      description: "Your information has been permanently saved to the database.",
+      title: "Profile Updated",
+      description: "Your information has been successfully saved.",
       className: "bg-[#FA4616] text-white border-none font-bold",
     });
   };
@@ -140,25 +118,25 @@ export default function AccountSettings() {
       <Header />
       
       <div className="pt-32 pb-20 px-4">
-        <div className="container mx-auto max-w-2xl">
-          <div className="mb-12 text-center md:text-left">
+        <div className="container mx-auto max-w-xl">
+          <div className="mb-12 text-center">
             <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
               User <span className="text-[#FA4616]">Profile</span>
             </h1>
-            <p className="text-muted-foreground">Customize your player identity and configure your reward delivery details.</p>
+            <p className="text-muted-foreground text-sm">Customize your player identity and configure your delivery email.</p>
           </div>
 
           <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a] shadow-2xl relative min-h-[400px]">
             {isDataLoading && !userData ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm z-10 rounded-[2.5rem]">
                 <Loader2 className="w-10 h-10 text-[#FA4616] animate-spin" />
-                <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Syncing with database...</p>
+                <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[10px]">Syncing...</p>
               </div>
             ) : (
               <form onSubmit={handleSaveProfile} className="space-y-8 animate-in fade-in duration-500">
                 {/* Identity Section */}
                 <div className="space-y-6">
-                  <h3 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
+                  <h3 className="text-lg font-black text-white flex items-center gap-3 uppercase tracking-tight">
                     <IdCard className="w-5 h-5 text-[#FA4616]" /> Personal Identity
                   </h3>
                   
@@ -190,49 +168,16 @@ export default function AccountSettings() {
                       />
                     </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Preferred Gift Card</Label>
-                    <Select value={preferredCard} onValueChange={setPreferredCard}>
-                      <SelectTrigger className="bg-white/5 border-white/10 h-14 rounded-2xl text-white font-bold focus:border-[#FA4616] focus:ring-0">
-                        <div className="flex items-center gap-3">
-                          <Gift className="w-4 h-4 text-white/20" />
-                          <SelectValue placeholder="Select a reward type" />
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#0a0a0a] border-white/10 rounded-xl">
-                        {giftCards.map((card) => (
-                          <SelectItem key={card.id} value={card.brand} className="text-white focus:bg-[#FA4616] focus:text-white rounded-lg">
-                            {card.brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
 
-                {/* Payout Section */}
+                {/* Delivery Section */}
                 <div className="pt-8 border-t border-white/5 space-y-6">
-                  <h3 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tight">
-                    <Wallet className="w-5 h-5 text-[#FA4616]" /> Payout Configuration
+                  <h3 className="text-lg font-black text-white flex items-center gap-3 uppercase tracking-tight">
+                    <Mail className="w-5 h-5 text-[#FA4616]" /> Reward Delivery
                   </h3>
 
                   <div className="space-y-2">
-                    <Label htmlFor="walletAddress" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Wallet Address (For Payouts)</Label>
-                    <div className="relative">
-                      <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                      <Input 
-                        id="walletAddress" 
-                        value={walletAddressInput}
-                        onChange={(e) => setWalletAddressInput(e.target.value)}
-                        placeholder="Enter your crypto wallet address"
-                        className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email Address (For receiving digital gift cards and codes)</Label>
+                    <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email for Gift Card Delivery</Label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
                       <Input 
@@ -245,17 +190,26 @@ export default function AccountSettings() {
                       />
                     </div>
                     <p className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-1 ml-1">
-                      Defaults to: {user.email}
+                      Current Login: {user.email}
                     </p>
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl w-full shadow-2xl shadow-[#FA4616]/20 transition-all active:scale-[0.98] mt-4"
-                >
-                  <Check className="w-5 h-5 mr-2" /> Save Profile
-                </Button>
+                <div className="pt-4">
+                  <Button 
+                    type="submit" 
+                    className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl w-full shadow-2xl shadow-[#FA4616]/20 transition-all active:scale-[0.98]"
+                  >
+                    <Check className="w-5 h-5 mr-2" /> Save Profile
+                  </Button>
+                  
+                  <div className="mt-6 flex items-center justify-center gap-2 text-white/30">
+                    <Info className="w-3.5 h-3.5" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider italic">
+                      Rewards can be claimed directly from your dashboard
+                    </span>
+                  </div>
+                </div>
               </form>
             )}
           </div>
