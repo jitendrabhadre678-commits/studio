@@ -7,9 +7,6 @@ import {
   LayoutDashboard, 
   User, 
   Wallet, 
-  Menu,
-  X,
-  Zap,
   Smartphone,
   Gamepad2,
   ArrowUpRight,
@@ -17,7 +14,8 @@ import {
   Home,
   ShieldCheck,
   Users,
-  Clock
+  Clock,
+  Zap
 } from 'lucide-react';
 import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -47,9 +45,6 @@ export default function Dashboard() {
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
   const [selectedTaskType, setSelectedTaskType] = useState<'apps' | 'games' | null>(null);
 
-  // Dynamic Stats State
-  const [taskStats, setTaskStats] = useState<{ [key: string]: number }>({});
-
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
@@ -70,11 +65,6 @@ export default function Dashboard() {
         setIsReturnModalOpen(true);
         sessionStorage.removeItem('task_started');
       }
-
-      setTaskStats({
-        apps: Math.floor(Math.random() * (600 - 200 + 1)) + 200,
-        games: Math.floor(Math.random() * (600 - 200 + 1)) + 200,
-      });
     }
   }, []);
 
@@ -104,14 +94,14 @@ export default function Dashboard() {
       title: 'Test Apps & Earn Cash',
       description: 'Get paid to test new mobile applications and share your feedback.',
       icon: Smartphone,
-      statKey: 'apps'
+      stats: '184+ This Month'
     },
     {
       id: 'games',
       title: 'Play Games & Earn Cash',
       description: 'Earn rewards for playing and reaching milestones in top-rated games.',
       icon: Gamepad2,
-      statKey: 'games'
+      stats: '472 This Month'
     }
   ];
 
@@ -201,13 +191,11 @@ export default function Dashboard() {
               <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
                 Start completing tasks to unlock your rewards.
               </p>
-              <div className="flex items-center gap-2">
-                <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
-                  Your account is active and secure
-                </p>
-                <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+              <div className="flex items-center gap-3 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
+                Your account is active and secure
+                <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full shrink-0">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                  <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified</span>
+                  <span className="text-[8px] font-black text-green-500 tracking-widest">Verified</span>
                 </div>
               </div>
             </div>
@@ -263,7 +251,7 @@ export default function Dashboard() {
                       <div className="text-right">
                         <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Activity</p>
                         <p className="text-lg font-black text-white">
-                          {taskStats[offer.statKey] || '...'} This Month
+                          {offer.stats}
                         </p>
                       </div>
                     </div>
