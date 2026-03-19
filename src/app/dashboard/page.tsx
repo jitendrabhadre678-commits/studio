@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -20,7 +21,8 @@ import {
   Loader2,
   Home,
   AlertCircle,
-  ShieldCheck
+  ShieldCheck,
+  CheckCircle2
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -156,9 +158,9 @@ export default function Dashboard() {
     }
     
     toast({
-      title: "Withdrawal Successful",
-      description: `Request for $${balance.toFixed(2)} submitted to ${userData.paypalEmail}.`,
-      className: "bg-[#FA4616] text-white border-none font-bold",
+      title: "Success! 💸",
+      description: "Withdrawal request submitted successfully. Check your email for confirmation.",
+      className: "bg-green-600 text-white border-none font-bold shadow-[0_0_30px_rgba(22,163,74,0.4)]",
     });
   };
 
@@ -259,9 +261,9 @@ export default function Dashboard() {
                     onClick={handleWithdraw}
                     disabled={balance < MIN_WITHDRAWAL}
                     className={cn(
-                      "h-12 px-8 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-xl",
+                      "h-12 px-8 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-xl active:scale-95",
                       balance >= MIN_WITHDRAWAL 
-                        ? "bg-primary hover:bg-primary/90 text-white shadow-primary/20" 
+                        ? "bg-primary hover:bg-primary/90 text-white shadow-[0_0_20px_rgba(250,70,22,0.4)] animate-pulse" 
                         : "bg-white/5 border border-white/10 text-white/20 cursor-not-allowed"
                     )}
                   >
