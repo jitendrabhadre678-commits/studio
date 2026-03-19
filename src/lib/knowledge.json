@@ -3,11 +3,30 @@
   "intents": [
     {
       "id": "reward",
-      "keywords": ["reward", "gift", "card", "unlock", "code", "claim", "amazon", "google", "play", "roblox", "netflix", "steam", "itunes", "xbox", "nintendo", "fortnite", "paypal", "visa", "vanilla", "uber", "starbucks", "mcdonald", "target", "walmart", "best buy", "ebay", "doordash"],
+      "keywords": ["reward", "get", "unlock", "claim", "how to", "gift", "card", "code"],
       "responses": [
-        "To unlock your reward:\n\n1. Click ‘Reveal Gift Card Code’\n2. Complete one quick verification offer\n3. Return back automatically\n4. Your reward will be unlocked instantly",
-        "It's very simple! 😊 Just pick a card from the gallery and click ‘Reveal Gift Card Code’. After finishing one quick task, your code is ready. Check the gallery now!",
-        "Getting rewards is fast! 🎁 Choose your favorite card and complete one short activity to prove you're human. Your code will be released right after!"
+        "To unlock your reward:\n\n1. Click ‘Reveal Gift Card Code’\n2. Complete one quick verification offer\n3. Return back automatically\n4. Your reward will be unlocked instantly"
+      ]
+    },
+    {
+      "id": "trust",
+      "keywords": ["real", "fake", "legit", "is this real", "work", "work?"],
+      "responses": [
+        "Yes, rewards are unlocked after completing a quick verification step. Thousands of users already claimed rewards successfully."
+      ]
+    },
+    {
+      "id": "problem",
+      "keywords": ["not working", "problem", "error", "failed", "stuck", "issue"],
+      "responses": [
+        "Make sure you complete the offer fully and return back to the page. If issue continues, try another offer."
+      ]
+    },
+    {
+      "id": "timing",
+      "keywords": ["how long", "time", "minutes", "duration", "long"],
+      "responses": [
+        "Most users complete it within 1–2 minutes."
       ]
     },
     {
@@ -15,83 +34,24 @@
       "keywords": ["earn", "money", "cash", "income"],
       "responses": [
         "You can earn rewards fast here! 💸 Just complete the tasks on your dashboard. They are quick and easy. Start your first task now!",
-        "Earning is simple! 🔥 Finish partner offers or invite friends with your link. Most people get their first reward in under 10 minutes. Go to your dashboard to see how much you can make!",
-        "Ready to make some points? 🚀 Just do a few quick tasks like watching a video or trying a new game. It's the best way to get free gift cards!"
-      ]
-    },
-    {
-      "id": "creator",
-      "keywords": ["creator", "whop", "clip", "video", "reels", "shorts", "tiktok"],
-      "responses": [
-        "Join our 'Clip & Earn' program! 🎥 Post videos about us on TikTok or Reels and we will pay you for views. It's a great way to earn cash! Join our Whop community to start.",
-        "You can get paid for your videos! 🌟 Just share your GameFlashX wins on social media. The more people watch, the more you earn. Visit the Creator section for details.",
-        "Turn your clips into cash! 💰 We love creators. Join our community on Whop to get your special links and start earning from your views today!"
+        "Earning is simple! 🔥 Finish partner offers or invite friends with your link. Go to your dashboard to see how much you can make!"
       ]
     },
     {
       "id": "referral",
       "keywords": ["referral", "refer", "invite", "code"],
       "responses": [
-        "Invite your friends and earn more! 🤝 When they join with your link, you get a bonus forever. Find your unique link on your Dashboard now.",
-        "Sharing is caring! 😊 Use your referral link from the dashboard to invite friends. It's one of the fastest ways to grow your balance without doing tasks!",
-        "Want a bonus? 🎁 Send your invite link to friends. When they sign up, your rewards grow automatically. Check your Dashboard for your link!"
-      ]
-    },
-    {
-      "id": "blog",
-      "keywords": ["blog", "guide", "article", "tip"],
-      "responses": [
-        "Our Blog has great tips! 📚 Learn how to get rewards faster and see what's new. It's the best place to learn. Read a guide now!",
-        "Need help? Check our Blog. 💡 We have easy guides for every gift card. It's perfect for new players who want to earn more.",
-        "I recommend reading our Blog for the best ways to earn. 👍 It shows you exactly how to claim codes safely and quickly."
-      ]
-    },
-    {
-      "id": "leaderboard",
-      "keywords": ["leaderboard", "top", "winner", "rank"],
-      "responses": [
-        "See our top winners! 🏆 The Leaderboard shows people cashing out every day. Keep doing tasks to see your name there soon!",
-        "Want to see who's winning? 🥇 Our top players make hundreds of dollars every month. Start a task now to climb the ranks!",
-        "The Leaderboard is real and live! 👑 It tracks the best earners. You can be one of them too—just stay active and finish your daily tasks."
-      ]
-    },
-    {
-      "id": "social",
-      "keywords": ["social", "instagram", "youtube", "discord", "follow", "community"],
-      "responses": [
-        "Come join our community! 🌐 Follow us on Instagram and Discord for live proof and new reward drops. All links are at the bottom of the page.",
-        "We love our players! 😊 Join our Discord to chat with others or follow us on Instagram for the latest news. It's the best way to stay updated!",
-        "Don't miss out! 🔥 Follow us for guides and giveaways. Our YouTube channel has easy tutorials to help you win faster."
+        "Invite your friends and earn more! 🤝 When they join with your link, you get a bonus forever. Find your unique link on your Dashboard now."
       ]
     },
     {
       "id": "account",
       "keywords": ["login", "signup", "account", "sign"],
       "responses": [
-        "Signing in is fast! 🔐 Use your Google account for instant access. If you're new, join today to start earning your first reward!",
-        "Need help with your account? 😊 You can use Google or Email to login. Make sure your profile is set up so we can send you your rewards!",
-        "Getting into your account is simple! 👍 Use your login details to see your progress and your Reward Vault. Ready to jump back in?"
-      ]
-    },
-    {
-      "id": "problem",
-      "keywords": ["problem", "error", "not working", "failed", "issue"],
-      "responses": [
-        "I can help with that! 🛠️ Usually a quick refresh of the page fixes it. If a task didn't work, just try a different one—it only takes a minute!",
-        "Don't worry! 😊 Sometimes there's a small delay. Try refreshing your dashboard or completing one more simple offer to trigger the reward.",
-        "I'm here for you! 👍 If a task is stuck, just try a new one from the list. Most issues are fixed by trying a different simple activity."
-      ]
-    },
-    {
-      "id": "trust",
-      "keywords": ["real", "fake", "legit", "work"],
-      "responses": [
-        "We are 100% real! ✅ Thousands of players get rewards every single day. You can see their wins on our Leaderboard and Social media. Try one small task to see!",
-        "It definitely works! 😊 Brands pay us to show you their products, and we give that value to you as gift cards. It's a win-win for everyone.",
-        "Yes, it's legit! 🔥 We've sent out thousands of codes already. Your reward is waiting for you behind one simple verification task. Start now!"
+        "Signing in is fast! 🔐 Use your Google account for instant access. If you're new, join today to start earning your first reward!"
       ]
     }
   ],
-  "fallback": "I'm here to help you get your rewards! 😊 You can ask about gift cards, how to earn, or your account. What reward are you looking for today?",
+  "fallback": "I'm here to help you get your rewards! 😊 You can ask about gift cards, how long it takes, or if you're having a problem. What can I help with?",
   "unclear": "I want to help! 👍 Could you tell me more about what you need? Are you trying to unlock a specific gift card?"
 }
