@@ -3,155 +3,67 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * GAMEFLASHX DASHBOARD - SECURITY RULES DOCUMENTATION
+     * GAMEFLASHX DASHBOARD - SECURITY RULES
      * 
-     * Core Philosophy: 
-     * This ruleset implements a strict path-based ownership model for all user-specific data.
-     * All private user data (profiles, task completions, transactions) is stored under the 
-     * /users/{userId} hierarchy to ensure clear authorization boundaries and high performance.
-     * 
-     * Data Structure:
-     * - /users/{userId}: The root profile for a user.
-     * - /users/{userId}/taskCompletions: Subcollection tracking task attempts.
-     * - /users/{userId}/transactions: Subcollection for all financial records.
-     * - /users/{userId}/rewardUnlocks: Subcollection for gift card redemptions.
-     * - /categories, /giftCards, /tasks: Global, public-read collections for platform content.
-     * - /public_reward_activity: A sanitized feed of recent unlocks for live notifications.
-     * 
-     * Key Security Decisions:
-     * 1. Path-based Ownership: We use the userId in the document path to verify ownership.
-     * 2. Relational Integrity: On creation, we force internal fields like 'userId' or 'id' 
-     *    to match the path wildcards to prevent data injection or spoofing.
-     * 3. Admin Roles: High-level management (modifying tasks/giftcards) is restricted to 
-     *    users with an 'isAdmin' flag on their UserProfile document.
-     * 4. Denormalization for Authorization: User-specific documents contain a denormalized 
-     *    'userId' field to ensure that security checks can be performed without costly 
-     *    cross-document lookups (get() calls).
+     * Enforces path-based ownership and restricted verification logic.
      */
 
-    // --- HELPER FUNCTIONS ---
-
-    /** @description Checks if the user is authenticated with Firebase. */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** @description Verifies if the authenticated user's UID matches the provided userId. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** @description Combines ownership check with existence check for updates/deletes. */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    /** @description Checks if the authenticated user has an administrative role. */
     function isAdmin() {
       return isSignedIn() && 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
-    // --- COLLECTION RULES ---
+    // Validation helpers
+    function isValidStatusTransition() {
+      // Users can only set status to 'Pending' on creation
+      return request.resource.data.status == 'Pending' || isAdmin();
+    }
 
-    /**
-     * @description Rules for user profile documents. Users can create their own profile and read it. 
-     * Update access is allowed for prototyping, while deletions are reserved for admins.
-     * @path /users/{userId}
-     * @allow (get) If auth.uid == userId
-     * @deny (write) If auth.uid != userId
-     * @principle Enforces path-based ownership and validates document ID integrity.
-     */
     match /users/{userId} {
       allow get, list: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow update: if isOwner(userId) || isAdmin();
       allow delete: if isAdmin();
 
-      /**
-       * @description Records of user task attempts. Secured by parent path ownership.
-       * @path /users/{userId}/taskCompletions/{completionId}
-       * @allow (create) If auth.uid == userId && data.userId == userId
-       * @principle Relational integrity: Forces the internal userId to match the path.
-       */
       match /taskCompletions/{completionId} {
         allow get, list: if isOwner(userId) || isAdmin();
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow create: if isOwner(userId) && 
+                        request.resource.data.userId == userId && 
+                        request.resource.data.status == 'Pending';
+        // Only Admin can move tasks to 'Verified'
+        allow update: if isAdmin();
         allow delete: if isAdmin();
       }
 
-      /**
-       * @description Records of financial movements. Ownership-based access.
-       * @path /users/{userId}/transactions/{transactionId}
-       * @allow (list) If auth.uid == userId
-       * @principle Ensures users can only view their own earnings history.
-       */
       match /transactions/{transactionId} {
         allow get, list: if isOwner(userId) || isAdmin();
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isAdmin();
-      }
-
-      /**
-       * @description Records of individual reward unlocks.
-       * @path /users/{userId}/rewardUnlocks/{unlockId}
-       * @allow (get) If auth.uid == userId
-       * @principle Private data restricted to the account owner.
-       */
-      match /rewardUnlocks/{unlockId} {
-        allow get, list: if isOwner(userId) || isAdmin();
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isAdmin();
+        allow update, delete: if isAdmin();
       }
     }
 
-    /**
-     * @description Global task/offer definitions. Publicly readable for all users.
-     * @path /tasks/{taskId}
-     * @allow (list) true (public)
-     * @deny (update) if not isAdmin()
-     * @principle Public consumption with administrative control.
-     */
+    // Public Collections
     match /tasks/{taskId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
-    /**
-     * @description Global gift card definitions. Publicly readable.
-     * @path /giftCards/{giftCardId}
-     * @allow (get) true
-     * @principle Allows all users to browse available rewards.
-     */
     match /giftCards/{giftCardId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
-    /**
-     * @description Global categories for grouping content. Publicly readable.
-     * @path /categories/{categoryId}
-     * @allow (list) true
-     * @principle Provides public structure for the reward marketplace.
-     */
     match /categories/{categoryId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    /**
-     * @description Public feed of recent reward activity (live notifications).
-     * @path /public_reward_activity/{activityId}
-     * @allow (get, list) true
-     * @deny (write) if not isAdmin()
-     * @principle Segregates public social proof from private user data.
-     */
-    match /public_reward_activity/{activityId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

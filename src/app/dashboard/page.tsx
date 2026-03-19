@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -19,13 +18,10 @@ import {
   Smartphone,
   ClipboardList,
   BookOpen,
-  PlayCircle,
-  BrainCircuit,
-  Layers,
   ArrowUpRight,
   Clock
 } from 'lucide-react';
-import { doc, collection, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
+import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,9 +31,8 @@ import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
 /**
- * @fileOverview Redesigned User Dashboard.
- * Features a clean greeting, prominent balance tracking, and a 
- * responsive grid of earning offer cards with activity tracking.
+ * @fileOverview Standardized User Dashboard.
+ * Features balance tracking and protected task activity log.
  */
 
 export default function Dashboard() {
@@ -47,13 +42,11 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
 
-  // Memoize user reference
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  // Real-time document subscription for user stats
   const { data: userData } = useDoc(userRef);
 
   useEffect(() => {
@@ -83,7 +76,6 @@ export default function Dashboard() {
       icon: Zap,
       rewardRange: '$1 - $100',
       highlight: true,
-      color: '#FA4616',
       url: 'https://gameflashx.space/sl/zy1x8'
     },
     {
@@ -92,7 +84,6 @@ export default function Dashboard() {
       description: 'Get paid to play new games and test mobile applications.',
       icon: Smartphone,
       rewardRange: '$0.50 - $25',
-      highlight: false,
       url: 'https://gameflashx.space/sl/zy1x8'
     },
     {
@@ -101,7 +92,6 @@ export default function Dashboard() {
       description: 'Share your opinion and get rewarded for your time.',
       icon: ClipboardList,
       rewardRange: '$0.20 - $10',
-      highlight: false,
       url: 'https://gameflashx.space/sl/zy1x8'
     },
     {
@@ -110,7 +100,6 @@ export default function Dashboard() {
       description: 'Earn points by reading articles and staying updated.',
       icon: BookOpen,
       rewardRange: 'Daily Payout',
-      highlight: false,
       url: 'https://gameflashx.space/sl/zy1x8'
     }
   ];
@@ -118,30 +107,27 @@ export default function Dashboard() {
   const handleStartTask = (offer: any) => {
     if (!firestore || !user) return;
 
-    // Track task click in Firestore
     const taskCompletionsRef = collection(firestore, 'users', user.uid, 'taskCompletions');
     
     addDocumentNonBlocking(taskCompletionsRef, {
       userId: user.uid,
       taskId: offer.id,
       title: offer.title,
-      rewardAmount: 0, // Initial amount before verification
+      rewardAmount: 0,
       status: 'Pending',
       createdAt: serverTimestamp()
     });
 
     toast({
-      title: "Task Registered",
+      title: "Activity Logged",
       description: `${offer.title} is now in your pending list.`,
     });
 
-    // Open offer link
     window.open(offer.url, '_blank');
   };
 
   return (
     <div className="flex min-h-screen bg-[#000000] text-white">
-      {/* Mobile Sidebar Toggle */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#FA4616] rounded-lg text-white"
@@ -149,7 +135,6 @@ export default function Dashboard() {
         {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* Sidebar Navigation */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-40 w-64 bg-[#0a0a0a] border-r border-white/5 transition-transform duration-300 lg:translate-x-0 lg:static",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -198,24 +183,22 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-          {/* Dashboard Header */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div>
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
                 Welcome, <span className="text-[#FA4616]">{username}</span>
               </h1>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                <CheckCircle className="w-3 h-3 text-green-500" /> Your account is secure and active
+                <CheckCircle className="w-3 h-3 text-green-500" /> Secure Verified Session
               </p>
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl shadow-[#FA4616]/5 relative overflow-hidden group min-w-[200px]">
+              <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl relative min-w-[200px]">
                 <div>
-                  <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Total Earnings</p>
+                  <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Available Balance</p>
                   <p className="text-3xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
                 </div>
                 <div className="w-10 h-10 rounded-2xl bg-[#FA4616]/10 flex items-center justify-center border border-[#FA4616]/20 shrink-0">
@@ -223,9 +206,9 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="glass-card bg-[#0a0a0a] border-yellow-500/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl shadow-yellow-500/5 relative overflow-hidden group min-w-[200px]">
+              <div className="glass-card bg-[#0a0a0a] border-yellow-500/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl relative min-w-[200px]">
                 <div>
-                  <p className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em] mb-1">Pending Rewards</p>
+                  <p className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em] mb-1">Pending Review</p>
                   <p className="text-3xl font-black text-white tabular-nums">${pendingBalance.toFixed(2)}</p>
                 </div>
                 <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shrink-0">
@@ -235,7 +218,6 @@ export default function Dashboard() {
             </div>
           </header>
 
-          {/* Offers Grid Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-[#FA4616] rounded-full" />
@@ -258,10 +240,10 @@ export default function Dashboard() {
                     <div className={cn("flex-1", offer.highlight && "max-w-2xl")}>
                       <div className="flex items-center justify-between mb-6">
                         <div className={cn(
-                          "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 border border-white/10",
-                          offer.highlight ? "bg-[#FA4616] text-white shadow-xl shadow-[#FA4616]/20" : "bg-white/5 text-[#FA4616] group-hover:bg-[#FA4616]/10"
+                          "w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10",
+                          offer.highlight ? "bg-[#FA4616] text-white shadow-xl shadow-[#FA4616]/20" : "bg-white/5 text-[#FA4616]"
                         )}>
-                          <offer.icon className={cn("w-7 h-7", offer.highlight && "animate-pulse")} />
+                          <offer.icon className="w-7 h-7" />
                         </div>
                         <div className="text-right">
                           <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Reward Potential</p>
@@ -298,7 +280,6 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* Activity Tracking Section */}
           <section id="history" className="scroll-mt-10">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-yellow-500 rounded-full" />
@@ -306,14 +287,6 @@ export default function Dashboard() {
             </div>
             <TaskHistory userId={user.uid} firestore={firestore} />
           </section>
-
-          {/* Activity Log Link */}
-          <div className="mt-12 text-center">
-            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-4">Need help with a task?</p>
-            <Link href="/#faq" className="text-white/40 hover:text-[#FA4616] transition-colors text-xs font-bold uppercase tracking-widest inline-flex items-center gap-2">
-              View Earning Guide <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
         </div>
       </main>
     </div>

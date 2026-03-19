@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -37,11 +36,12 @@ export function AuthRedirectListener() {
               createdAt: serverTimestamp(),
               balance: 0,
               totalEarnings: 0,
-              offersCompleted: 0,
-              rewardsUnlocked: 0,
+              pendingEarnings: 0,
+              totalReferrals: 0,
               accountStatus: 'active',
-              username: '',
-              preferredGiftCard: ''
+              username: user.email?.split('@')[0] || '',
+              preferredGiftCard: '',
+              isAdmin: false // Default to non-admin
             }, { merge: true });
           }
           
@@ -49,6 +49,8 @@ export function AuthRedirectListener() {
             title: `Identity Verified`, 
             description: "Session successfully synchronized." 
           });
+          
+          router.push('/dashboard');
         }
       } catch (error: any) {
         console.error("Auth Listener Error:", error);
