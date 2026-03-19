@@ -17,14 +17,25 @@ import {
   Loader2,
   Home,
   ShieldCheck,
-  Users
+  Users,
+  ExternalLink,
+  Clock
 } from 'lucide-react';
 import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter 
+} from '@/components/ui/dialog';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
@@ -32,6 +43,10 @@ export default function Dashboard() {
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // Modal States
+  const [isAppOfferModalOpen, setIsAppOfferModalOpen] = useState(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
 
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -45,6 +60,17 @@ export default function Dashboard() {
       router.push('/');
     }
   }, [user, isUserLoading, router]);
+
+  // Handle return message detection
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hasStartedTask = sessionStorage.getItem('app_testing_started');
+      if (hasStartedTask) {
+        setIsReturnModalOpen(true);
+        sessionStorage.removeItem('app_testing_started');
+      }
+    }
+  }, []);
 
   if (isUserLoading || !user) {
     return (
@@ -83,8 +109,17 @@ export default function Dashboard() {
     }
   ];
 
-  const handleStartTask = () => {
-    router.push('/task');
+  const handleStartTask = (id: string) => {
+    if (id === 'apps') {
+      setIsAppOfferModalOpen(true);
+    } else {
+      router.push('/task');
+    }
+  };
+
+  const handleAppOfferRedirect = () => {
+    sessionStorage.setItem('app_testing_started', 'true');
+    window.location.href = "https://gameflashx.space/d/i/277ood";
   };
 
   const handleWithdraw = () => {
@@ -172,9 +207,10 @@ export default function Dashboard() {
               <div className="flex items-center gap-3 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
                 <span>Your account is active and secure</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                <span className="bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500 text-[8px] font-black tracking-widest">
-                  Verified
-                </span>
+                <div className="flex items-center gap-1 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500">
+                  <ShieldCheck className="w-2.5 h-2.5" />
+                  <span className="text-[8px] font-black tracking-widest uppercase">Verified</span>
+                </div>
               </div>
             </div>
 
@@ -251,7 +287,7 @@ export default function Dashboard() {
 
                     <div className="mt-auto">
                       <Button 
-                        onClick={handleStartTask}
+                        onClick={() => handleStartTask(offer.id)}
                         className="w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-white"
                       >
                         Start Task <ArrowUpRight className="ml-2 w-5 h-5" />
@@ -264,6 +300,66 @@ export default function Dashboard() {
           </section>
         </div>
       </main>
+
+      {/* App Earning Partner Modal */}
+      <Dialog open={isAppOfferModalOpen} onOpenChange={setIsAppOfferModalOpen}>
+        <DialogContent className="sm:max-w-[480px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
+          <div className="p-8 md:p-10">
+            <DialogHeader className="mb-8 text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/20">
+                <ShieldCheck className="w-8 h-8 text-primary" />
+              </div>
+              <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight">
+                Partner Offer <span className="text-primary">Available</span>
+              </DialogTitle>
+              <DialogDescription className="text-muted-foreground text-base mt-4 leading-relaxed">
+                We've found a partner offer for you.
+                <br /><br />
+                To continue, please complete a quick verification step. 
+                After completion, your app testing review will be processed and your reward will be sent to your registered email.
+                <br /><br />
+                Make sure your Gameflashx email is linked with PayPal.
+                <br /><br />
+                Thank you.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button 
+                onClick={handleAppOfferRedirect}
+                className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95"
+              >
+                Continue <ArrowUpRight className="ml-2 w-6 h-6" />
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Return Welcome Modal */}
+      <Dialog open={isReturnModalOpen} onOpenChange={setIsReturnModalOpen}>
+        <DialogContent className="sm:max-w-[450px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
+          <div className="p-8 md:p-10 text-center">
+            <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-green-500/20">
+              <Clock className="w-8 h-8 text-green-500" />
+            </div>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4">
+              Review in <span className="text-green-500">Progress</span>
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              Your app testing review is in progress.
+              <br /><br />
+              Once verified, your reward will be sent to your registered email. 
+              Thank you for your patience.
+            </p>
+            <Button 
+              onClick={() => setIsReturnModalOpen(false)}
+              className="w-full h-14 bg-white/5 hover:bg-white/10 text-white border border-white/10 font-black uppercase tracking-widest rounded-xl transition-all"
+            >
+              Understood
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
