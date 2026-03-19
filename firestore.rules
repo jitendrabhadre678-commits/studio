@@ -3,67 +3,89 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * GAMEFLASHX DASHBOARD - SECURITY RULES
-     * 
-     * Enforces path-based ownership and restricted verification logic.
+     * FIRESTORE SECURITY RULES - PROTOTYPING MODE
+     *
+     * Core Philosophy:
+     * This ruleset enforces a strict User-Ownership model. Access to data is tied directly 
+     * to the authenticated user's UID. The structure prioritizes "Authorization Independence,"
+     * meaning all security decisions can be made using only the document path and the 
+     * document's own data, avoiding slow and expensive cross-document lookups (get() calls).
+     *
+     * Data Structure:
+     * All user-specific data is hierarchically organized under the /users/{userId} path.
+     * - /users/{userId}: The primary user profile.
+     * - /users/{userId}/rewards/{rewardId}: Digital rewards belonging to a specific user.
+     * - /users/{userId}/activity/{activityId}: Task and interaction logs for a specific user.
+     *
+     * Key Security Decisions:
+     * 1. Strict Ownership: Users can only read, list, or write data within their own 
+     *    /{userId} tree. Listing of all users or other users' rewards/activities is strictly denied.
+     * 2. Denormalization for Authorization: The `userId` is stored both in the path 
+     *    and as a field within subcollection documents. Rules enforce that these match
+     *    to ensure relational integrity.
+     * 3. Prototyping Flexibility: While authorization (WHO can access) is strictly enforced,
+     *    data validation (WHAT the data looks like) is kept minimal to allow for rapid 
+     *    schema iteration during development.
      */
 
+    // --- Helper Functions ---
+
+    /** @description Checks if the request is from an authenticated user. */
     function isSignedIn() {
       return request.auth != null;
     }
 
+    /** @description Checks if the authenticated user's UID matches the provided userId. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    function isAdmin() {
-      return isSignedIn() && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    /** @description Verifies ownership and ensures the document exists for state-changing operations. */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
     }
 
-    // Validation helpers
-    function isValidStatusTransition() {
-      // Users can only set status to 'Pending' on creation
-      return request.resource.data.status == 'Pending' || isAdmin();
-    }
+    // --- Collection Rules ---
 
+    /**
+     * @description Rules for the root User profile document.
+     * @path /users/{userId}
+     * @allow (create) if the auth UID matches the document ID.
+     * @deny (get) if a user tries to view another user's profile document.
+     * @principle Enforces self-creation and strict ownership of the user profile.
+     */
     match /users/{userId} {
-      allow get, list: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isOwner(userId) || isAdmin();
-      allow delete: if isAdmin();
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update, delete: if isExistingOwner(userId);
 
-      match /taskCompletions/{completionId} {
-        allow get, list: if isOwner(userId) || isAdmin();
-        allow create: if isOwner(userId) && 
-                        request.resource.data.userId == userId && 
-                        request.resource.data.status == 'Pending';
-        // Only Admin can move tasks to 'Verified'
-        allow update: if isAdmin();
-        allow delete: if isAdmin();
-      }
-
-      match /transactions/{transactionId} {
-        allow get, list: if isOwner(userId) || isAdmin();
+      /**
+       * @description Rules for digital rewards earned or claimed by a user.
+       * @path /users/{userId}/rewards/{rewardId}
+       * @allow (list) if the user is listing their own rewards subcollection.
+       * @deny (create) if the internal 'userId' field does not match the path userId.
+       * @principle Uses path-based authorization to secure subcollections without get() calls.
+       */
+      match /rewards/{rewardId} {
+        allow get, list: if isOwner(userId);
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update, delete: if isAdmin();
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
       }
-    }
 
-    // Public Collections
-    match /tasks/{taskId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /giftCards/{giftCardId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      /**
+       * @description Rules for user interaction and task completion logs.
+       * @path /users/{userId}/activity/{activityId}
+       * @allow (get) if the owner accesses a specific activity record.
+       * @deny (update) if the user attempts to change the 'userId' field of the record.
+       * @principle Ensures relational integrity by enforcing immutability of the owner field.
+       */
+      match /activity/{activityId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
     }
   }
 }
