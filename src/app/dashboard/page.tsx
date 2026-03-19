@@ -48,6 +48,9 @@ export default function Dashboard() {
   const [isAppOfferModalOpen, setIsAppOfferModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
 
+  // Dynamic Stats State
+  const [taskStats, setTaskStats] = useState<{ [key: string]: number }>({});
+
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
@@ -61,7 +64,7 @@ export default function Dashboard() {
     }
   }, [user, isUserLoading, router]);
 
-  // Handle return message detection
+  // Handle return message detection & generate random stats
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hasStartedTask = sessionStorage.getItem('app_testing_started');
@@ -69,6 +72,12 @@ export default function Dashboard() {
         setIsReturnModalOpen(true);
         sessionStorage.removeItem('app_testing_started');
       }
+
+      // Generate random counts once on mount
+      setTaskStats({
+        apps: Math.floor(Math.random() * (600 - 200 + 1)) + 200,
+        games: Math.floor(Math.random() * (600 - 200 + 1)) + 200,
+      });
     }
   }, []);
 
@@ -98,14 +107,16 @@ export default function Dashboard() {
       title: 'Test Apps & Earn Cash',
       description: 'Get paid to test new mobile applications and share your feedback.',
       icon: Smartphone,
-      rewardRange: '$0.50 - $25'
+      rewardRange: '$0.50 - $25',
+      statKey: 'apps'
     },
     {
       id: 'games',
       title: 'Play Games & Earn Cash',
       description: 'Earn rewards for playing and reaching milestones in top-rated games.',
       icon: Gamepad2,
-      rewardRange: '$1.00 - $50'
+      rewardRange: '$1.00 - $50',
+      statKey: 'games'
     }
   ];
 
@@ -204,12 +215,13 @@ export default function Dashboard() {
               <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
                 Start completing tasks to unlock your rewards.
               </p>
-              <div className="flex items-center gap-3 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
-                <span>Your account is active and secure</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                <div className="flex items-center gap-1 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500">
-                  <ShieldCheck className="w-2.5 h-2.5" />
-                  <span className="text-[8px] font-black tracking-widest uppercase">Verified</span>
+              <div className="flex items-center gap-2">
+                <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
+                  Your account is active and secure
+                </p>
+                <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                  <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified</span>
                 </div>
               </div>
             </div>
@@ -248,7 +260,7 @@ export default function Dashboard() {
           {/* Motivational Message */}
           {balance === 0 && (
             <div className="mb-12 text-center p-10 glass-card rounded-[2.5rem] border-primary/10 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-10 transition-opacity" />
               <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Complete 1 offer and unlock your first withdrawal 💸</h2>
               <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Just one step away — start now and claim your reward</p>
             </div>
@@ -274,7 +286,9 @@ export default function Dashboard() {
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Active Now</p>
-                        <p className="text-lg font-black text-white">145 This Month</p>
+                        <p className="text-lg font-black text-white">
+                          {taskStats[offer.statKey] || '...'} This Month
+                        </p>
                       </div>
                     </div>
 
