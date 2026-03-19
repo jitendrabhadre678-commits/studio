@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -10,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 /**
  * Handles Firebase Auth redirect results and ensures user profile exists in Firestore.
- * Also performs automatic country detection via geolocation API.
+ * Performs automatic country detection and email synchronization.
  */
 export function AuthRedirectListener() {
   const auth = useAuth();
@@ -28,6 +27,7 @@ export function AuthRedirectListener() {
           const userRef = doc(db, 'users', user.uid);
           const userSnap = await getDoc(userRef);
 
+          // Geolocation Detection
           let detectedCountry = 'Unknown';
           try {
             const geoRes = await fetch('https://ipapi.co/json/');
@@ -37,11 +37,15 @@ export function AuthRedirectListener() {
             console.warn("Geolocation API failed, defaulting to Unknown.");
           }
 
+          // Email extraction
+          const loginEmail = user.email || '';
+          const defaultUsername = loginEmail.split('@')[0] || `player_${user.uid.slice(0, 5)}`;
+
           // Initialize user document if it doesn't exist
           if (!userSnap.exists()) {
             setDocumentNonBlocking(userRef, {
               id: user.uid,
-              email: user.email,
+              email: loginEmail,
               displayName: user.displayName || '',
               photoURL: user.photoURL || '',
               createdAt: serverTimestamp(),
@@ -50,22 +54,27 @@ export function AuthRedirectListener() {
               pendingEarnings: 0,
               totalReferrals: 0,
               accountStatus: 'active',
-              username: user.email?.split('@')[0] || '',
+              username: defaultUsername,
               country: detectedCountry,
               paypalEmail: '',
               isAdmin: false
             }, { merge: true });
           } else {
-            // Update country if missing or different (optional, keeps data fresh)
+            // Update email and country if they are missing or "Unknown"
             const existingData = userSnap.data();
-            if (!existingData.country || existingData.country === 'Unknown') {
-              setDocumentNonBlocking(userRef, { country: detectedCountry }, { merge: true });
+            const updates: any = {};
+            
+            if (!existingData.email && loginEmail) updates.email = loginEmail;
+            if (!existingData.country || existingData.country === 'Unknown') updates.country = detectedCountry;
+            
+            if (Object.keys(updates).length > 0) {
+              setDocumentNonBlocking(userRef, updates, { merge: true });
             }
           }
           
           toast({ 
-            title: `Identity Verified`, 
-            description: "Session successfully synchronized." 
+            title: `Session Synchronized`, 
+            description: "Your rewards profile is ready." 
           });
           
           router.push('/dashboard');
