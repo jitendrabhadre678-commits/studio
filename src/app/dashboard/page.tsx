@@ -10,7 +10,6 @@ import {
   User, 
   Wallet, 
   Trophy, 
-  CheckCircle,
   Menu,
   X,
   Zap,
@@ -18,11 +17,9 @@ import {
   ClipboardList,
   BookOpen,
   ArrowUpRight,
-  Clock,
   Loader2,
   Home,
   AlertCircle,
-  ChevronRight,
   ShieldCheck
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
@@ -236,10 +233,6 @@ export default function Dashboard() {
                 <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
                   Welcome, <span className="text-[#FA4616]">{username}</span>
                 </h1>
-                <div className="hidden sm:flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
-                  <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
-                  <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Verified Account</span>
-                </div>
               </div>
               <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
                 Start completing tasks to unlock your rewards.
