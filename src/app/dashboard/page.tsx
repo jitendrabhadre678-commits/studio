@@ -6,36 +6,29 @@ import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Gift, 
-  History, 
   User, 
   Wallet, 
-  Trophy, 
   Menu,
   X,
   Zap,
   Smartphone,
-  ClipboardList,
-  BookOpen,
+  Gamepad2,
   ArrowUpRight,
   Loader2,
   Home,
-  ShieldCheck,
-  Star
+  ShieldCheck
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { TaskHistory } from '@/components/dashboard/TaskHistory';
-import { DailyBonus } from '@/components/dashboard/DailyBonus';
-import { SpinWheel } from '@/components/dashboard/SpinWheel';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
 /**
- * @fileOverview Refined User Dashboard.
- * Focuses on Available Balance and provides clear path to withdrawal with trust signals.
+ * @fileOverview Simplified User Dashboard for GameFlashX.
+ * Focuses on balance, withdrawals, and two main task categories.
  */
 
 export default function Dashboard() {
@@ -70,50 +63,32 @@ export default function Dashboard() {
 
   // Reactive data mapping
   const balance = userData?.balance || 0;
-  const username = userData?.username || user.displayName || user.email?.split('@')[0] || 'Player';
+  const username = userData?.username || user.email?.split('@')[0] || 'Player';
   const MIN_WITHDRAWAL = 5;
 
   const navItems = [
     { id: 'landing', label: 'Home', icon: Home, href: '/' },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-    { id: 'rewards', label: 'Rewards', icon: Gift, href: '#offers' },
-    { id: 'history', label: 'History', icon: History, href: '#history' },
+    { id: 'refer', label: 'Refer & Earn', icon: Zap, href: '/refer' },
     { id: 'profile', label: 'Profile', icon: User, href: '/account-settings' },
   ];
 
   const offerCards = [
     {
-      id: 'premium',
-      title: 'Premium Offers',
-      description: 'Earn high-value rewards from $1.00 up to $100.00 per task.',
-      icon: Zap,
-      rewardRange: '$1 - $100',
-      highlight: true,
-      url: '/quiz-earn'
-    },
-    {
       id: 'apps',
-      title: 'App Testing & Games',
-      description: 'Get paid to play new games and test mobile applications.',
+      title: 'Test Apps & Earn Cash',
+      description: 'Get paid to test new mobile applications and share your feedback.',
       icon: Smartphone,
       rewardRange: '$0.50 - $25',
-      url: '/quiz-earn'
+      url: '/task'
     },
     {
-      id: 'surveys',
-      title: 'Paid Surveys',
-      description: 'Share your opinion and get rewarded for your time.',
-      icon: ClipboardList,
-      rewardRange: '$0.20 - $10',
-      url: '/quiz-earn'
-    },
-    {
-      id: 'read',
-      title: 'Read & Earn',
-      description: 'Earn points by reading articles and staying updated.',
-      icon: BookOpen,
-      rewardRange: 'Daily Payout',
-      url: '/quiz-earn'
+      id: 'games',
+      title: 'Play Games & Earn Cash',
+      description: 'Earn rewards for playing and reaching milestones in top-rated games.',
+      icon: Gamepad2,
+      rewardRange: '$1.00 - $50',
+      url: '/task'
     }
   ];
 
@@ -131,34 +106,15 @@ export default function Dashboard() {
       createdAt: serverTimestamp()
     });
 
-    toast({
-      title: "Activity Logged",
-      description: `${offer.title} is now in your pending list.`,
-    });
-
-    router.push('/quiz-earn');
+    router.push('/task');
   };
 
   const handleWithdraw = () => {
     if (balance < MIN_WITHDRAWAL) return;
-
-    if (!userData?.paypalEmail) {
-      toast({
-        variant: "destructive",
-        title: "Payout Setup Required",
-        description: "Please configure your PayPal email in Profile settings to withdraw cash.",
-        action: (
-          <Button variant="outline" size="sm" onClick={() => router.push('/account-settings')}>
-            Go to Profile
-          </Button>
-        ),
-      });
-      return;
-    }
     
     toast({
-      title: "Success! 💸",
-      description: "Withdrawal request submitted successfully. Check your email for confirmation.",
+      title: "Success!",
+      description: "Withdrawal request submitted 💸",
       className: "bg-green-600 text-white border-none font-bold shadow-[0_0_30px_rgba(22,163,74,0.4)]",
     });
   };
@@ -227,7 +183,7 @@ export default function Dashboard() {
       {/* Main Dashboard Content */}
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-          {/* Real-time Header Stats */}
+          {/* Header Stats */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div className="w-full">
               <div className="flex items-center gap-3 mb-2">
@@ -240,8 +196,8 @@ export default function Dashboard() {
               </p>
               <div className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                 <span>Your account is active and secure</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                <span className="bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500 text-[8px] font-black tracking-widest shadow-[0_0_10px_rgba(34,197,94,0.1)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <span className="bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500 text-[8px] font-black tracking-widest">
                   Verified
                 </span>
               </div>
@@ -275,35 +231,8 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
-              <DailyBonus userRef={userRef} userData={userData} />
             </div>
           </header>
-
-          {/* Daily Perks & Lucky Games */}
-          <section className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1.5 bg-yellow-500 rounded-full" />
-              <h2 className="text-2xl font-black uppercase tracking-tight">Daily Perks</h2>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <SpinWheel userRef={userRef} userData={userData} />
-              </div>
-              <Card className="glass-card bg-[#0a0a0a] border-white/5 p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
-                  <Star className="w-8 h-8 text-blue-500" />
-                </div>
-                <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">More Rewards</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                  Come back every 24 hours to claim your daily bonus and spin the lucky wheel for extra cash.
-                </p>
-                <div className="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                  Active Streak: {userData?.loginStreak || 0} Days
-                </div>
-              </Card>
-            </div>
-          </section>
 
           {/* Offers Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
@@ -312,52 +241,34 @@ export default function Dashboard() {
               <h2 className="text-2xl font-black uppercase tracking-tight">Available Tasks</h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {offerCards.map((offer) => (
                 <Card 
-                  className={cn(
-                    "glass-card border-white/5 bg-[#0a0a0a] hover:border-[#FA4616]/40 transition-all duration-500 group overflow-hidden rounded-[2rem]",
-                    offer.highlight && "md:col-span-2 lg:col-span-3 border-[#FA4616]/30 bg-gradient-to-br from-[#0a0a0a] to-[#1a0804]"
-                  )}
+                  className="glass-card border-white/5 bg-[#0a0a0a] hover:border-[#FA4616]/40 transition-all duration-500 group overflow-hidden rounded-[2rem]"
                   key={offer.id}
                 >
-                  <CardContent className={cn(
-                    "p-8 flex flex-col h-full",
-                    offer.highlight && "md:flex-row md:items-center md:justify-between gap-8"
-                  )}>
-                    <div className={cn("flex-1", offer.highlight && "max-w-2xl")}>
-                      <div className="flex items-center justify-between mb-6">
-                        <div className={cn(
-                          "w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10",
-                          offer.highlight ? "bg-[#FA4616] text-white shadow-xl shadow-[#FA4616]/20" : "bg-white/5 text-[#FA4616]"
-                        )}>
-                          <offer.icon className="w-7 h-7" />
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Reward Potential</p>
-                          <p className="text-lg font-black text-white">{offer.rewardRange}</p>
-                        </div>
+                  <CardContent className="p-8 flex flex-col h-full">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 text-[#FA4616] border border-white/10">
+                        <offer.icon className="w-7 h-7" />
                       </div>
-
-                      <h3 className={cn(
-                        "font-black uppercase tracking-tight mb-3",
-                        offer.highlight ? "text-3xl md:text-4xl" : "text-xl"
-                      )}>
-                        {offer.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-8">
-                        {offer.description}
-                      </p>
+                      <div className="text-right">
+                        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Users Participating</p>
+                        <p className="text-lg font-black text-white">145 This Month</p>
+                      </div>
                     </div>
 
-                    <div className={cn("shrink-0", offer.highlight && "md:w-64")}>
+                    <h3 className="font-black uppercase tracking-tight mb-3 text-xl">
+                      {offer.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-8">
+                      {offer.description}
+                    </p>
+
+                    <div className="mt-auto">
                       <Button 
                         onClick={() => handleStartTask(offer)}
-                        className={cn(
-                          "w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl",
-                          "bg-white/5 hover:bg-[#FA4616] border border-white/10 hover:border-[#FA4616] text-white",
-                          offer.highlight && "bg-[#FA4616] border-[#FA4616] shadow-[#FA4616]/20 hover:scale-[1.02]"
-                        )}
+                        className="w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl bg-white/5 hover:bg-[#FA4616] border border-white/10 hover:border-[#FA4616] text-white"
                       >
                         Start Task <ArrowUpRight className="ml-2 w-5 h-5" />
                       </Button>
@@ -366,15 +277,6 @@ export default function Dashboard() {
                 </Card>
               ))}
             </div>
-          </section>
-
-          {/* Real-time Activity Log */}
-          <section id="history" className="scroll-mt-10">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1.5 bg-green-500 rounded-full" />
-              <h2 className="text-2xl font-black uppercase tracking-tight">Activity Log</h2>
-            </div>
-            <TaskHistory userId={user.uid} firestore={firestore} />
           </section>
         </div>
       </main>
