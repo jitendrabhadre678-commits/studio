@@ -1,110 +1,132 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * FIRESTORE SECURITY RULES - PROTOTYPING MODE
+     * CORE PHILOSOPHY
+     * This ruleset implements a strict user-ownership model for private data (Profiles, Rewards)
+     * while allowing public read access to platform content (Tasks, Gift Cards).
      *
-     * Core Philosophy:
-     * This ruleset enforces a strict User-Ownership model. Access to data is tied directly 
-     * to the authenticated user's UID. The structure prioritizes "Authorization Independence,"
-     * meaning all security decisions can be made using only the document path and the 
-     * document's own data, avoiding slow and expensive cross-document lookups (get() calls).
+     * DATA STRUCTURE
+     * - /users/{userId}: Private user profiles, owned by the authenticated user.
+     * - /users/{userId}/rewards/{rewardId}: Private rewards associated with a user.
+     * - /tasks/{taskId}: Publicly readable tasks, manageable only by administrators.
+     * - /giftCardBrands/{brandId}: Publicly readable gift card metadata.
+     * - /admins/{adminId}: A restricted collection used to identify administrative users.
      *
-     * Data Structure:
-     * All user-specific data is hierarchically organized under the /users/{userId} path.
-     * - /users/{userId}: The primary user profile.
-     * - /users/{userId}/rewards/{rewardId}: Digital rewards belonging to a specific user.
-     * - /users/{userId}/activity/{activityId}: Task and interaction logs for a specific user.
+     * KEY SECURITY DECISIONS
+     * - Ownership is enforced via path parameters (userId) and validated against request.auth.uid.
+     * - Platform content (Tasks, Gift Cards) is readable by everyone to allow landing page visibility.
+     * - Relational integrity is enforced by requiring 'userId' fields in documents to match the path.
+     * - Write access to platform content is restricted to users present in the /admins collection.
      *
-     * Key Security Decisions:
-     * 1. Strict Ownership: Users can only read, list, or write data within their own 
-     *    /{userId} tree. Listing of all users or other users' rewards/activities is strictly denied.
-     * 2. Denormalization for Authorization: The `userId` is stored both in the path 
-     *    and as a field within subcollection documents. Rules enforce that these match
-     *    to ensure relational integrity.
-     * 3. Field Immutability: Critical identity fields like 'username' are protected from modification
-     *    after initial creation to prevent fraud and payout confusion.
+     * DENORMALIZATION FOR AUTHORIZATION
+     * - User IDs are embedded directly into subcollections (like Rewards) to ensure that 
+     *   authorization checks remain fast and independent of parent document lookups.
      */
 
-    // --- Helper Functions ---
+    // --- Global Helper Functions ---
 
-    /** @description Checks if the request is from an authenticated user. */
+    /** Checks if the user is authenticated. */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** @description Checks if the authenticated user's UID matches the provided userId. */
+    /** Checks if the authenticated user's UID matches the provided userId. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** @description Verifies ownership and ensures the document exists for state-changing operations. */
+    /** Checks if the user is an owner and the document currently exists. */
     function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+      return resource != null && isOwner(userId);
+    }
+
+    /** Checks if the authenticated user has an entry in the admins collection. */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
     // --- Collection Rules ---
 
     /**
-     * @description Rules for the root User profile document.
+     * @description Rules for the UserProfile entity. Users can manage their own profile.
      * @path /users/{userId}
-     * @allow (create) if the auth UID matches the document ID.
-     * @deny (update) if the user attempts to change their fixed 'username'.
+     * @allow (create) User 'abc' creates document /users/abc while signed in as 'abc'.
+     * @deny (update) User 'abc' tries to update /users/xyz.
+     * @principle Enforces strict path-based ownership and self-creation.
      */
     match /users/{userId} {
       allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId);
+      
+      allow create: if isOwner(userId) 
+                    && request.resource.data.id == userId;
+      
       allow update: if isExistingOwner(userId) 
-                    && (request.resource.data.username == resource.data.username);
+                    && request.resource.data.id == resource.data.id;
+      
       allow delete: if isExistingOwner(userId);
 
       /**
-       * @description Rules for digital rewards earned or claimed by a user.
+       * @description Rules for the Reward entity. Subcollection of UserProfile.
+       * @path /users/{userId}/rewards/{rewardId}
+       * @allow (list) User 'abc' fetches all their rewards from /users/abc/rewards.
+       * @deny (create) User 'abc' tries to create a reward for user 'xyz'.
+       * @principle Ensures reward data is private to the user and linked correctly.
        */
       match /rewards/{rewardId} {
         allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Rules for user interaction and task completion logs.
-       */
-      match /activity/{activityId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Rules for task completions tracking.
-       */
-      match /taskCompletions/{taskId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.status == resource.data.status;
+        
+        allow create: if isOwner(userId) 
+                      && request.resource.data.userId == userId;
+        
+        allow update: if isExistingOwner(userId) 
+                      && request.resource.data.userId == resource.data.userId;
+        
         allow delete: if isExistingOwner(userId);
       }
     }
 
     /**
-     * @description Rules for referrals tracking.
+     * @description Rules for the Task entity. Public catalog of available tasks.
+     * @path /tasks/{taskId}
+     * @allow (get) Any visitor views a task description.
+     * @deny (update) A regular user tries to change the reward amount of a task.
+     * @principle Public read access with restricted admin-only writes.
      */
-    match /referrals/{referralId} {
-      allow get: if true;
-      allow create, update: if isSignedIn();
+    match /tasks/{taskId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
     }
 
     /**
-     * @description Rules for financial transactions.
+     * @description Rules for GiftCardBrand and its denominations.
+     * @path /giftCardBrands/{brandId}
+     * @allow (list) Any visitor browses available gift card brands.
+     * @deny (delete) A non-admin user tries to delete a brand.
+     * @principle Catalog data is public; management is administrative.
      */
-    match /transactions/{transactionId} {
-      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    match /giftCardBrands/{brandId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+
+      match /values/{valueId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+      }
+    }
+
+    /**
+     * @description Rules for the Admin collection (Role-Based Access Control).
+     * @path /admins/{adminId}
+     * @allow (get) An admin checks their own admin status.
+     * @deny (list) A user tries to find out who all the admins are.
+     * @principle System-critical collection; writes are typically handled via console/backend.
+     */
+    match /admins/{adminId} {
+      allow get: if isSignedIn() && request.auth.uid == adminId;
+      allow list: if false;
+      allow create, update, delete: if false; // Admin roles should be managed via high-privilege environments.
     }
   }
 }
