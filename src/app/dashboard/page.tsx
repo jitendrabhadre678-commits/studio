@@ -20,7 +20,9 @@ import {
   ArrowUpRight,
   Clock,
   Loader2,
-  Home
+  Home,
+  AlertCircle,
+  ChevronRight
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -32,8 +34,8 @@ import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 
 /**
- * @fileOverview Standardized User Dashboard.
- * Features real-time balance tracking and protected task activity log using onSnapshot.
+ * @fileOverview Refined User Dashboard.
+ * Focuses on Available Balance and provides clear path to withdrawal.
  */
 
 export default function Dashboard() {
@@ -68,8 +70,8 @@ export default function Dashboard() {
 
   // Reactive data mapping
   const balance = userData?.balance || 0;
-  const pendingBalance = userData?.pendingEarnings || 0;
   const username = userData?.username || user.displayName || user.email?.split('@')[0] || 'Player';
+  const MIN_WITHDRAWAL = 5;
 
   const navItems = [
     { id: 'landing', label: 'Home', icon: Home, href: '/' },
@@ -138,6 +140,16 @@ export default function Dashboard() {
     router.push('/quiz-earn');
   };
 
+  const handleWithdraw = () => {
+    if (balance < MIN_WITHDRAWAL) return;
+    
+    toast({
+      title: "Withdrawal Successful",
+      description: "Withdrawal request submitted.",
+      className: "bg-[#FA4616] text-white border-none font-bold",
+    });
+  };
+
   return (
     <div className="flex min-h-screen bg-[#000000] text-white">
       {/* Mobile Toggle */}
@@ -201,7 +213,7 @@ export default function Dashboard() {
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {/* Real-time Header Stats */}
-          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
             <div className="w-full">
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
                 Welcome, <span className="text-[#FA4616]">{username}</span>
@@ -214,29 +226,56 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-4">
-              <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl relative min-w-[200px]">
+            <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+              <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center justify-between gap-12 shadow-2xl relative min-w-[280px] w-full md:w-auto">
                 {isDataLoading && <div className="absolute top-2 right-4"><Loader2 className="w-3 h-3 text-[#FA4616] animate-spin" /></div>}
                 <div>
                   <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Available Balance</p>
-                  <p className="text-3xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
+                  <p className="text-4xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
                 </div>
-                <div className="w-10 h-10 rounded-2xl bg-[#FA4616]/10 flex items-center justify-center border border-[#FA4616]/20 shrink-0">
-                  <Trophy className="w-5 h-5 text-[#FA4616]" />
-                </div>
-              </div>
-
-              <div className="glass-card bg-[#0a0a0a] border-yellow-500/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl relative min-w-[200px]">
-                <div>
-                  <p className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em] mb-1">Pending Review</p>
-                  <p className="text-3xl font-black text-white tabular-nums">${pendingBalance.toFixed(2)}</p>
-                </div>
-                <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shrink-0">
-                  <Clock className="w-5 h-5 text-yellow-500" />
+                
+                <div className="flex flex-col items-center gap-2">
+                  <Button 
+                    onClick={handleWithdraw}
+                    disabled={balance < MIN_WITHDRAWAL}
+                    className={cn(
+                      "h-12 px-8 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-xl",
+                      balance >= MIN_WITHDRAWAL 
+                        ? "bg-primary hover:bg-primary/90 text-white shadow-primary/20" 
+                        : "bg-white/5 border border-white/10 text-white/20 cursor-not-allowed"
+                    )}
+                  >
+                    <Wallet className="w-4 h-4 mr-2" /> Withdraw
+                  </Button>
+                  {balance < MIN_WITHDRAWAL && (
+                    <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">
+                      Min. withdrawal $5.00
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
           </header>
+
+          {/* Zero Balance Motivation */}
+          {balance === 0 && (
+            <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+              <div className="glass-card bg-gradient-to-r from-[#FA4616]/5 to-transparent border-[#FA4616]/10 p-8 rounded-[2rem] text-center flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full translate-y-1/2" />
+                <div className="relative z-10">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20 animate-bounce">
+                    <Trophy className="text-primary w-8 h-8" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
+                    Complete 1 offer and unlock your first withdrawal 💸
+                  </h3>
+                  <p className="text-muted-foreground font-medium text-sm">
+                    Just one step away — start now and claim your reward
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Offers Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
