@@ -5,7 +5,6 @@ import { useUser, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
-  Gift, 
   User, 
   Wallet, 
   Menu,
@@ -18,7 +17,6 @@ import {
   Home,
   ShieldCheck,
   Users,
-  ExternalLink,
   Clock
 } from 'lucide-react';
 import { doc } from 'firebase/firestore';
@@ -35,7 +33,6 @@ import {
 } from '@/components/ui/dialog';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
@@ -45,8 +42,9 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   
   // Modal States
-  const [isAppOfferModalOpen, setIsAppOfferModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [selectedTaskType, setSelectedTaskType] = useState<'apps' | 'games' | null>(null);
 
   // Dynamic Stats State
   const [taskStats, setTaskStats] = useState<{ [key: string]: number }>({});
@@ -56,7 +54,7 @@ export default function Dashboard() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userData, isLoading: isDataLoading } = useDoc(userRef);
+  const { data: userData } = useDoc(userRef);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -67,10 +65,10 @@ export default function Dashboard() {
   // Handle return message detection & generate random stats
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const hasStartedTask = sessionStorage.getItem('app_testing_started');
+      const hasStartedTask = sessionStorage.getItem('task_started');
       if (hasStartedTask) {
         setIsReturnModalOpen(true);
-        sessionStorage.removeItem('app_testing_started');
+        sessionStorage.removeItem('task_started');
       }
 
       // Generate random counts once on mount
@@ -121,16 +119,20 @@ export default function Dashboard() {
   ];
 
   const handleStartTask = (id: string) => {
-    if (id === 'apps') {
-      setIsAppOfferModalOpen(true);
-    } else {
-      router.push('/task');
-    }
+    setSelectedTaskType(id as 'apps' | 'games');
+    setIsTaskModalOpen(true);
   };
 
-  const handleAppOfferRedirect = () => {
-    sessionStorage.setItem('app_testing_started', 'true');
-    window.location.href = "https://gameflashx.space/d/i/277ood";
+  const handleTaskRedirect = () => {
+    if (!selectedTaskType) return;
+    
+    const links = {
+      apps: "https://gameflashx.space/cl/i/277ood",
+      games: "https://gameflashx.space/cl/i/7jj1vk"
+    };
+
+    sessionStorage.setItem('task_started', 'true');
+    window.location.href = links[selectedTaskType];
   };
 
   const handleWithdraw = () => {
@@ -315,9 +317,9 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* App Earning Partner Modal */}
-      <Dialog open={isAppOfferModalOpen} onOpenChange={setIsAppOfferModalOpen}>
-        <DialogContent className="sm:max-w-[480px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
+      {/* Partner Offer Modal */}
+      <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
           <div className="p-8 md:p-10">
             <DialogHeader className="mb-8 text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/20">
@@ -326,20 +328,26 @@ export default function Dashboard() {
               <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight">
                 Partner Offer <span className="text-primary">Available</span>
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground text-base mt-4 leading-relaxed">
-                We've found a partner offer for you.
+              <DialogDescription className="text-muted-foreground text-base mt-4 leading-relaxed text-left">
+                You are about to access a partner task.
                 <br /><br />
-                To continue, please complete a quick verification step. 
-                After completion, your app testing review will be processed and your reward will be sent to your registered email.
+                Complete the app testing or game task to qualify for your reward. 
+                Your payment will be sent directly to your registered email address.
                 <br /><br />
-                Make sure your Gameflashx email is linked with PayPal.
+                <span className="text-white font-bold uppercase tracking-widest text-[10px]">Processing Time:</span>
+                <ul className="list-disc pl-5 mt-2 space-y-1 text-xs">
+                  <li>Usually within 1 hour after submission</li>
+                  <li>In some cases, it may take 12–24 hours depending on demand</li>
+                </ul>
+                <br />
+                Make sure your Gameflashx email is linked with PayPal to receive payments.
                 <br /><br />
-                Thank you.
+                Thank you for your participation.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button 
-                onClick={handleAppOfferRedirect}
+                onClick={handleTaskRedirect}
                 className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95"
               >
                 Continue <ArrowUpRight className="ml-2 w-6 h-6" />
@@ -360,10 +368,12 @@ export default function Dashboard() {
               Review in <span className="text-green-500">Progress</span>
             </h3>
             <p className="text-muted-foreground leading-relaxed mb-8">
-              Your app testing review is in progress.
+              Your task has been submitted successfully.
               <br /><br />
+              Your testing review is now in progress.
               Once verified, your reward will be sent to your registered email. 
-              Thank you for your patience.
+              <br /><br />
+              Thank you.
             </p>
             <Button 
               onClick={() => setIsReturnModalOpen(false)}
