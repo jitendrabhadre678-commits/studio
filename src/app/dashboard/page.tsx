@@ -241,11 +241,11 @@ export default function Dashboard() {
                   <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Verified Account</span>
                 </div>
               </div>
-              <p className="text-white/60 font-bold uppercase tracking-widest text-[10px] mb-4">
-                Your account is verified and secure. Start completing tasks to unlock rewards.
+              <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
+                Start completing tasks to unlock your rewards.
               </p>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Your account is active and safe
+                Your account is active and safe 🟢
               </p>
             </div>
 
