@@ -35,6 +35,7 @@ export function Header() {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Leaderboard', href: '/leaderboard' },
+    { name: 'Communities', href: '/communities' },
     { name: 'Blog', href: '/blog' },
   ];
 
