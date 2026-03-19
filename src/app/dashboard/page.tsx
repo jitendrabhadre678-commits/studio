@@ -244,9 +244,13 @@ export default function Dashboard() {
               <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
                 Start completing tasks to unlock your rewards.
               </p>
-              <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                Your account is active and safe 🟢
-              </p>
+              <div className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
+                <span>Your account is active and secure</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                <span className="bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500 text-[8px] font-black tracking-widest shadow-[0_0_10px_rgba(34,197,94,0.1)]">
+                  Verified
+                </span>
+              </div>
             </div>
 
             <div className="flex flex-col items-end gap-3 w-full md:w-auto">
