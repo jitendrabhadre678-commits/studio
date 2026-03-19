@@ -78,14 +78,14 @@ export default function AccountSettings() {
                     <IdCard className="w-5 h-5 text-[#FA4616]" /> User Profile
                   </h3>
                   
-                  {/* Non-Editable Username */}
-                  <div className="space-y-2">
+                  {/* Plain Text Username (Non-Editable) */}
+                  <div className="space-y-1">
                     <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Username</Label>
-                    <div className="relative">
-                      <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                      <div className="bg-white/5 border border-white/5 h-14 rounded-2xl pl-11 flex items-center text-white/40 font-bold cursor-not-allowed">
+                    <div className="flex items-center gap-2 ml-1">
+                      <AtSign className="w-4 h-4 text-primary" />
+                      <p className="text-2xl font-black text-white uppercase tracking-tight">
                         {userData?.username || '...'}
-                      </div>
+                      </p>
                     </div>
                     <div className="flex items-start gap-2 mt-2 ml-1 opacity-40">
                       <Info className="w-3 h-3 mt-0.5 text-[#FA4616]" />

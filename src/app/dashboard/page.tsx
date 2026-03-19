@@ -245,7 +245,7 @@ export default function Dashboard() {
                 Your account is verified and secure. Start completing tasks to unlock rewards.
               </p>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                <CheckCircle className="w-3 h-3 text-green-500" /> Live Data Sync Active
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Your account is active and safe
               </p>
             </div>
 
@@ -310,11 +310,11 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {offerCards.map((offer) => (
                 <Card 
-                  key={offer.id} 
                   className={cn(
                     "glass-card border-white/5 bg-[#0a0a0a] hover:border-[#FA4616]/40 transition-all duration-500 group overflow-hidden rounded-[2rem]",
                     offer.highlight && "md:col-span-2 lg:col-span-3 border-[#FA4616]/30 bg-gradient-to-br from-[#0a0a0a] to-[#1a0804]"
                   )}
+                  key={offer.id}
                 >
                   <CardContent className={cn(
                     "p-8 flex flex-col h-full",
