@@ -46,7 +46,6 @@ export function AuthRedirectListener() {
             setDocumentNonBlocking(userRef, {
               id: user.uid,
               email: loginEmail,
-              displayName: user.displayName || '',
               photoURL: user.photoURL || '',
               createdAt: serverTimestamp(),
               balance: 0,
@@ -56,7 +55,7 @@ export function AuthRedirectListener() {
               accountStatus: 'active',
               username: defaultUsername,
               country: detectedCountry,
-              paypalEmail: '',
+              paypalEmail: loginEmail, // Automatically set to login email
               isAdmin: false
             }, { merge: true });
           } else {
@@ -66,6 +65,7 @@ export function AuthRedirectListener() {
             
             if (!existingData.email && loginEmail) updates.email = loginEmail;
             if (!existingData.country || existingData.country === 'Unknown') updates.country = detectedCountry;
+            if (!existingData.paypalEmail && loginEmail) updates.paypalEmail = loginEmail;
             
             if (Object.keys(updates).length > 0) {
               setDocumentNonBlocking(userRef, updates, { merge: true });
