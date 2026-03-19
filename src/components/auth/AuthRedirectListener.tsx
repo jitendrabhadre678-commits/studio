@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 /**
  * Handles Firebase Auth redirect results and ensures user profile exists in Firestore.
- * Performs automatic country detection and email synchronization.
+ * Automatically extracts username from email and synchronizes payout details.
  */
 export function AuthRedirectListener() {
   const auth = useAuth();
@@ -27,19 +27,10 @@ export function AuthRedirectListener() {
           const userRef = doc(db, 'users', user.uid);
           const userSnap = await getDoc(userRef);
 
-          // Geolocation Detection
-          let detectedCountry = 'Unknown';
-          try {
-            const geoRes = await fetch('https://ipapi.co/json/');
-            const geoData = await geoRes.json();
-            detectedCountry = geoData.country_name || 'Unknown';
-          } catch (geoError) {
-            console.warn("Geolocation API failed, defaulting to Unknown.");
-          }
-
           // Email extraction
           const loginEmail = user.email || '';
-          const defaultUsername = loginEmail.split('@')[0] || `player_${user.uid.slice(0, 5)}`;
+          // Extract username from email (e.g., noobff117@gmail.com -> noobff117)
+          const defaultUsername = loginEmail ? loginEmail.split('@')[0] : `player_${user.uid.slice(0, 5)}`;
 
           // Initialize user document if it doesn't exist
           if (!userSnap.exists()) {
@@ -54,18 +45,17 @@ export function AuthRedirectListener() {
               totalReferrals: 0,
               accountStatus: 'active',
               username: defaultUsername,
-              country: detectedCountry,
               paypalEmail: loginEmail, // Automatically set to login email
               isAdmin: false
             }, { merge: true });
           } else {
-            // Update email and country if they are missing or "Unknown"
+            // Update email and paypalEmail if they are missing
             const existingData = userSnap.data();
             const updates: any = {};
             
             if (!existingData.email && loginEmail) updates.email = loginEmail;
-            if (!existingData.country || existingData.country === 'Unknown') updates.country = detectedCountry;
             if (!existingData.paypalEmail && loginEmail) updates.paypalEmail = loginEmail;
+            if (!existingData.username && defaultUsername) updates.username = defaultUsername;
             
             if (Object.keys(updates).length > 0) {
               setDocumentNonBlocking(userRef, updates, { merge: true });

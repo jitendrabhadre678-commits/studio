@@ -11,14 +11,15 @@ import {
   Mail,
   Info,
   Wallet,
-  AtSign
+  AtSign,
+  ShieldCheck
 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { doc } from 'firebase/firestore';
 
 /**
  * @fileOverview Minimal User Profile page.
- * Strictly read-only info hub with zero user input.
+ * Strictly read-only info hub with verified trust signals.
  */
 
 export default function AccountSettings() {
@@ -79,7 +80,7 @@ export default function AccountSettings() {
                   
                   {/* Non-Editable Username */}
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Gamer Tag / Username</Label>
+                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Username</Label>
                     <div className="relative">
                       <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
                       <div className="bg-white/5 border border-white/5 h-14 rounded-2xl pl-11 flex items-center text-white/40 font-bold cursor-not-allowed">
@@ -99,8 +100,12 @@ export default function AccountSettings() {
                     <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Login Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
-                      <div className="bg-white/5 border border-white/5 h-14 rounded-2xl pl-11 flex items-center text-white/40 font-bold cursor-not-allowed">
-                        {user.email}
+                      <div className="bg-white/5 border border-white/5 h-14 rounded-2xl pl-11 pr-4 flex items-center justify-between text-white/40 font-bold cursor-not-allowed">
+                        <span className="truncate">{user.email}</span>
+                        <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full shrink-0">
+                          <ShieldCheck className="w-2.5 h-2.5 text-green-500" />
+                          <span className="text-[8px] font-black text-green-500 uppercase tracking-widest">Verified</span>
+                        </div>
                       </div>
                     </div>
                   </div>

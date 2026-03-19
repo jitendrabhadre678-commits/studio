@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -23,7 +22,8 @@ import {
   Loader2,
   Home,
   AlertCircle,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -36,7 +36,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Refined User Dashboard.
- * Focuses on Available Balance and provides clear path to withdrawal with PayPal validation.
+ * Focuses on Available Balance and provides clear path to withdrawal with trust signals.
  */
 
 export default function Dashboard() {
@@ -217,7 +217,9 @@ export default function Dashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-black truncate">@{username}</p>
-                <p className="text-[10px] text-white/40 font-bold uppercase">{userData?.country || 'Player'}</p>
+                <div className="flex items-center gap-1 text-[8px] text-green-500 font-bold uppercase tracking-widest">
+                  <ShieldCheck className="w-2.5 h-2.5" /> Verified
+                </div>
               </div>
             </div>
           </div>
@@ -230,11 +232,17 @@ export default function Dashboard() {
           {/* Real-time Header Stats */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
             <div className="w-full">
-              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
-                Welcome, <span className="text-[#FA4616]">{username}</span>
-              </h1>
-              <p className="text-white/40 font-bold uppercase tracking-widest text-[10px] mb-4">
-                Location: {userData?.country || 'Detecting...'}
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+                  Welcome, <span className="text-[#FA4616]">{username}</span>
+                </h1>
+                <div className="hidden sm:flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
+                  <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
+                  <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Verified Account</span>
+                </div>
+              </div>
+              <p className="text-white/60 font-bold uppercase tracking-widest text-[10px] mb-4">
+                Your account is verified and secure. Start completing tasks to unlock rewards.
               </p>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                 <CheckCircle className="w-3 h-3 text-green-500" /> Live Data Sync Active

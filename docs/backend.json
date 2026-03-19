@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user account on the GameFlashX platform, tracking their identity, balance, location, and payout details.",
+      "description": "Represents a user account on the GameFlashX platform, tracking their identity, balance, and payout details.",
       "properties": {
         "id": {
           "type": "string",
@@ -17,15 +17,11 @@
         },
         "username": {
           "type": "string",
-          "description": "The user's gamer tag or unique handle."
+          "description": "The user's auto-generated handle from their email."
         },
         "balance": {
           "type": "number",
           "description": "The user's current reward balance or points."
-        },
-        "country": {
-          "type": "string",
-          "description": "The user's detected country via geolocation."
         },
         "paypalEmail": {
           "type": "string",
