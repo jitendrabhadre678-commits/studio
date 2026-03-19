@@ -8,7 +8,7 @@ export function TrustBadges() {
     { icon: <ShieldCheck />, label: "Verified Platform", sub: "SSL Encrypted Security" },
     { icon: <Globe />, label: "Global Rewards", sub: "Accessible Worldwide" },
     { icon: <Zap />, label: "Instant Delivery", sub: "Digital Codes Released 24/7" },
-    { icon: <Users />, label: "2.4M+ Users", sub: "Trusted by Global Gamers" },
+    { icon: <Users />, label: "12,847+ Users", sub: "Trusted by Global Gamers" },
   ];
 
   return (
