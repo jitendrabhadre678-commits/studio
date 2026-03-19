@@ -67,7 +67,7 @@ export function TrendingRewards() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[400px]">
           <AnimatePresence mode="popLayout">
             {filteredCards.map((card, idx) => {
-              const unlockedToday = 100 + (parseInt(card.id) * 45) + (idx * 12);
+              const unlockedThisMonth = 100 + (parseInt(card.id) * 45) + (idx * 12);
               
               return (
                 <motion.div
@@ -107,9 +107,9 @@ export function TrendingRewards() {
                           </div>
                           <div className="flex flex-col items-end shrink-0">
                              <div className="flex items-center gap-1 text-[10px] font-black text-green-500 uppercase tracking-widest">
-                               <Users className="w-3 h-3" /> {unlockedToday}
+                               <Users className="w-3 h-3" /> {unlockedThisMonth}
                              </div>
-                             <span className="text-[8px] text-muted-foreground uppercase tracking-widest">Today</span>
+                             <span className="text-[8px] text-muted-foreground uppercase tracking-widest">This Month</span>
                           </div>
                         </div>
                         
