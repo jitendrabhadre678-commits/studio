@@ -3,7 +3,7 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
-import { Video, Radio, Gift, ArrowRight, Users, Sparkles } from 'lucide-react';
+import { Video, Radio, Gift, ArrowRight, Users, Sparkles, Flame, Coins } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,19 @@ import { cn } from '@/lib/utils';
  */
 
 const communities = [
+  {
+    name: "Razed Casino Clipping",
+    description: "Create casino clips and earn high payouts from viral content. High-converting offers ready for you.",
+    highlight: "High Earnings",
+    extraInfo: "Up to $350 per million views",
+    members: "2,231 members",
+    icon: <Coins className="w-8 h-8" />,
+    link: "https://discord.gg/at4Xc6wbf9",
+    btnText: "Join Now",
+    isTrending: true,
+    gradient: "from-[#FA4616]/20 to-orange-600/10",
+    shadow: "shadow-[#FA4616]/10"
+  },
   {
     name: "Clipping Community",
     description: "Connect with thousands of creators and earn money by uploading viral GameFlashX clips.",
@@ -88,26 +101,53 @@ export default function CommunitiesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 whileHover={{ scale: 1.02 }}
-                className="group h-full"
+                className={cn("group h-full", community.isTrending && "md:col-span-2 lg:col-span-1")}
               >
-                <div className="bg-[#1A1A1A] border border-white/5 p-8 md:p-10 rounded-[2.5rem] h-full flex flex-col items-center text-center transition-all duration-300 group-hover:border-[#FA4616]/40 shadow-2xl relative overflow-hidden group/card">
+                <div className={cn(
+                  "bg-[#1A1A1A] border border-white/5 p-8 md:p-10 rounded-[2.5rem] h-full flex flex-col items-center text-center transition-all duration-300 relative overflow-hidden group/card shadow-2xl",
+                  community.isTrending ? "border-[#FA4616]/30 bg-[#1c1412]" : "hover:border-[#FA4616]/40",
+                  community.shadow
+                )}>
+                  {/* Trending Badge */}
+                  {community.isTrending && (
+                    <div className="absolute top-6 right-6 z-20 flex items-center gap-1.5 bg-[#FA4616] text-white px-3 py-1 rounded-full shadow-xl">
+                      <Flame className="w-3 h-3 fill-white" />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Trending</span>
+                    </div>
+                  )}
+
                   {/* Decorative Gradient Background */}
-                  <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br", community.gradient)} />
+                  <div className={cn(
+                    "absolute inset-0 transition-opacity duration-500 bg-gradient-to-br", 
+                    community.gradient,
+                    community.isTrending ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  )} />
                   
-                  <div className="w-20 h-20 bg-white/5 rounded-[1.5rem] flex items-center justify-center mb-8 border border-white/10 text-white group-hover:text-[#FA4616] group-hover:bg-[#FA4616]/10 group-hover:border-[#FA4616]/20 group-hover:scale-110 transition-all duration-500 relative z-10">
+                  <div className={cn(
+                    "w-20 h-20 bg-white/5 rounded-[1.5rem] flex items-center justify-center mb-8 border transition-all duration-500 relative z-10",
+                    community.isTrending ? "text-[#FA4616] border-[#FA4616]/20 bg-[#FA4616]/10" : "border-white/10 text-white group-hover:text-[#FA4616] group-hover:bg-[#FA4616]/10 group-hover:border-[#FA4616]/20 group-hover:scale-110"
+                  )}>
                     {community.icon}
                   </div>
 
-                  <div className="relative z-10">
+                  <div className="relative z-10 w-full">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FA4616]/10 border border-[#FA4616]/20 mb-6">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#FA4616] animate-pulse" />
                       <span className="text-[10px] font-black uppercase text-[#FA4616] tracking-widest">{community.highlight}</span>
                     </div>
 
                     <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight leading-tight">{community.name}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-8 flex-grow min-h-[60px]">
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow min-h-[60px]">
                       {community.description}
                     </p>
+
+                    {community.extraInfo && (
+                      <div className="mb-6 p-3 rounded-xl bg-[#FA4616]/10 border border-[#FA4616]/20">
+                        <span className="text-[11px] font-black text-[#FA4616] uppercase tracking-widest">
+                          {community.extraInfo}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="flex items-center justify-center gap-2 mb-10 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
                       <Users className="w-3.5 h-3.5" /> {community.members}
