@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 /**
  * Handles Firebase Auth redirect results and ensures user profile exists in Firestore.
- * Automatically extracts username from email and synchronizes payout details.
+ * Automatically generates referral codes and captures referredBy info.
  */
 export function AuthRedirectListener() {
   const auth = useAuth();
@@ -27,13 +27,15 @@ export function AuthRedirectListener() {
           const userRef = doc(db, 'users', user.uid);
           const userSnap = await getDoc(userRef);
 
-          // Email extraction
           const loginEmail = user.email || '';
-          // Extract username from email (e.g., noobff117@gmail.com -> noobff117)
           const defaultUsername = loginEmail ? loginEmail.split('@')[0] : `player_${user.uid.slice(0, 5)}`;
 
-          // Initialize user document if it doesn't exist
           if (!userSnap.exists()) {
+            // Generate unique referral code
+            const referralCode = `GF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+            // Get referral ID from tracker
+            const referredBy = localStorage.getItem('referralId') || null;
+
             setDocumentNonBlocking(userRef, {
               id: user.uid,
               email: loginEmail,
@@ -41,25 +43,16 @@ export function AuthRedirectListener() {
               createdAt: serverTimestamp(),
               balance: 0,
               totalEarnings: 0,
-              pendingEarnings: 0,
+              referralEarnings: 0,
               totalReferrals: 0,
               accountStatus: 'active',
               username: defaultUsername,
-              paypalEmail: loginEmail, // Automatically set to login email
+              paypalEmail: loginEmail,
+              referralCode: referralCode,
+              referredBy: referredBy,
+              hasCompletedFirstTask: false,
               isAdmin: false
             }, { merge: true });
-          } else {
-            // Update email and paypalEmail if they are missing
-            const existingData = userSnap.data();
-            const updates: any = {};
-            
-            if (!existingData.email && loginEmail) updates.email = loginEmail;
-            if (!existingData.paypalEmail && loginEmail) updates.paypalEmail = loginEmail;
-            if (!existingData.username && defaultUsername) updates.username = defaultUsername;
-            
-            if (Object.keys(updates).length > 0) {
-              setDocumentNonBlocking(userRef, updates, { merge: true });
-            }
           }
           
           toast({ 

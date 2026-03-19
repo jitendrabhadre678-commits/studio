@@ -16,20 +16,15 @@ import {
   ArrowUpRight,
   Loader2,
   Home,
-  ShieldCheck
+  ShieldCheck,
+  Users
 } from 'lucide-react';
-import { doc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
-
-/**
- * @fileOverview Simplified User Dashboard for GameFlashX.
- * Focuses on balance, withdrawals, and two main task categories.
- */
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
@@ -38,13 +33,11 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
 
-  // Memoize user reference for the real-time listener hook
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  // Real-time document subscription
   const { data: userData, isLoading: isDataLoading } = useDoc(userRef);
 
   useEffect(() => {
@@ -56,20 +49,20 @@ export default function Dashboard() {
   if (isUserLoading || !user) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-[#FA4616] animate-spin" />
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
-  // Reactive data mapping
   const balance = userData?.balance || 0;
+  const referralEarnings = userData?.referralEarnings || 0;
   const username = userData?.username || user.email?.split('@')[0] || 'Player';
   const MIN_WITHDRAWAL = 5;
 
   const navItems = [
     { id: 'landing', label: 'Home', icon: Home, href: '/' },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-    { id: 'refer', label: 'Refer & Earn', icon: Zap, href: '/refer' },
+    { id: 'refer', label: 'Refer & Earn', icon: Users, href: '/refer' },
     { id: 'profile', label: 'Profile', icon: User, href: '/account-settings' },
   ];
 
@@ -79,33 +72,18 @@ export default function Dashboard() {
       title: 'Test Apps & Earn Cash',
       description: 'Get paid to test new mobile applications and share your feedback.',
       icon: Smartphone,
-      rewardRange: '$0.50 - $25',
-      url: '/task'
+      rewardRange: '$0.50 - $25'
     },
     {
       id: 'games',
       title: 'Play Games & Earn Cash',
       description: 'Earn rewards for playing and reaching milestones in top-rated games.',
       icon: Gamepad2,
-      rewardRange: '$1.00 - $50',
-      url: '/task'
+      rewardRange: '$1.00 - $50'
     }
   ];
 
-  const handleStartTask = (offer: any) => {
-    if (!firestore || !user) return;
-
-    const taskCompletionsRef = collection(firestore, 'users', user.uid, 'taskCompletions');
-    
-    addDocumentNonBlocking(taskCompletionsRef, {
-      userId: user.uid,
-      taskId: offer.id,
-      title: offer.title,
-      rewardAmount: 0,
-      status: 'Pending',
-      createdAt: serverTimestamp()
-    });
-
+  const handleStartTask = () => {
     router.push('/task');
   };
 
@@ -120,11 +98,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#000000] text-white">
+    <div className="flex min-h-screen bg-black text-white">
       {/* Mobile Toggle */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#FA4616] rounded-lg text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-primary rounded-lg text-white"
       >
         {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -136,10 +114,10 @@ export default function Dashboard() {
       )}>
         <div className="flex flex-col h-full p-6">
           <div className="mb-10 flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#FA4616] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
-            <span className="text-xl font-black uppercase tracking-tighter">GameFlash<span className="text-[#FA4616]">X</span></span>
+            <span className="text-xl font-black uppercase tracking-tighter">GameFlash<span className="text-primary">X</span></span>
           </div>
 
           <nav className="flex-1 space-y-2">
@@ -154,7 +132,7 @@ export default function Dashboard() {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all duration-300 group",
                   activeTab === item.id 
-                    ? "bg-[#FA4616] text-white shadow-lg shadow-[#FA4616]/20" 
+                    ? "bg-primary text-white shadow-lg shadow-primary/20" 
                     : "text-white/40 hover:text-white hover:bg-white/5"
                 )}
               >
@@ -166,8 +144,8 @@ export default function Dashboard() {
 
           <div className="mt-auto pt-6 border-t border-white/5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#FA4616]/20 border border-[#FA4616]/40 flex items-center justify-center font-black text-[#FA4616]">
-                {user.email?.charAt(0).toUpperCase()}
+              <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center font-black text-primary uppercase">
+                {username.charAt(0)}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-black truncate">@{username}</p>
@@ -180,21 +158,18 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      {/* Main Dashboard Content */}
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {/* Header Stats */}
-          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 animate-in fade-in duration-700">
             <div className="w-full">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
-                  Welcome, <span className="text-[#FA4616]">{username}</span>
-                </h1>
-              </div>
+              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
+                Welcome, <span className="text-primary">{username}</span>
+              </h1>
               <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
                 Start completing tasks to unlock your rewards.
               </p>
-              <div className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
+              <div className="flex items-center gap-3 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
                 <span>Your account is active and secure</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                 <span className="bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full text-green-500 text-[8px] font-black tracking-widest">
@@ -203,12 +178,12 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-4 w-full md:w-auto">
-              <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center justify-between gap-12 shadow-2xl relative min-w-[280px] w-full md:w-auto">
-                {isDataLoading && <div className="absolute top-2 right-4"><Loader2 className="w-3 h-3 text-[#FA4616] animate-spin" /></div>}
+            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <div className="glass-card bg-[#0a0a0a] border-primary/20 p-6 px-8 rounded-3xl flex items-center justify-between gap-12 shadow-2xl relative min-w-[280px]">
                 <div>
-                  <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Available Balance</p>
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1">Available Balance</p>
                   <p className="text-4xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
+                  <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mt-1">Ref. Earnings: ${referralEarnings.toFixed(2)}</p>
                 </div>
                 
                 <div className="flex flex-col items-center gap-2">
@@ -218,7 +193,7 @@ export default function Dashboard() {
                     className={cn(
                       "h-12 px-8 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-xl active:scale-95",
                       balance >= MIN_WITHDRAWAL 
-                        ? "bg-primary hover:bg-primary/90 text-white shadow-[0_0_20px_rgba(250,70,22,0.4)] animate-pulse" 
+                        ? "bg-primary hover:bg-primary/90 text-white shadow-primary/40 animate-pulse" 
                         : "bg-white/5 border border-white/10 text-white/20 cursor-not-allowed"
                     )}
                   >
@@ -234,26 +209,35 @@ export default function Dashboard() {
             </div>
           </header>
 
+          {/* Motivational Message */}
+          {balance === 0 && (
+            <div className="mb-12 text-center p-10 glass-card rounded-[2.5rem] border-primary/10 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Complete 1 offer and unlock your first withdrawal 💸</h2>
+              <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Just one step away — start now and claim your reward</p>
+            </div>
+          )}
+
           {/* Offers Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
             <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1.5 bg-[#FA4616] rounded-full" />
+              <div className="h-8 w-1.5 bg-primary rounded-full" />
               <h2 className="text-2xl font-black uppercase tracking-tight">Available Tasks</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {offerCards.map((offer) => (
                 <Card 
-                  className="glass-card border-white/5 bg-[#0a0a0a] hover:border-[#FA4616]/40 transition-all duration-500 group overflow-hidden rounded-[2rem]"
+                  className="glass-card border-white/5 bg-[#0a0a0a] hover:border-primary/40 transition-all duration-500 group overflow-hidden rounded-[2rem]"
                   key={offer.id}
                 >
                   <CardContent className="p-8 flex flex-col h-full">
                     <div className="flex items-center justify-between mb-6">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 text-[#FA4616] border border-white/10">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 text-primary border border-white/10">
                         <offer.icon className="w-7 h-7" />
                       </div>
                       <div className="text-right">
-                        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Users Participating</p>
+                        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Active Now</p>
                         <p className="text-lg font-black text-white">145 This Month</p>
                       </div>
                     </div>
@@ -267,8 +251,8 @@ export default function Dashboard() {
 
                     <div className="mt-auto">
                       <Button 
-                        onClick={() => handleStartTask(offer)}
-                        className="w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl bg-white/5 hover:bg-[#FA4616] border border-white/10 hover:border-[#FA4616] text-white"
+                        onClick={handleStartTask}
+                        className="w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-white"
                       >
                         Start Task <ArrowUpRight className="ml-2 w-5 h-5" />
                       </Button>
