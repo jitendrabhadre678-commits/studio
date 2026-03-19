@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -14,7 +13,6 @@ import {
   CheckCircle,
   Menu,
   X,
-  ChevronRight,
   Zap,
   Smartphone,
   ClipboardList,
@@ -22,8 +20,7 @@ import {
   ArrowUpRight,
   Clock,
   Loader2,
-  Home,
-  ArrowLeft
+  Home
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -206,19 +203,9 @@ export default function Dashboard() {
           {/* Real-time Header Stats */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div className="w-full">
-              <div className="flex items-center justify-between gap-4 mb-2">
-                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
-                  Welcome, <span className="text-[#FA4616]">{username}</span>
-                </h1>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => router.push('/')}
-                  className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] h-9 rounded-lg"
-                >
-                  <ArrowLeft className="w-3 h-3 mr-2" /> Back to Home
-                </Button>
-              </div>
+              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
+                Welcome, <span className="text-[#FA4616]">{username}</span>
+              </h1>
               <p className="text-white/40 font-bold uppercase tracking-widest text-[10px] mb-4">
                 Complete tasks to unlock rewards and track your progress below
               </p>
