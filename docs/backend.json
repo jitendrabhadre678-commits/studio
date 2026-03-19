@@ -1,161 +1,359 @@
-
 {
   "entities": {
-    "User": {
+    "UserProfile": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "User",
+      "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user profile within the GameFlashX platform, storing essential information and reward-related metrics.",
+      "description": "Represents a user's profile, financial statistics, and referral information within the GameFlashX platform.",
       "properties": {
         "id": {
-          "type": "string"
-        },
-        "email": {
           "type": "string",
-          "format": "email"
+          "description": "Unique identifier for the UserProfile entity, linking to an external authentication system."
         },
-        "payoutEmail": {
+        "totalEarnings": {
+          "type": "number",
+          "description": "The total amount of earnings a user has accumulated and successfully moved from pending to completed status."
+        },
+        "pendingEarnings": {
+          "type": "number",
+          "description": "The total amount of earnings a user has accumulated but which are awaiting verification or manual approval."
+        },
+        "totalReferrals": {
+          "type": "number",
+          "description": "The total count of users successfully referred by this user."
+        },
+        "referralCode": {
           "type": "string",
-          "format": "email",
-          "description": "Secondary email for digital reward delivery."
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "photoURL": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string",
-          "description": "Unique gamer tag chosen by the user."
-        },
-        "preferredGiftCard": {
-          "type": "string",
-          "description": "The user's preferred reward type."
-        },
-        "physicalAddress": {
-          "type": "string",
-          "description": "User's physical address for potential physical reward delivery."
-        },
-        "walletAddress": {
-          "type": "string",
-          "description": "Connected crypto wallet address for payouts."
-        },
-        "lastWalletChangeAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "bio": {
-          "type": "string"
+          "description": "A unique code assigned to the user for referral tracking."
         },
         "createdAt": {
           "type": "string",
+          "description": "Timestamp when the user profile was created.",
           "format": "date-time"
         },
-        "updatedAt": {
+        "lastActivityAt": {
           "type": "string",
+          "description": "Timestamp of the user's last activity on the platform.",
           "format": "date-time"
-        },
-        "points": {
-          "type": "number"
-        },
-        "balance": {
-          "type": "number"
-        },
-        "totalEarnings": {
-          "type": "number"
-        },
-        "offersCompleted": {
-          "type": "number"
-        },
-        "rewardsUnlocked": {
-          "type": "number"
-        },
-        "referralsCount": {
-          "type": "number"
-        },
-        "referralEarnings": {
-          "type": "number"
-        },
-        "lastLoginAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "loginStreak": {
-          "type": "number"
-        },
-        "accountStatus": {
-          "type": "string",
-          "enum": ["active", "suspended"]
         }
       },
       "required": [
         "id",
-        "email",
-        "createdAt",
-        "balance",
         "totalEarnings",
-        "offersCompleted",
-        "rewardsUnlocked"
+        "pendingEarnings",
+        "totalReferrals",
+        "referralCode",
+        "createdAt"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Represents a category for grouping gift cards (e.g., Shopping, Gaming, Entertainment).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Category entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the category (e.g., 'Gaming')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the category."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "GiftCard": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GiftCard",
+      "type": "object",
+      "description": "Details about a digital gift card available for users to unlock as a reward.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the GiftCard entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The common name of the gift card (e.g., 'Amazon Gift Card')."
+        },
+        "brand": {
+          "type": "string",
+          "description": "The brand associated with the gift card (e.g., 'Amazon')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A marketing description of the gift card, potentially AI-generated."
+        },
+        "imageUri": {
+          "type": "string",
+          "description": "URL to the image representation of the gift card.",
+          "format": "uri"
+        },
+        "categoryIds": {
+          "type": "array",
+          "description": "References to Categories this gift card belongs to. (Relationship: Category N:N GiftCard)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "availableValues": {
+          "type": "array",
+          "description": "An array of numerical values (e.g., 10, 25, 50) for which this gift card is available.",
+          "items": {
+            "type": "number"
+          }
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Indicates if the gift card is currently active and available on the platform."
+        },
+        "targetMarkets": {
+          "type": "array",
+          "description": "An array of target market codes (e.g., 'US', 'UK', 'CA', 'AU') where this gift card is available.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "brand",
+        "description",
+        "imageUri",
+        "categoryIds",
+        "availableValues",
+        "isActive",
+        "targetMarkets"
+      ]
+    },
+    "Task": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Task",
+      "type": "object",
+      "description": "Represents a specific task or offer that users can complete to earn rewards.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Task entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title or name of the task."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of what the task entails."
+        },
+        "rewardAmount": {
+          "type": "number",
+          "description": "The monetary reward amount a user receives upon completing this task."
+        },
+        "externalUrl": {
+          "type": "string",
+          "description": "The URL where the user needs to go to complete the task.",
+          "format": "uri"
+        },
+        "availableRegions": {
+          "type": "array",
+          "description": "An array of region codes (e.g., 'US', 'UK') where this task is available.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maxCompletionsPerUser": {
+          "type": "number",
+          "description": "The maximum number of times a single user can complete this specific task. Set to 0 for unlimited."
+        },
+        "dailyLimitPerUser": {
+          "type": "number",
+          "description": "The maximum number of times a single user can complete this specific task within a 24-hour period. Set to 0 if no daily limit."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Indicates if the task is currently active and available for users."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "rewardAmount",
+        "externalUrl",
+        "availableRegions",
+        "maxCompletionsPerUser",
+        "dailyLimitPerUser",
+        "isActive"
+      ]
+    },
+    "UserTaskCompletion": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserTaskCompletion",
+      "type": "object",
+      "description": "Records a specific instance of a user attempting or completing a task, used for tracking and anti-fraud.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserTaskCompletion entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who completed the task. (Relationship: UserProfile 1:N UserTaskCompletion)"
+        },
+        "taskId": {
+          "type": "string",
+          "description": "Reference to the Task that was completed. (Relationship: Task 1:N UserTaskCompletion)"
+        },
+        "completionDate": {
+          "type": "string",
+          "description": "Timestamp when the task was reported as completed by the user.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the task completion (e.g., awaiting manual review, approved, or rejected).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rewardAmount": {
+          "type": "number",
+          "description": "The reward amount recorded for this specific completion, matching the task's reward at the time of completion."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "taskId",
+        "completionDate",
+        "status",
+        "rewardAmount"
       ]
     },
     "Transaction": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Transaction",
       "type": "object",
-      "description": "Represents an individual earning or spending event.",
+      "description": "Records all financial movements related to a user's earnings, referrals, and withdrawals.",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "description": "Unique identifier for the Transaction entity."
         },
         "userId": {
-          "type": "string"
+          "type": "string",
+          "description": "Reference to the UserProfile associated with this transaction. (Relationship: UserProfile 1:N Transaction)"
         },
         "type": {
           "type": "string",
-          "enum": ["offer", "referral", "daily_bonus", "spin", "withdrawal"]
+          "description": "The type of financial transaction.",
+          "items": {
+            "type": "string"
+          }
         },
         "amount": {
-          "type": "number"
-        },
-        "rewardName": {
-          "type": "string"
+          "type": "number",
+          "description": "The monetary amount of the transaction. Positive for earnings, negative for withdrawals."
         },
         "status": {
           "type": "string",
-          "enum": ["completed", "pending", "processing", "failed"]
+          "description": "The current status of the transaction.",
+          "items": {
+            "type": "string"
+          }
         },
-        "createdAt": {
+        "transactionDate": {
           "type": "string",
+          "description": "Timestamp when the transaction was initiated or occurred.",
           "format": "date-time"
         },
-        "recipientEmail": {
+        "sourceEntityId": {
           "type": "string",
-          "format": "email"
+          "description": "Optional reference to the originating entity (e.g., UserTaskCompletion ID for TaskReward, referred UserProfile ID for ReferralBonus)."
         },
-        "walletAddress": {
-          "type": "string"
+        "description": {
+          "type": "string",
+          "description": "A brief description of the transaction for clarity."
         }
       },
-      "required": ["id", "userId", "type", "amount", "status", "createdAt"]
+      "required": [
+        "id",
+        "userId",
+        "type",
+        "amount",
+        "status",
+        "transactionDate",
+        "description"
+      ]
     },
-    "Referral": {
+    "RewardUnlock": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Referral",
+      "title": "RewardUnlock",
       "type": "object",
-      "description": "Tracks traffic generated by a user's referral link.",
+      "description": "Records an instance where a user successfully 'unlocks' and redeems a digital gift card.",
       "properties": {
-        "referrerId": { "type": "string" },
-        "clicks": { "type": "number" },
-        "lastUpdated": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the RewardUnlock entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who unlocked the reward. (Relationship: UserProfile 1:N RewardUnlock)"
+        },
+        "giftCardId": {
+          "type": "string",
+          "description": "Reference to the GiftCard that was unlocked. (Relationship: GiftCard 1:N RewardUnlock)"
+        },
+        "valueUnlocked": {
+          "type": "number",
+          "description": "The specific value of the gift card unlocked (e.g., 25 for a $25 Amazon card)."
+        },
+        "unlockDate": {
+          "type": "string",
+          "description": "Timestamp when the reward was successfully unlocked.",
+          "format": "date-time"
+        },
+        "userLocation": {
+          "type": "string",
+          "description": "The reported location of the user at the time of unlock (e.g., 'UK'), used for live activity feed."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the reward unlock process.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "redeemUrl": {
+          "type": "string",
+          "description": "The external URL provided to the user to redeem the gift card.",
+          "format": "uri"
+        }
       },
-      "required": ["referrerId", "clicks"]
+      "required": [
+        "id",
+        "userId",
+        "giftCardId",
+        "valueUnlocked",
+        "unlockDate",
+        "userLocation",
+        "status",
+        "redeemUrl"
+      ]
     }
   },
   "auth": {
     "providers": [
       "password",
-      "google.com"
+      "anonymous"
     ]
   },
   "firestore": {
@@ -163,33 +361,138 @@
       {
         "path": "/users/{userId}",
         "definition": {
-          "entityName": "User",
+          "entityName": "UserProfile",
           "schema": {
-            "$ref": "#/backend/entities/User"
+            "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores individual user profile data."
+          "description": "Stores user-specific profile, financial statistics (totalEarnings, pendingEarnings, totalReferrals), and referral information. Access is strictly limited to the owning user or administrators."
         }
       },
       {
-        "path": "/transactions/{transactionId}",
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Stores global, publicly viewable categories for grouping gift cards. Read-only for users, writable by administrators.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "The unique identifier of the category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/giftCards/{giftCardId}",
+        "definition": {
+          "entityName": "GiftCard",
+          "schema": {
+            "$ref": "#/backend/entities/GiftCard"
+          },
+          "description": "Stores global, publicly viewable details of gift cards available on the platform. Read-only for users, writable by administrators.",
+          "params": [
+            {
+              "name": "giftCardId",
+              "description": "The unique identifier of the gift card."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tasks/{taskId}",
+        "definition": {
+          "entityName": "Task",
+          "schema": {
+            "$ref": "#/backend/entities/Task"
+          },
+          "description": "Stores global, publicly viewable details of tasks and offers available to users. Read-only for users, writable by administrators.",
+          "params": [
+            {
+              "name": "taskId",
+              "description": "The unique identifier of the task."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/taskCompletions/{completionId}",
+        "definition": {
+          "entityName": "UserTaskCompletion",
+          "schema": {
+            "$ref": "#/backend/entities/UserTaskCompletion"
+          },
+          "description": "Records individual task completion instances for a specific user. Includes denormalized 'userId' for authorization independence. Access is restricted to the owning user or administrators.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who completed the task, matching the parent user document."
+            },
+            {
+              "name": "completionId",
+              "description": "The unique identifier for this specific task completion record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/transactions/{transactionId}",
         "definition": {
           "entityName": "Transaction",
           "schema": {
             "$ref": "#/backend/entities/Transaction"
           },
-          "description": "Stores all financial activity for users."
+          "description": "Records all financial transactions (earnings, referrals, withdrawals) for a specific user. Includes denormalized 'userId' for authorization independence. Access is restricted to the owning user or administrators.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user associated with this transaction, matching the parent user document."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique identifier for this specific transaction record."
+            }
+          ]
         }
       },
       {
-        "path": "/referrals/{referrerId}",
+        "path": "/users/{userId}/rewardUnlocks/{unlockId}",
         "definition": {
-          "entityName": "Referral",
+          "entityName": "RewardUnlock",
           "schema": {
-            "$ref": "#/backend/entities/Referral"
+            "$ref": "#/backend/entities/RewardUnlock"
           },
-          "description": "Stores click statistics for referral links."
+          "description": "Records individual reward unlock instances for a specific user. Includes denormalized 'userId' for authorization independence. Access is restricted to the owning user or administrators.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who unlocked the reward, matching the parent user document."
+            },
+            {
+              "name": "unlockId",
+              "description": "The unique identifier for this specific reward unlock record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/public_reward_activity/{activityId}",
+        "definition": {
+          "entityName": "RewardUnlock",
+          "schema": {
+            "$ref": "#/backend/entities/RewardUnlock"
+          },
+          "description": "A dedicated collection for public display of recent reward unlocks for the 'Live Activity Notifications' feature. Each document is a subset of the 'RewardUnlock' schema, containing only public fields (e.g., valueUnlocked, userLocation, giftCardBrand) populated by a Cloud Function, ensuring privacy and QAPs adherence. Read-only for all users.",
+          "params": [
+            {
+              "name": "activityId",
+              "description": "The unique identifier for this public activity feed entry."
+            }
+          ]
         }
       }
-    ]
+    ],
+    "reasoning": "The GameFlashX Dashboard Firestore structure prioritizes security, scalability, and debuggability following the specified core design principles and mandates. \n\n**Authorization Independence via Denormalization:**\n*   User-specific data such as `UserTaskCompletion`, `Transaction`, and `RewardUnlock` are stored in subcollections under `/users/{userId}/`. This path-based ownership, where `userId` matches `request.auth.uid`, is the primary mechanism for authorization. This design choice *eliminates* the need for `get()` calls to parent documents in security rules to determine access, thereby ensuring Authorization Independence. The `userId` field is also explicitly included within these documents for data integrity and redundancy, enabling atomic creation of parent and child documents. \n\n**Structural Segregation for Homogeneous Security Posture:**\n*   Publicly accessible, static data entities (`Category`, `GiftCard`, `Task`) are placed in top-level collections (`/categories`, `/giftCards`, `/tasks`). These collections are designed for public read access (and admin write), ensuring all documents within them share the same security requirements. \n*   Private user-owned data is strictly confined to `/users/{userId}/` subcollections. \n*   To support the 'Live Activity Notifications' feature, a dedicated top-level collection `/public_reward_activity/{activityId}` is introduced. This collection exclusively contains publicly displayable information (a subset of `RewardUnlock` fields, like `valueUnlocked`, `userLocation`, `giftCardBrand` etc.) populated by a Cloud Function. This segregation prevents exposing sensitive user data from the main `RewardUnlock` records (which are private to the user) and adheres to the QAPs principle by providing a truly public, secure list. A Cloud Function would be responsible for populating this collection upon a user's `RewardUnlock` creation.\n\n**Access Modeling and DBAC:**\n*   **Private Data:** User profiles, task completions, transactions, and individual reward unlocks are secured using path-based ownership (`/users/{userId}/...`), where `request.auth.uid` must match the `{userId}` wildcard. This is the most robust form of private data access.\n*   **Global Roles (DBAC):** To implement admin roles without custom claims and while respecting the strict schema reference output constraint, an `isAdmin` boolean field is conceptually added to the `UserProfile` entity (even though it's not present in the provided JSON schema). An admin check in security rules would involve a `get()` call to the authenticated user's own profile (`get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true`). This method is considered an acceptable deviation from avoiding `get()` calls, as it's a direct self-referential check for a global role, not a hierarchical dependency.\n\n**QAPs (Queries are not Filters):**\n*   All collections support secure `list` operations. Public collections (`/categories`, `/giftCards`, `/tasks`, `/public_reward_activity`) allow unfiltered `list` queries as all their documents are intended to be public. \n*   User-owned subcollections enforce QAPs by including the `userId` in the path. Security rules ensure that a user can only `list` documents within *their own* `/users/{userId}/` segment, effectively filtering results by ownership at the security layer rather than relying on client-side queries for filtering.\n\n**Data Clarity and Predictability:**\n*   The structure uses clear, semantic names for collections and wildcards (e.g., `users`, `userId`, `taskCompletions`).\n*   `status` fields are consistently used for explicit state modeling across `UserTaskCompletion`, `Transaction`, and `RewardUnlock` entities."
   }
 }
