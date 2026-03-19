@@ -309,21 +309,23 @@ export default function Dashboard() {
               <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight">
                 Partner Offer <span className="text-primary">Available</span>
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground text-base mt-4 leading-relaxed text-left">
-                You are about to access a partner task.
-                <br /><br />
-                Complete the app testing or game task to qualify for your reward. 
-                Your payment will be sent directly to your registered email address.
-                <br /><br />
-                <span className="text-white font-bold uppercase tracking-widest text-[10px]">Processing Time:</span>
-                <ul className="list-disc pl-5 mt-2 space-y-1 text-xs">
-                  <li>Usually within 1 hour after submission</li>
-                  <li>In some cases, it may take 12–24 hours depending on demand</li>
-                </ul>
-                <br />
-                Make sure your Gameflashx email is linked with PayPal to receive payments.
-                <br /><br />
-                Thank you for your participation.
+              <DialogDescription className="text-muted-foreground text-base mt-4 leading-relaxed text-left" asChild>
+                <div>
+                  You are about to access a partner task.
+                  <br /><br />
+                  Complete the app testing or game task to qualify for your reward. 
+                  Your payment will be sent directly to your registered email address.
+                  <br /><br />
+                  <span className="text-white font-bold uppercase tracking-widest text-[10px]">Processing Time:</span>
+                  <ul className="list-disc pl-5 mt-2 space-y-1 text-xs">
+                    <li>Usually within 1 hour after submission</li>
+                    <li>In some cases, it may take 12–24 hours depending on demand</li>
+                  </ul>
+                  <br />
+                  Make sure your Gameflashx email is linked with PayPal to receive payments.
+                  <br /><br />
+                  Thank you for your participation.
+                </div>
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
