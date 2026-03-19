@@ -19,7 +19,8 @@ import {
   ClipboardList,
   BookOpen,
   ArrowUpRight,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -32,7 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Standardized User Dashboard.
- * Features balance tracking and protected task activity log.
+ * Features real-time balance tracking and protected task activity log using onSnapshot.
  */
 
 export default function Dashboard() {
@@ -42,12 +43,14 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
 
+  // Memoize user reference for the real-time listener hook
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userData } = useDoc(userRef);
+  // Real-time document subscription (uses onSnapshot internally)
+  const { data: userData, isLoading: isDataLoading } = useDoc(userRef);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -55,8 +58,15 @@ export default function Dashboard() {
     }
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !user) return null;
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-[#FA4616] animate-spin" />
+      </div>
+    );
+  }
 
+  // Reactive data mapping
   const balance = userData?.balance || 0;
   const pendingBalance = userData?.pendingEarnings || 0;
   const username = userData?.username || user.displayName || user.email?.split('@')[0] || 'Player';
@@ -109,6 +119,7 @@ export default function Dashboard() {
 
     const taskCompletionsRef = collection(firestore, 'users', user.uid, 'taskCompletions');
     
+    // Add task completion log (creates a 'Pending' entry in Firestore)
     addDocumentNonBlocking(taskCompletionsRef, {
       userId: user.uid,
       taskId: offer.id,
@@ -128,6 +139,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-[#000000] text-white">
+      {/* Mobile Toggle */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#FA4616] rounded-lg text-white"
@@ -135,6 +147,7 @@ export default function Dashboard() {
         {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
+      {/* Sidebar Navigation */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-40 w-64 bg-[#0a0a0a] border-r border-white/5 transition-transform duration-300 lg:translate-x-0 lg:static",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -183,20 +196,23 @@ export default function Dashboard() {
         </div>
       </aside>
 
+      {/* Main Dashboard Content */}
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
+          {/* Real-time Header Stats */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div>
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
                 Welcome, <span className="text-[#FA4616]">{username}</span>
               </h1>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                <CheckCircle className="w-3 h-3 text-green-500" /> Secure Verified Session
+                <CheckCircle className="w-3 h-3 text-green-500" /> Live Data Sync Active
               </p>
             </div>
 
             <div className="flex flex-wrap gap-4">
               <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl relative min-w-[200px]">
+                {isDataLoading && <div className="absolute top-2 right-4"><Loader2 className="w-3 h-3 text-[#FA4616] animate-spin" /></div>}
                 <div>
                   <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Available Balance</p>
                   <p className="text-3xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
@@ -218,6 +234,7 @@ export default function Dashboard() {
             </div>
           </header>
 
+          {/* Offers Section */}
           <section id="offers" className="scroll-mt-10 mb-20">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-[#FA4616] rounded-full" />
@@ -280,6 +297,7 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {/* Real-time Activity Log */}
           <section id="history" className="scroll-mt-10">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-yellow-500 rounded-full" />
