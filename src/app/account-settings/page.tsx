@@ -24,7 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Refined User Profile page.
- * Enhanced with country detection display and PayPal payout email configuration.
+ * Enhanced with read-only username enforcement and payout consistency.
  */
 
 export default function AccountSettings() {
@@ -68,16 +68,6 @@ export default function AccountSettings() {
     e.preventDefault();
     if (!userRef || !firestore) return;
 
-    // Validation: Gamer Tag
-    if (usernameInput && usernameInput.length < 4) {
-      toast({
-        variant: "destructive",
-        title: "Username Too Short",
-        description: "Gamer Tag must be at least 4 characters.",
-      });
-      return;
-    }
-
     // Validation: PayPal Email Format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (paypalEmailInput && !emailRegex.test(paypalEmailInput)) {
@@ -89,9 +79,8 @@ export default function AccountSettings() {
       return;
     }
 
-    // Prepare data for update
+    // Prepare data for update - Exclude username as it is read-only
     const updateData = {
-      username: usernameInput,
       displayName: displayNameInput,
       paypalEmail: paypalEmailInput,
       updatedAt: serverTimestamp()
@@ -149,11 +138,16 @@ export default function AccountSettings() {
                       <Input 
                         id="username" 
                         value={usernameInput}
-                        onChange={(e) => setUsernameInput(e.target.value.replace(/\s+/g, '').toLowerCase())}
-                        className="bg-white/5 border-white/10 h-14 rounded-2xl pl-10 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
+                        readOnly
+                        className="bg-white/5 border-white/5 h-14 rounded-2xl pl-10 text-white/40 font-bold cursor-not-allowed transition-colors" 
                         placeholder="Choose a handle"
-                        required
                       />
+                    </div>
+                    <div className="flex items-start gap-2 mt-2 ml-1 opacity-40">
+                      <Info className="w-3 h-3 mt-0.5 text-[#FA4616]" />
+                      <p className="text-[9px] font-bold leading-normal uppercase tracking-wider max-w-[350px]">
+                        Username cannot be changed to ensure smooth reward processing and avoid payment issues.
+                      </p>
                     </div>
                   </div>
 

@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -23,9 +24,8 @@ service cloud.firestore {
      * 2. Denormalization for Authorization: The `userId` is stored both in the path 
      *    and as a field within subcollection documents. Rules enforce that these match
      *    to ensure relational integrity.
-     * 3. Prototyping Flexibility: While authorization (WHO can access) is strictly enforced,
-     *    data validation (WHAT the data looks like) is kept minimal to allow for rapid 
-     *    schema iteration during development.
+     * 3. Field Immutability: Critical identity fields like 'username' are protected from modification
+     *    after initial creation to prevent fraud and payout confusion.
      */
 
     // --- Helper Functions ---
@@ -51,20 +51,17 @@ service cloud.firestore {
      * @description Rules for the root User profile document.
      * @path /users/{userId}
      * @allow (create) if the auth UID matches the document ID.
-     * @deny (get) if a user tries to view another user's profile document.
-     * @principle Enforces self-creation and strict ownership of the user profile.
+     * @deny (update) if the user attempts to change their fixed 'username'.
      */
     match /users/{userId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update, delete: if isExistingOwner(userId);
+      allow update: if isExistingOwner(userId) 
+                    && (request.resource.data.username == resource.data.username);
+      allow delete: if isExistingOwner(userId);
 
       /**
        * @description Rules for digital rewards earned or claimed by a user.
-       * @path /users/{userId}/rewards/{rewardId}
-       * @allow (list) if the user is listing their own rewards subcollection.
-       * @deny (create) if the internal 'userId' field does not match the path userId.
-       * @principle Uses path-based authorization to secure subcollections without get() calls.
        */
       match /rewards/{rewardId} {
         allow get, list: if isOwner(userId);
@@ -75,10 +72,6 @@ service cloud.firestore {
 
       /**
        * @description Rules for user interaction and task completion logs.
-       * @path /users/{userId}/activity/{activityId}
-       * @allow (get) if the owner accesses a specific activity record.
-       * @deny (update) if the user attempts to change the 'userId' field of the record.
-       * @principle Ensures relational integrity by enforcing immutability of the owner field.
        */
       match /activity/{activityId} {
         allow get, list: if isOwner(userId);
@@ -86,6 +79,32 @@ service cloud.firestore {
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
         allow delete: if isExistingOwner(userId);
       }
+
+      /**
+       * @description Rules for task completions tracking.
+       */
+      match /taskCompletions/{taskId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.status == resource.data.status;
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+    /**
+     * @description Rules for referrals tracking.
+     */
+    match /referrals/{referralId} {
+      allow get: if true;
+      allow create, update: if isSignedIn();
+    }
+
+    /**
+     * @description Rules for financial transactions.
+     */
+    match /transactions/{transactionId} {
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
   }
 }
