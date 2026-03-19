@@ -2,56 +2,88 @@
 {
   "intents": [
     {
-      "id": "reward",
-      "keywords": ["reward", "get", "unlock", "claim", "how to", "gift", "card", "code"],
+      "id": "how_to_unlock",
+      "keywords": ["how", "unlock", "get", "claim", "start", "process"],
+      "suggestions": [
+        "How to unlock reward",
+        "How to claim gift card",
+        "Step-by-step guide"
+      ],
       "responses": [
         "To unlock your reward:\n\n1. Click ‘Reveal Gift Card Code’\n2. Complete one quick verification offer\n3. Return back automatically\n4. Your reward will be unlocked instantly"
       ]
     },
     {
-      "id": "trust",
-      "keywords": ["real", "fake", "legit", "is this real", "work", "work?"],
+      "id": "issues",
+      "keywords": ["not", "working", "problem", "failed", "stuck", "error", "issue"],
+      "suggestions": [
+        "Offer not working",
+        "Reward not received",
+        "Stuck on verification"
+      ],
       "responses": [
-        "Yes, rewards are unlocked after completing a quick verification step. Thousands of users already claimed rewards successfully."
-      ]
-    },
-    {
-      "id": "problem",
-      "keywords": ["not working", "problem", "error", "failed", "stuck", "issue"],
-      "responses": [
-        "Make sure you complete the offer fully and return back to the page. If issue continues, try another offer."
+        "Make sure you complete the offer fully and return back to the page. If issue continues, try another offer from the list!"
       ]
     },
     {
       "id": "timing",
-      "keywords": ["how long", "time", "minutes", "duration", "long"],
+      "keywords": ["long", "time", "minutes", "wait", "when"],
+      "suggestions": [
+        "How long does it take",
+        "When will I get my code"
+      ],
       "responses": [
-        "Most users complete it within 1–2 minutes."
-      ]
-    },
-    {
-      "id": "earn",
-      "keywords": ["earn", "money", "cash", "income"],
-      "responses": [
-        "You can earn rewards fast here! 💸 Just complete the tasks on your dashboard. They are quick and easy. Start your first task now!",
-        "Earning is simple! 🔥 Finish partner offers or invite friends with your link. Go to your dashboard to see how much you can make!"
-      ]
-    },
-    {
-      "id": "referral",
-      "keywords": ["referral", "refer", "invite", "code"],
-      "responses": [
-        "Invite your friends and earn more! 🤝 When they join with your link, you get a bonus forever. Find your unique link on your Dashboard now."
+        "Most users complete the process in 1–2 minutes. Codes are delivered instantly after successful validation."
       ]
     },
     {
       "id": "account",
-      "keywords": ["login", "signup", "account", "sign"],
+      "keywords": ["login", "signup", "account", "profile", "access"],
+      "suggestions": [
+        "Login issue",
+        "Account problem",
+        "Setup username"
+      ],
       "responses": [
-        "Signing in is fast! 🔐 Use your Google account for instant access. If you're new, join today to start earning your first reward!"
+        "For account issues, ensure you are signed in with Google for the most stable experience. Check your Profile page to update your details."
+      ]
+    },
+    {
+      "id": "earn_faster",
+      "keywords": ["earn", "money", "fast", "more", "cash", "points"],
+      "suggestions": [
+        "How to earn faster",
+        "Highest paying tasks",
+        "Daily bonus info"
+      ],
+      "responses": [
+        "To earn faster: \n1. Check 'Premium Offers' on your Dashboard\n2. Claim your Daily Bonus\n3. Invite friends using your referral link!"
+      ]
+    },
+    {
+      "id": "communities",
+      "keywords": ["community", "discord", "join", "group", "social"],
+      "suggestions": [
+        "Join Discord",
+        "Communities Hub",
+        "Clip & Earn program"
+      ],
+      "responses": [
+        "Check our Communities page to join our Discord and Whop groups. You can earn extra rewards by joining clipping campaigns!"
+      ]
+    },
+    {
+      "id": "trust",
+      "keywords": ["real", "legit", "fake", "safe", "verified"],
+      "suggestions": [
+        "Is this real?",
+        "Are rewards verified?"
+      ],
+      "responses": [
+        "Yes! Thousands of users have already claimed rewards. All codes are verified and secured with SSL encryption."
       ]
     }
   ],
-  "fallback": "I'm here to help you get your rewards! 😊 You can ask about gift cards, how long it takes, or if you're having a problem. What can I help with?",
-  "unclear": "I want to help! 👍 Could you tell me more about what you need? Are you trying to unlock a specific gift card?"
+  "fallback": "Try searching: reward, login, offer",
+  "default_welcome": "Hi there! 👋 I'm your Smart Assistant. How can I help you earn rewards today?"
 }
