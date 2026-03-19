@@ -22,23 +22,28 @@ import {
   PlayCircle,
   BrainCircuit,
   Layers,
-  ArrowUpRight
+  ArrowUpRight,
+  Clock
 } from 'lucide-react';
-import { doc } from 'firebase/firestore';
+import { doc, collection, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
+import { TaskHistory } from '@/components/dashboard/TaskHistory';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Redesigned User Dashboard.
  * Features a clean greeting, prominent balance tracking, and a 
- * responsive grid of earning offer cards.
+ * responsive grid of earning offer cards with activity tracking.
  */
 
 export default function Dashboard() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
+  const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
 
@@ -48,7 +53,7 @@ export default function Dashboard() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  // Real-time document subscription
+  // Real-time document subscription for user stats
   const { data: userData } = useDoc(userRef);
 
   useEffect(() => {
@@ -60,12 +65,13 @@ export default function Dashboard() {
   if (isUserLoading || !user) return null;
 
   const balance = userData?.balance || 0;
+  const pendingBalance = userData?.pendingEarnings || 0;
   const username = userData?.username || user.displayName || user.email?.split('@')[0] || 'Player';
 
   const navItems = [
     { id: 'home', label: 'Home', icon: LayoutDashboard },
     { id: 'rewards', label: 'Rewards', icon: Gift, href: '#offers' },
-    { id: 'history', label: 'History', icon: History },
+    { id: 'history', label: 'History', icon: History, href: '#history' },
     { id: 'profile', label: 'Profile', icon: User, href: '/account-settings' },
   ];
 
@@ -77,15 +83,8 @@ export default function Dashboard() {
       icon: Zap,
       rewardRange: '$1 - $100',
       highlight: true,
-      color: '#FA4616'
-    },
-    {
-      id: 'offerwalls',
-      title: 'General Offer Walls',
-      description: 'Access multiple partners and hundreds of daily tasks.',
-      icon: Layers,
-      rewardRange: 'Varies',
-      highlight: false
+      color: '#FA4616',
+      url: 'https://gameflashx.space/sl/zy1x8'
     },
     {
       id: 'apps',
@@ -93,7 +92,8 @@ export default function Dashboard() {
       description: 'Get paid to play new games and test mobile applications.',
       icon: Smartphone,
       rewardRange: '$0.50 - $25',
-      highlight: false
+      highlight: false,
+      url: 'https://gameflashx.space/sl/zy1x8'
     },
     {
       id: 'surveys',
@@ -101,7 +101,8 @@ export default function Dashboard() {
       description: 'Share your opinion and get rewarded for your time.',
       icon: ClipboardList,
       rewardRange: '$0.20 - $10',
-      highlight: false
+      highlight: false,
+      url: 'https://gameflashx.space/sl/zy1x8'
     },
     {
       id: 'read',
@@ -109,25 +110,34 @@ export default function Dashboard() {
       description: 'Earn points by reading articles and staying updated.',
       icon: BookOpen,
       rewardRange: 'Daily Payout',
-      highlight: false
-    },
-    {
-      id: 'watch',
-      title: 'Watch & Earn',
-      description: 'Watch short video clips and promotional content.',
-      icon: PlayCircle,
-      rewardRange: 'Instant Credit',
-      highlight: false
-    },
-    {
-      id: 'quizzes',
-      title: 'Quizzes',
-      description: 'Test your knowledge and earn rewards for correct answers.',
-      icon: BrainCircuit,
-      rewardRange: 'Bonus Points',
-      highlight: false
+      highlight: false,
+      url: 'https://gameflashx.space/sl/zy1x8'
     }
   ];
+
+  const handleStartTask = (offer: any) => {
+    if (!firestore || !user) return;
+
+    // Track task click in Firestore
+    const taskCompletionsRef = collection(firestore, 'users', user.uid, 'taskCompletions');
+    
+    addDocumentNonBlocking(taskCompletionsRef, {
+      userId: user.uid,
+      taskId: offer.id,
+      title: offer.title,
+      rewardAmount: 0, // Initial amount before verification
+      status: 'Pending',
+      createdAt: serverTimestamp()
+    });
+
+    toast({
+      title: "Task Registered",
+      description: `${offer.title} is now in your pending list.`,
+    });
+
+    // Open offer link
+    window.open(offer.url, '_blank');
+  };
 
   return (
     <div className="flex min-h-screen bg-[#000000] text-white">
@@ -181,7 +191,7 @@ export default function Dashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-black truncate">@{username}</p>
-                <p className="text-[10px] text-white/40 font-bold uppercase">Member Since 2024</p>
+                <p className="text-[10px] text-white/40 font-bold uppercase">Active Player</p>
               </div>
             </div>
           </div>
@@ -195,29 +205,38 @@ export default function Dashboard() {
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div>
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
-                Welcome back, <span className="text-[#FA4616]">{username}</span>
+                Welcome, <span className="text-[#FA4616]">{username}</span>
               </h1>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                 <CheckCircle className="w-3 h-3 text-green-500" /> Your account is secure and active
               </p>
             </div>
 
-            <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl shadow-[#FA4616]/5 relative overflow-hidden group min-w-[240px]">
-              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Wallet className="w-16 h-16 text-[#FA4616]" />
+            <div className="flex flex-wrap gap-4">
+              <div className="glass-card bg-[#0a0a0a] border-[#FA4616]/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl shadow-[#FA4616]/5 relative overflow-hidden group min-w-[200px]">
+                <div>
+                  <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Total Earnings</p>
+                  <p className="text-3xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-[#FA4616]/10 flex items-center justify-center border border-[#FA4616]/20 shrink-0">
+                  <Trophy className="w-5 h-5 text-[#FA4616]" />
+                </div>
               </div>
-              <div>
-                <p className="text-[10px] font-black text-[#FA4616] uppercase tracking-[0.2em] mb-1">Current Balance</p>
-                <p className="text-4xl font-black text-white tabular-nums">${balance.toFixed(2)}</p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-[#FA4616]/10 flex items-center justify-center border border-[#FA4616]/20">
-                <Trophy className="w-6 h-6 text-[#FA4616]" />
+
+              <div className="glass-card bg-[#0a0a0a] border-yellow-500/20 p-6 px-8 rounded-3xl flex items-center gap-6 shadow-2xl shadow-yellow-500/5 relative overflow-hidden group min-w-[200px]">
+                <div>
+                  <p className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em] mb-1">Pending Rewards</p>
+                  <p className="text-3xl font-black text-white tabular-nums">${pendingBalance.toFixed(2)}</p>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 shrink-0">
+                  <Clock className="w-5 h-5 text-yellow-500" />
+                </div>
               </div>
             </div>
           </header>
 
           {/* Offers Grid Section */}
-          <section id="offers" className="scroll-mt-10">
+          <section id="offers" className="scroll-mt-10 mb-20">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-[#FA4616] rounded-full" />
               <h2 className="text-2xl font-black uppercase tracking-tight">Available Tasks</h2>
@@ -245,7 +264,7 @@ export default function Dashboard() {
                           <offer.icon className={cn("w-7 h-7", offer.highlight && "animate-pulse")} />
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Earning Potential</p>
+                          <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Reward Potential</p>
                           <p className="text-lg font-black text-white">{offer.rewardRange}</p>
                         </div>
                       </div>
@@ -262,11 +281,14 @@ export default function Dashboard() {
                     </div>
 
                     <div className={cn("shrink-0", offer.highlight && "md:w-64")}>
-                      <Button className={cn(
-                        "w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl",
-                        "bg-white/5 hover:bg-[#FA4616] border border-white/10 hover:border-[#FA4616] text-white",
-                        offer.highlight && "bg-[#FA4616] border-[#FA4616] shadow-[#FA4616]/20 hover:scale-[1.02]"
-                      )}>
+                      <Button 
+                        onClick={() => handleStartTask(offer)}
+                        className={cn(
+                          "w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl",
+                          "bg-white/5 hover:bg-[#FA4616] border border-white/10 hover:border-[#FA4616] text-white",
+                          offer.highlight && "bg-[#FA4616] border-[#FA4616] shadow-[#FA4616]/20 hover:scale-[1.02]"
+                        )}
+                      >
                         Start Task <ArrowUpRight className="ml-2 w-5 h-5" />
                       </Button>
                     </div>
@@ -274,6 +296,15 @@ export default function Dashboard() {
                 </Card>
               ))}
             </div>
+          </section>
+
+          {/* Activity Tracking Section */}
+          <section id="history" className="scroll-mt-10">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-1.5 bg-yellow-500 rounded-full" />
+              <h2 className="text-2xl font-black uppercase tracking-tight">Activity Log</h2>
+            </div>
+            <TaskHistory userId={user.uid} firestore={firestore} />
           </section>
 
           {/* Activity Log Link */}
