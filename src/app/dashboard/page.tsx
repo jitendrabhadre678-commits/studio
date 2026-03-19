@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -20,7 +21,9 @@ import {
   BookOpen,
   ArrowUpRight,
   Clock,
-  Loader2
+  Loader2,
+  Home,
+  ArrowLeft
 } from 'lucide-react';
 import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -41,7 +44,7 @@ export default function Dashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   // Memoize user reference for the real-time listener hook
   const userRef = useMemoFirebase(() => {
@@ -72,7 +75,8 @@ export default function Dashboard() {
   const username = userData?.username || user.displayName || user.email?.split('@')[0] || 'Player';
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: LayoutDashboard },
+    { id: 'landing', label: 'Home', icon: Home, href: '/' },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
     { id: 'rewards', label: 'Rewards', icon: Gift, href: '#offers' },
     { id: 'history', label: 'History', icon: History, href: '#history' },
     { id: 'profile', label: 'Profile', icon: User, href: '/account-settings' },
@@ -86,7 +90,7 @@ export default function Dashboard() {
       icon: Zap,
       rewardRange: '$1 - $100',
       highlight: true,
-      url: 'https://gameflashx.space/sl/zy1x8'
+      url: '/quiz-earn'
     },
     {
       id: 'apps',
@@ -94,7 +98,7 @@ export default function Dashboard() {
       description: 'Get paid to play new games and test mobile applications.',
       icon: Smartphone,
       rewardRange: '$0.50 - $25',
-      url: 'https://gameflashx.space/sl/zy1x8'
+      url: '/quiz-earn'
     },
     {
       id: 'surveys',
@@ -102,7 +106,7 @@ export default function Dashboard() {
       description: 'Share your opinion and get rewarded for your time.',
       icon: ClipboardList,
       rewardRange: '$0.20 - $10',
-      url: 'https://gameflashx.space/sl/zy1x8'
+      url: '/quiz-earn'
     },
     {
       id: 'read',
@@ -110,7 +114,7 @@ export default function Dashboard() {
       description: 'Earn points by reading articles and staying updated.',
       icon: BookOpen,
       rewardRange: 'Daily Payout',
-      url: 'https://gameflashx.space/sl/zy1x8'
+      url: '/quiz-earn'
     }
   ];
 
@@ -134,7 +138,7 @@ export default function Dashboard() {
       description: `${offer.title} is now in your pending list.`,
     });
 
-    window.open(offer.url, '_blank');
+    router.push('/quiz-earn');
   };
 
   return (
@@ -164,19 +168,19 @@ export default function Dashboard() {
             {navItems.map((item) => (
               <Link 
                 key={item.id}
-                href={item.href || '#'}
+                href={item.href}
                 onClick={() => {
                   setActiveTab(item.id);
-                  if (item.id === 'home') setIsSidebarOpen(false);
+                  if (item.href === '/dashboard') setIsSidebarOpen(false);
                 }}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all",
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all duration-300 group",
                   activeTab === item.id 
                     ? "bg-[#FA4616] text-white shadow-lg shadow-[#FA4616]/20" 
                     : "text-white/40 hover:text-white hover:bg-white/5"
                 )}
               >
-                <item.icon className="w-5 h-5" />
+                <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", activeTab === item.id ? "text-white" : "text-white/40 group-hover:text-white")} />
                 {item.label}
               </Link>
             ))}
@@ -201,10 +205,23 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto">
           {/* Real-time Header Stats */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-            <div>
-              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
-                Welcome, <span className="text-[#FA4616]">{username}</span>
-              </h1>
+            <div className="w-full">
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+                  Welcome, <span className="text-[#FA4616]">{username}</span>
+                </h1>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => router.push('/')}
+                  className="bg-white/5 border-white/10 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] h-9 rounded-lg"
+                >
+                  <ArrowLeft className="w-3 h-3 mr-2" /> Back to Home
+                </Button>
+              </div>
+              <p className="text-white/40 font-bold uppercase tracking-widest text-[10px] mb-4">
+                Complete tasks to unlock rewards and track your progress below
+              </p>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                 <CheckCircle className="w-3 h-3 text-green-500" /> Live Data Sync Active
               </p>
