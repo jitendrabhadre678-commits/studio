@@ -1,10 +1,11 @@
+
 {
   "entities": {
     "User": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user account on the GameFlashX platform, tracking their identity, balance, and creation timestamp. Authentication details are handled by an external system.",
+      "description": "Represents a user account on the GameFlashX platform, tracking their identity, balance, location, and payout details.",
       "properties": {
         "id": {
           "type": "string",
@@ -15,9 +16,26 @@
           "description": "The user's email address, used for identification and communication.",
           "format": "email"
         },
+        "username": {
+          "type": "string",
+          "description": "The user's gamer tag or unique handle."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's full name or display name."
+        },
         "balance": {
           "type": "number",
-          "description": "The user's current reward balance or points, typically used to redeem gift cards."
+          "description": "The user's current reward balance or points."
+        },
+        "country": {
+          "type": "string",
+          "description": "The user's detected country via geolocation."
+        },
+        "paypalEmail": {
+          "type": "string",
+          "description": "The user's verified PayPal email for cash payouts.",
+          "format": "email"
         },
         "createdAt": {
           "type": "string",
@@ -36,7 +54,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Reward",
       "type": "object",
-      "description": "Represents a digital gift card or premium reward available on the GameFlashX platform, tracked for user unlocks and status.",
+      "description": "Represents a digital gift card or premium reward available on the GameFlashX platform.",
       "properties": {
         "id": {
           "type": "string",
@@ -44,26 +62,23 @@
         },
         "userId": {
           "type": "string",
-          "description": "Reference to the User who is associated with this reward. (Relationship: User 1:N Reward)"
+          "description": "Reference to the User who is associated with this reward."
         },
         "name": {
           "type": "string",
-          "description": "The common name of the reward, e.g., 'Amazon Gift Card' or 'Steam Gift Card'."
+          "description": "The common name of the reward."
         },
         "amount": {
           "type": "number",
-          "description": "The monetary value of the reward in USD (e.g., 10, 25, 50)."
+          "description": "The monetary value of the reward in USD."
         },
         "status": {
           "type": "string",
-          "description": "The current status of the reward for a user, indicating its progression through redemption.",
-          "items": {
-            "type": "string"
-          }
+          "description": "The current status of the reward (e.g., pending, verified)."
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp indicating when this reward instance was created or recorded.",
+          "description": "Timestamp indicating when this reward was recorded.",
           "format": "date-time"
         }
       },
@@ -80,7 +95,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Activity",
       "type": "object",
-      "description": "Records a user's interaction or completion of specific tasks (e.g., quizzes, games, offers) within the GameFlashX platform, contributing to their reward balance.",
+      "description": "Records a user's interaction or completion of specific tasks.",
       "properties": {
         "id": {
           "type": "string",
@@ -88,25 +103,19 @@
         },
         "userId": {
           "type": "string",
-          "description": "Reference to the User who performed this activity. (Relationship: User 1:N Activity)"
+          "description": "Reference to the User who performed this activity."
         },
         "type": {
           "type": "string",
-          "description": "The classification of the activity completed by the user, such as a quiz, game, or offer.",
-          "items": {
-            "type": "string"
-          }
+          "description": "The classification of the activity (quiz, game, etc.)."
         },
         "status": {
           "type": "string",
-          "description": "The completion status of the activity, reflecting its current state (e.g., pending, completed, failed).",
-          "items": {
-            "type": "string"
-          }
+          "description": "The completion status of the activity."
         },
         "createdAt": {
           "type": "string",
-          "description": "Timestamp indicating when the activity was initiated or recorded.",
+          "description": "Timestamp indicating when the activity was initiated.",
           "format": "date-time"
         }
       },
@@ -122,7 +131,8 @@
   "auth": {
     "providers": [
       "password",
-      "anonymous"
+      "anonymous",
+      "google.com"
     ]
   },
   "firestore": {
@@ -134,7 +144,7 @@
           "schema": {
             "$ref": "#/backend/entities/User"
           },
-          "description": "Stores individual user profiles, identified by their Firebase Authentication UID. This document is typically auto-created upon a user's first login. Access requires `request.auth.uid` to match `{userId}`. Includes fields like email, balance, and createdAt."
+          "description": "Stores individual user profiles."
         }
       },
       {
@@ -144,17 +154,7 @@
           "schema": {
             "$ref": "#/backend/entities/Reward"
           },
-          "description": "Stores specific rewards claimed or earned by a user. Authorization is path-based: `request.auth.uid` must match `{userId}`. The `userId` field within the document is denormalized from the path for explicit authorization context and to enable robust, independent security rules. This structure enables Querying All Permissions (QAPs) for secure listing of a user's rewards.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user who owns this reward. Matches `request.auth.uid` for authorization."
-            },
-            {
-              "name": "rewardId",
-              "description": "The unique identifier for a specific reward instance."
-            }
-          ]
+          "description": "Stores specific rewards claimed or earned by a user."
         }
       },
       {
@@ -164,20 +164,10 @@
           "schema": {
             "$ref": "#/backend/entities/Activity"
           },
-          "description": "Records a user's completed or pending activities. Authorization is path-based: `request.auth.uid` must match `{userId}`. The `userId` field within the document is denormalized from the path for explicit authorization context and to enable robust, independent security rules. This structure enables Querying All Permissions (QAPs) for secure listing of a user's activities.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user who performed this activity. Matches `request.auth.uid` for authorization."
-            },
-            {
-              "name": "activityId",
-              "description": "The unique identifier for a specific activity instance."
-            }
-          ]
+          "description": "Records a user's completed or pending activities."
         }
       }
     ],
-    "reasoning": "The recommended Firestore structure for GameFlashX prioritizes secure, scalable, and easily debuggable security rules by strictly adhering to Authorization Independence and enabling Querying All Permissions (QAPs). The core strategy involves structuring user-specific data (Rewards and Activity) as subcollections under a user's document, rather than as top-level collections. This design ensures that all authorization decisions can be made without `get()` calls, making rules atomic, simple, and performant.\n\n1.  **Authorization Independence (Denormalization):**\n    *   `users/{userId}/rewards/{rewardId}` and `users/{userId}/activity/{activityId}`: By embedding `rewards` and `activity` as subcollections, the `userId` is explicitly part of the document path. This allows Firestore Security Rules to directly check `request.auth.uid == userId` for all read/write operations on these documents. The `userId` field within the `Reward` and `Activity` documents themselves (`resource.data.userId`) serves as a crucial denormalized authorization context, reinforcing ownership. This redundancy allows for rules like `allow read, write: if request.auth.uid == userId && resource.data.userId == userId;`, which is highly explicit and removes the need for expensive `get()` calls to a parent `users` document or a separate owner mapping collection. This guarantees atomic operations, as access can be determined solely from the request context and the document itself.\n\n2.  **QAPs (Secure List Operations):**\n    *   The path-based ownership for `rewards` and `activity` directly facilitates QAPs. Since `rewards` are at `/users/{userId}/rewards` and `activity` at `/users/{userId}/activity`, a user can only perform `list` operations on their own respective subcollections (e.g., `/users/$(request.auth.uid)/rewards`). Security rules can easily enforce that the `{userId}` in the path must match `request.auth.uid`. This prevents unauthorized listing of rewards or activities belonging to other users, as any query attempting to list across different user IDs would be rejected by the rules. The structure inherently provides the necessary scope for secure queries without relying on client-side filtering or complex, insecure rules.\n\n3.  **Structural Segregation & Consistency:**\n    *   Each collection and subcollection (e.g., `/users`, `/users/{userId}/rewards`, `/users/{userId}/activity`) holds documents with a homogeneous security posture, meaning all documents within a given collection/subcollection are subject to the same access rules (e.g., owner-only). This simplifies rule writing significantly. Consistent naming (`userId`, `rewardId`, `activityId`) further enhances clarity and debuggability. The `status` field in `Reward` and `Activity` documents provides explicit state modeling."
+    "reasoning": "Standard hierarchical user-centric structure for security and scalability."
   }
 }

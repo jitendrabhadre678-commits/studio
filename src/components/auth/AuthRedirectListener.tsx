@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -9,6 +10,7 @@ import { useRouter } from 'next/navigation';
 
 /**
  * Handles Firebase Auth redirect results and ensures user profile exists in Firestore.
+ * Also performs automatic country detection via geolocation API.
  */
 export function AuthRedirectListener() {
   const auth = useAuth();
@@ -26,6 +28,15 @@ export function AuthRedirectListener() {
           const userRef = doc(db, 'users', user.uid);
           const userSnap = await getDoc(userRef);
 
+          let detectedCountry = 'Unknown';
+          try {
+            const geoRes = await fetch('https://ipapi.co/json/');
+            const geoData = await geoRes.json();
+            detectedCountry = geoData.country_name || 'Unknown';
+          } catch (geoError) {
+            console.warn("Geolocation API failed, defaulting to Unknown.");
+          }
+
           // Initialize user document if it doesn't exist
           if (!userSnap.exists()) {
             setDocumentNonBlocking(userRef, {
@@ -40,9 +51,16 @@ export function AuthRedirectListener() {
               totalReferrals: 0,
               accountStatus: 'active',
               username: user.email?.split('@')[0] || '',
-              preferredGiftCard: '',
-              isAdmin: false // Default to non-admin
+              country: detectedCountry,
+              paypalEmail: '',
+              isAdmin: false
             }, { merge: true });
+          } else {
+            // Update country if missing or different (optional, keeps data fresh)
+            const existingData = userSnap.data();
+            if (!existingData.country || existingData.country === 'Unknown') {
+              setDocumentNonBlocking(userRef, { country: detectedCountry }, { merge: true });
+            }
           }
           
           toast({ 

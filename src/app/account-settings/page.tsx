@@ -12,7 +12,9 @@ import {
   Check,
   User as UserIcon,
   Mail,
-  Info
+  Info,
+  Globe,
+  Wallet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Refined User Profile page.
- * Simplified to focus on identity and essential delivery details.
+ * Enhanced with country detection display and PayPal payout email configuration.
  */
 
 export default function AccountSettings() {
@@ -33,7 +35,7 @@ export default function AccountSettings() {
   // Local state for form inputs
   const [usernameInput, setUsernameInput] = useState('');
   const [displayNameInput, setDisplayNameInput] = useState('');
-  const [payoutEmailInput, setPayoutEmailInput] = useState('');
+  const [paypalEmailInput, setPaypalEmailInput] = useState('');
 
   // Memoize user reference for the useDoc hook
   const userRef = useMemoFirebase(() => {
@@ -53,12 +55,12 @@ export default function AccountSettings() {
 
   // Intelligent Auto-fill on Load
   useEffect(() => {
-    if (user) {
+    if (user && userData) {
       const emailPrefix = user.email?.split('@')[0] || '';
       
-      setUsernameInput(userData?.username || emailPrefix);
-      setDisplayNameInput(userData?.displayName || user.displayName || emailPrefix);
-      setPayoutEmailInput(userData?.payoutEmail || user.email || '');
+      setUsernameInput(userData.username || emailPrefix);
+      setDisplayNameInput(userData.displayName || user.displayName || emailPrefix);
+      setPaypalEmailInput(userData.paypalEmail || '');
     }
   }, [userData, user]);
 
@@ -76,26 +78,26 @@ export default function AccountSettings() {
       return;
     }
 
-    // Validation: Email Format
+    // Validation: PayPal Email Format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (payoutEmailInput && !emailRegex.test(payoutEmailInput)) {
+    if (paypalEmailInput && !emailRegex.test(paypalEmailInput)) {
       toast({
         variant: "destructive",
         title: "Invalid Email Format",
-        description: "Please enter a valid email address for reward delivery.",
+        description: "Please enter a valid PayPal email address.",
       });
       return;
     }
 
-    // Prepare data for permanent storage
+    // Prepare data for update
     const updateData = {
       username: usernameInput,
       displayName: displayNameInput,
-      payoutEmail: payoutEmailInput,
+      paypalEmail: paypalEmailInput,
       updatedAt: serverTimestamp()
     };
 
-    // Permanent Update Logic
+    // Update Logic
     setDocumentNonBlocking(userRef, updateData, { merge: true });
     
     toast({
@@ -123,7 +125,7 @@ export default function AccountSettings() {
             <h1 className="font-headline text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tight">
               User <span className="text-[#FA4616]">Profile</span>
             </h1>
-            <p className="text-muted-foreground text-sm">Customize your player identity and configure your delivery email.</p>
+            <p className="text-muted-foreground text-sm">Configure your identity, location, and payout details.</p>
           </div>
 
           <div className="glass-card rounded-[2.5rem] p-8 md:p-12 border-white/10 bg-[#0a0a0a] shadow-2xl relative min-h-[400px]">
@@ -168,29 +170,49 @@ export default function AccountSettings() {
                       />
                     </div>
                   </div>
+
+                  {/* Read-Only Country Display */}
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Detected Country (Auto)</Label>
+                    <div className="relative">
+                      <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FA4616]" />
+                      <div className="bg-white/5 border border-white/5 h-14 rounded-2xl pl-11 flex items-center text-white/60 font-bold cursor-not-allowed">
+                        {userData?.country || 'Detecting...'}
+                      </div>
+                    </div>
+                    <p className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-1 ml-1">
+                      Country is automatically detected for regional offer matching.
+                    </p>
+                  </div>
                 </div>
 
-                {/* Delivery Section */}
+                {/* Payout Information Section */}
                 <div className="pt-8 border-t border-white/5 space-y-6">
                   <h3 className="text-lg font-black text-white flex items-center gap-3 uppercase tracking-tight">
-                    <Mail className="w-5 h-5 text-[#FA4616]" /> Reward Delivery
+                    <Wallet className="w-5 h-5 text-[#FA4616]" /> Payout Information
                   </h3>
 
+                  <div className="p-4 bg-[#FA4616]/10 border border-[#FA4616]/20 rounded-xl">
+                    <p className="text-[10px] text-white/80 font-bold leading-relaxed">
+                      For cash withdrawals, your account must be linked to a valid PayPal email. Ensure the email below is correct to receive payments.
+                    </p>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="payoutEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">Email for Gift Card Delivery</Label>
+                    <Label htmlFor="paypalEmail" className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] ml-1">PayPal Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
                       <Input 
-                        id="payoutEmail" 
+                        id="paypalEmail" 
                         type="email"
-                        value={payoutEmailInput}
-                        onChange={(e) => setPayoutEmailInput(e.target.value)}
-                        placeholder="delivery@example.com"
+                        value={paypalEmailInput}
+                        onChange={(e) => setPaypalEmailInput(e.target.value)}
+                        placeholder="paypal@example.com"
                         className="bg-white/5 border-white/10 h-14 rounded-2xl pl-11 text-white font-bold focus:border-[#FA4616] focus:ring-0 transition-colors" 
                       />
                     </div>
                     <p className="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-1 ml-1">
-                      Current Login: {user.email}
+                      Logged in as: {user.email}
                     </p>
                   </div>
                 </div>
@@ -200,7 +222,7 @@ export default function AccountSettings() {
                     type="submit" 
                     className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl w-full shadow-2xl shadow-[#FA4616]/20 transition-all active:scale-[0.98]"
                   >
-                    <Check className="w-5 h-5 mr-2" /> Save Profile
+                    <Check className="w-5 h-5 mr-2" /> Save Profile & Payouts
                   </Button>
                   
                   <div className="mt-6 flex items-center justify-center gap-2 text-white/30">

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -35,7 +36,7 @@ import { useToast } from '@/hooks/use-toast';
 
 /**
  * @fileOverview Refined User Dashboard.
- * Focuses on Available Balance and provides clear path to withdrawal.
+ * Focuses on Available Balance and provides clear path to withdrawal with PayPal validation.
  */
 
 export default function Dashboard() {
@@ -51,7 +52,7 @@ export default function Dashboard() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  // Real-time document subscription (uses onSnapshot internally)
+  // Real-time document subscription
   const { data: userData, isLoading: isDataLoading } = useDoc(userRef);
 
   useEffect(() => {
@@ -122,7 +123,6 @@ export default function Dashboard() {
 
     const taskCompletionsRef = collection(firestore, 'users', user.uid, 'taskCompletions');
     
-    // Add task completion log (creates a 'Pending' entry in Firestore)
     addDocumentNonBlocking(taskCompletionsRef, {
       userId: user.uid,
       taskId: offer.id,
@@ -142,10 +142,25 @@ export default function Dashboard() {
 
   const handleWithdraw = () => {
     if (balance < MIN_WITHDRAWAL) return;
+
+    // Payout Validation: PayPal email check
+    if (!userData?.paypalEmail) {
+      toast({
+        variant: "destructive",
+        title: "Payout Setup Required",
+        description: "Please configure your PayPal email in Profile settings to withdraw cash.",
+        action: (
+          <Button variant="outline" size="sm" onClick={() => router.push('/account-settings')}>
+            Go to Profile
+          </Button>
+        ),
+      });
+      return;
+    }
     
     toast({
       title: "Withdrawal Successful",
-      description: "Withdrawal request submitted.",
+      description: `Request for $${balance.toFixed(2)} submitted to ${userData.paypalEmail}.`,
       className: "bg-[#FA4616] text-white border-none font-bold",
     });
   };
@@ -202,7 +217,7 @@ export default function Dashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-black truncate">@{username}</p>
-                <p className="text-[10px] text-white/40 font-bold uppercase">Active Player</p>
+                <p className="text-[10px] text-white/40 font-bold uppercase">{userData?.country || 'Player'}</p>
               </div>
             </div>
           </div>
@@ -219,7 +234,7 @@ export default function Dashboard() {
                 Welcome, <span className="text-[#FA4616]">{username}</span>
               </h1>
               <p className="text-white/40 font-bold uppercase tracking-widest text-[10px] mb-4">
-                Complete tasks to unlock rewards and track your progress below
+                Location: {userData?.country || 'Detecting...'}
               </p>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                 <CheckCircle className="w-3 h-3 text-green-500" /> Live Data Sync Active
