@@ -105,7 +105,7 @@ export function Footer() {
           <div className="h-px bg-white/5 mb-10" />
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
-            <p>© 2024 GAMEFLASHX. ALL RIGHTS RESERVED.</p>
+            <p>© 2026 GAMEFLASHX. ALL RIGHTS RESERVED.</p>
             <div className="flex items-center gap-6">
               <span className="text-primary/60 border border-primary/20 px-3 py-1 rounded-full bg-primary/5">Global Reward Network</span>
             </div>
