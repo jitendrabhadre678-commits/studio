@@ -3,7 +3,7 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
-import { Zap, ArrowRight, ShieldCheck, Gift, Clock, Globe, User } from 'lucide-react';
+import { Zap, ArrowRight, ShieldCheck, Gift, Clock, Globe } from 'lucide-react';
 
 /**
  * @fileOverview Client component for the 2026 Amazon gift card guide.
@@ -44,11 +44,18 @@ export default function AmazonBlogClient() {
               How to Get a <span className="text-[#ff4d00]">Free Amazon Gift Card</span> in 2026
             </h1>
             
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/40 font-bold uppercase tracking-widest">
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-[#ff4d00]" />
-                <span>Editorial Team</span>
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-white/40 font-bold uppercase tracking-widest">
+              {/* Profile Card for Alex Rivera */}
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#ff4d00] flex items-center justify-center text-white text-[11px] font-black shrink-0 shadow-[0_0_15px_rgba(255,77,0,0.3)]">
+                  AR
+                </div>
+                <div className="text-left">
+                  <div className="text-white text-[11px] font-black uppercase leading-tight">Alex Rivera</div>
+                  <div className="text-[8px] text-white/40 font-bold uppercase tracking-widest leading-tight mt-0.5">Gaming Rewards Expert</div>
+                </div>
               </div>
+
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
                 <span>Updated March 2026</span>
