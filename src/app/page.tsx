@@ -11,7 +11,6 @@ import { CommunityHub } from '@/components/sections/CommunityHub';
 import { categories } from '@/lib/gift-cards';
 import { Zap } from 'lucide-react';
 import Link from 'next/link';
-import { ScrollTriggerPopup } from '@/components/modals/ScrollTriggerPopup';
 
 export default function Home() {
   return (
@@ -54,9 +53,6 @@ export default function Home() {
       <FAQ />
 
       <Footer />
-
-      {/* Global Marketing Modals */}
-      <ScrollTriggerPopup />
     </main>
   );
 }

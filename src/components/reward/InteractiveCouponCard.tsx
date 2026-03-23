@@ -5,7 +5,6 @@ import { Gift, Lock, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { giftCards } from '@/lib/gift-cards';
-import { RewardUnlockModal } from './RewardUnlockModal';
 
 interface InteractiveCouponCardProps {
   brand: string;
@@ -61,13 +60,6 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
         <div className="hidden lg:block absolute top-1/2 -left-4 -translate-y-1/2 w-8 h-8 bg-[#000000] rounded-full border border-white/10" />
         <div className="hidden lg:block absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-[#000000] rounded-full border border-white/10" />
       </div>
-
-      <RewardUnlockModal 
-        card={cardData}
-        value={value}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 }
