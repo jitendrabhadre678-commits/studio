@@ -1,7 +1,7 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent } from '@/components/ui/card';
-import { Zap, ChevronRight, User } from 'lucide-react';
+import { Zap, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 /**
@@ -15,21 +15,33 @@ const customPosts = [
     slug: "free-amazon-gift-card-2026",
     description: "Learn how to secure a free amazon gift card in 2026. Explore verified methods to claim rewards through gaming activities and simple tasks.",
     category: "Shopping",
-    date: "Updated March 2026"
+    date: "March 2026",
+    author: {
+      name: "Alex Rivera",
+      initials: "AR"
+    }
   },
   {
     title: "Free Roblox Gift Card Codes 2026",
     slug: "free-roblox-gift-card-2026",
     description: "Unlock free roblox gift card codes and get robux 2026. Join the top-rated community for gaming rewards and digital codes.",
     category: "Gaming",
-    date: "Updated March 2026"
+    date: "March 2026",
+    author: {
+      name: "Editorial Team",
+      initials: "GF"
+    }
   },
   {
     title: "Free Steam Gift Card 2026",
     slug: "free-steam-gift-card-2026",
     description: "Get your free steam gift card 2026 today. Access unused steam wallet codes and free steam games by completing verified activities.",
     category: "PC Gaming",
-    date: "Updated March 2026"
+    date: "March 2026",
+    author: {
+      name: "Editorial Team",
+      initials: "GF"
+    }
   }
 ];
 
@@ -75,9 +87,11 @@ export default function BlogIndexPage() {
                     </p>
 
                     <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                      <div className="flex items-center gap-2">
-                        <User className="w-3.5 h-3.5 text-[#ff4d00]" />
-                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Editorial Team</span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-[#ff4d00] flex items-center justify-center text-white text-[10px] font-black shrink-0">
+                          {post.author.initials}
+                        </div>
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{post.author.name}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-[#ff4d00] tracking-[0.2em] transition-all group-hover:gap-3">
                         Read More <ChevronRight className="w-4 h-4" />
