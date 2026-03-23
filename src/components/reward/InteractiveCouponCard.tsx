@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Gift, Lock, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +12,22 @@ interface InteractiveCouponCardProps {
 }
 
 export function InteractiveCouponCard({ brand, value, description }: InteractiveCouponCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const cardData = giftCards.find(c => c.brand === brand) || giftCards[0];
+  const handleLockerTrigger = () => {
+    if (typeof window !== 'undefined') {
+      if (!document.getElementById('ogjs')) {
+        const s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.id = 'ogjs';
+        s.src = 'https://gameflashx.space/cl/js/277ood';
+        document.head.appendChild(s);
+      } else {
+        const win = window as any;
+        if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
+          win.ogads_locker.lock();
+        }
+      }
+    }
+  };
 
   return (
     <div className="relative group mb-4 md:mb-6">
@@ -48,7 +61,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
 
             <div className="w-full lg:w-auto shrink-0 mt-2 lg:mt-0">
               <Button 
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleLockerTrigger}
                 className="w-full lg:w-72 h-14 md:h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl md:rounded-2xl shadow-xl transition-all text-xs md:text-sm"
               >
                 Reveal Reward Code <Zap className="ml-2 w-4 h-4 md:w-5 md:h-5" />

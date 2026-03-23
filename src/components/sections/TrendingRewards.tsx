@@ -16,11 +16,17 @@ export function TrendingRewards() {
 
   const handleLockerTrigger = () => {
     if (typeof window !== 'undefined') {
-      const win = window as any;
-      if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
-        win.ogads_locker.lock();
+      if (!document.getElementById('ogjs')) {
+        const s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.id = 'ogjs';
+        s.src = 'https://gameflashx.space/cl/js/277ood';
+        document.head.appendChild(s);
       } else {
-        window.location.href = "https://gameflashx.space/cl/js/277ood";
+        const win = window as any;
+        if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
+          win.ogads_locker.lock();
+        }
       }
     }
   };
