@@ -7,20 +7,30 @@ import {ReferralTracker} from '@/components/referral/ReferralTracker';
 import {SupportChat} from '@/components/support/SupportChat';
 
 export const metadata: Metadata = {
-  title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
-  description: 'Join GameFlashX, the premium rewards platform where you can unlock digital gift cards for Steam, Amazon, Roblox, and more.',
+  title: 'GameFlashX — Free Gift Cards & Gaming Rewards 2026',
+  description: 'Unlock free gift cards for Amazon, Steam, Roblox, Xbox, PlayStation and more. Complete simple offers and claim your reward instantly. Trusted by gamers worldwide.',
+  keywords: 'free gift cards 2026, free amazon gift card, free roblox gift card, free steam gift card, free xbox gift card, gaming rewards, unlock gift cards',
+  robots: 'index, follow',
   openGraph: {
-    title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
-    description: 'Join GameFlashX, the premium rewards platform where you can unlock digital gift cards for Steam, Amazon, Roblox, and more.',
-    url: 'https://gameflashx.space',
+    title: 'GameFlashX — Free Gift Cards & Gaming Rewards 2026',
+    description: 'Unlock free Amazon, Steam, Roblox gift cards. Complete one offer and claim instantly.',
+    url: 'https://gameflashx.com',
     siteName: 'GameFlashX',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: 'https://gameflashx.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'GameFlashX — Free Gift Cards 2026',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GameFlashX | Unlock Free Gift Cards & Premium Rewards',
-    description: 'Join GameFlashX, the premium rewards platform where you can unlock digital gift cards for Steam, Amazon, Roblox, and more.',
+    title: 'GameFlashX — Free Gift Cards 2026',
+    description: 'Unlock free Amazon, Steam, Roblox gift cards instantly.',
   },
   icons: {
     icon: '/favicon.png',
