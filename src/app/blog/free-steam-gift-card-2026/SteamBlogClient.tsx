@@ -1,6 +1,6 @@
 'use client';
 
-import { BlogPostTemplate } from '@/components/blog/BlogPostTemplate';
+import BlogPostTemplate from '@/components/blog/BlogPostTemplate';
 
 /**
  * @fileOverview Client component for the 2026 Steam gift card guide.
@@ -17,12 +17,6 @@ export default function SteamBlogClient() {
 
     <h2>Verified Sessions and Instant Delivery</h2>
     <p>Security is our top priority when dealing with digital rewards. When you decide to claim steam gift card codes through our network, you are entering a secure, SSL-encrypted environment. Our backend system uses 256-bit AES encryption to protect every session. Once you successfully complete a sponsored activity, our automated verification node receives a signal from the advertiser. After this brief validation, your digital Steam code is released instantly into your account. There are no long waiting periods or manual review queues; your reward is ready as soon as you finish the work.</p>
-
-    <h2>Global Compatibility for Every Gamer</h2>
-    <p>Whether you are located in the United States, Europe, or Asia, our Steam rewards are designed for global utility. These codes are sourced from official retailers, ensuring they function perfectly regardless of your regional store settings. This makes them ideal for purchasing the latest expansions, unlocking community market items, or gifting games to your friends. If you are looking for free steam games or simply want to top up your wallet for the next big seasonal sale, GameFlashX provides the most efficient pathway in 2026.</p>
-
-    <h2>Maximizing Your Earnings</h2>
-    <p>For those looking to maximize their wallet balance, we recommend checking the dashboard daily. High-value offers are frequently added, and some are only available for a limited time. Additionally, our platform features a referral program where you can earn bonuses by inviting other gamers to join. Consistency is the key to accumulating multiple gift cards throughout the month. Start your journey today by selecting the Steam reward value that fits your needs and joining the premier community for digital gaming rewards.</p>
   `;
 
   return (

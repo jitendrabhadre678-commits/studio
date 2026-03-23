@@ -28,8 +28,8 @@ const customPosts = [
     category: "Gaming",
     date: "March 2026",
     author: {
-      name: "Editorial Team",
-      initials: "GF"
+      name: "Jake Thompson",
+      initials: "JT"
     }
   },
   {
@@ -39,8 +39,8 @@ const customPosts = [
     category: "PC Gaming",
     date: "March 2026",
     author: {
-      name: "Editorial Team",
-      initials: "GF"
+      name: "Sarah Mitchell",
+      initials: "SM"
     }
   }
 ];
@@ -66,7 +66,7 @@ export default function BlogIndexPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {customPosts.map((post, idx) => (
+            {customPosts.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group h-full">
                 <Card className="bg-[#1a1a1a] border-white/5 group-hover:border-[#ff4d00]/40 transition-all duration-500 overflow-hidden rounded-[2rem] h-full flex flex-col shadow-2xl">
                   <CardContent className="p-8 flex flex-col h-full relative">

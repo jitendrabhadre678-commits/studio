@@ -24,7 +24,7 @@ interface BlogPostTemplateProps {
   category?: string;
 }
 
-export function BlogPostTemplate({ 
+export default function BlogPostTemplate({ 
   title, 
   author, 
   htmlContent, 
@@ -69,7 +69,7 @@ export function BlogPostTemplate({
               {/* Author Info */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#ff4d00] flex items-center justify-center text-white text-[11px] font-black shrink-0 shadow-[0_0_15px_rgba(255,77,0,0.3)]">
-                  {author.initials}
+                  {author.initials || 'GF'}
                 </div>
                 <div className="text-left">
                   <div className="text-white text-[11px] font-black uppercase leading-tight">{author.name}</div>
