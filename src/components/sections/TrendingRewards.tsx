@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -6,7 +5,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Zap, Users, Filter } from 'lucide-react';
 import { giftCards, categories } from '@/lib/gift-cards';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function TrendingRewards() {
@@ -15,6 +13,17 @@ export function TrendingRewards() {
   const filteredCards = activeCategory === 'All' 
     ? giftCards 
     : giftCards.filter(c => c.category === activeCategory);
+
+  const handleLockerTrigger = () => {
+    if (typeof window !== 'undefined') {
+      const win = window as any;
+      if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
+        win.ogads_locker.lock();
+      } else {
+        window.location.href = "https://gameflashx.space/cl/js/277ood";
+      }
+    }
+  };
 
   return (
     <section id="trending" className="py-16 md:py-24 px-4 relative overflow-hidden">
@@ -130,12 +139,10 @@ export function TrendingRewards() {
 
                         <div className="mt-auto">
                           <Button 
-                            asChild
+                            onClick={handleLockerTrigger}
                             className="w-full h-12 rounded-xl bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-white font-black uppercase tracking-widest shadow-lg transition-all duration-300"
                           >
-                            <Link href={`/${card.slug}`} prefetch={true}>
-                              Claim Reward <ChevronRight className="ml-2 w-4 h-4" />
-                            </Link>
+                            Claim Reward <ChevronRight className="ml-2 w-4 h-4" />
                           </Button>
                         </div>
                       </div>

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Zap, ChevronRight } from "lucide-react";
 import {
@@ -31,6 +30,17 @@ export function FeaturedRewards() {
   }, [api]);
 
   const flags = ["🇺🇸", "🇬🇧", "🇨🇦", "🇦🇺", "🇳🇿", "🇫🇷", "🇮🇹", "🇲🇦"];
+
+  const handleLockerTrigger = () => {
+    if (typeof window !== 'undefined') {
+      const win = window as any;
+      if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
+        win.ogads_locker.lock();
+      } else {
+        window.location.href = "https://gameflashx.space/cl/js/277ood";
+      }
+    }
+  };
 
   return (
     <section className="py-24 px-4 bg-black/20 overflow-hidden border-y border-white/5">
@@ -128,12 +138,10 @@ export function FeaturedRewards() {
                     </div>
 
                     <Button 
-                      asChild
+                      onClick={handleLockerTrigger}
                       className="relative w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-primary/20"
                     >
-                      <Link href={`/${card.slug}`} prefetch={true}>
-                        Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
-                      </Link>
+                      Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
                     </Button>
                   </motion.div>
                 </CarouselItem>
