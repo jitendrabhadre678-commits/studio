@@ -103,6 +103,12 @@ export default {
           '0%, 100%': { transform: 'translateY(0) translateX(0)', opacity: '0' },
           '50%': { opacity: '0.5' },
           '100%': { transform: 'translateY(-100px) translateX(20px)', opacity: '0' },
+        },
+        'data-flow': {
+          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '5%': { opacity: '1' },
+          '95%': { opacity: '1' },
+          '100%': { transform: 'translateX(1000%)', opacity: '0' },
         }
       },
       animation: {
@@ -116,6 +122,7 @@ export default {
         'shine': 'shine 8s linear infinite',
         'beam-shimmer': 'beam-shimmer 4s ease-in-out infinite',
         'float-particle': 'float-particle 10s linear infinite',
+        'data-flow': 'data-flow 3s linear infinite',
       },
     },
   },

@@ -2,140 +2,135 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Gift, ShieldCheck, Zap, Circle } from 'lucide-react';
+import { Gift, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Redesigned How It Works section.
- * Features a central vertical energy conduit with alternating glass cards.
+ * @fileOverview Redesigned "How It Works" Section.
+ * Features a horizontal flow connected by an animated "Wire Flow" energy line.
  */
 
 const steps = [
   {
     id: 1,
-    icon: <Gift className="w-8 h-8 md:w-10 md:h-10 text-primary" />,
+    icon: <Gift className="w-8 h-8 text-blue-400" />,
     title: "Choose Gift Card",
-    description: "Browse our premium vault and select the reward brand and denomination you want to claim.",
-    align: "left"
+    description: "Browse our premium vault and select the reward brand and denomination you want to claim."
   },
   {
     id: 2,
-    icon: <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-primary" />,
+    icon: <ShieldCheck className="w-8 h-8 text-cyan-400" />,
     title: "Complete Verification",
-    description: "Complete one quick sponsored activity to verify your human session and secure your reward.",
-    align: "right"
+    description: "Complete one quick sponsored activity to verify your human session and secure your reward."
   },
   {
     id: 3,
-    icon: <Zap className="w-8 h-8 md:w-10 md:h-10 text-primary" />,
+    icon: <Zap className="w-8 h-8 text-blue-400" />,
     title: "Unlock Reward",
-    description: "Your unique digital code is instantly revealed in your private vault, ready for immediate use.",
-    align: "left"
+    description: "Your unique digital code is instantly revealed in your private vault, ready for immediate use."
   }
 ];
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-32 px-4 relative overflow-hidden bg-black/20">
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+    <section id="how-it-works" className="py-32 px-4 relative overflow-hidden bg-transparent">
+      {/* Background Ambient Glows */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto max-w-6xl relative">
         {/* Header */}
-        <div className="text-center mb-24">
+        <div className="text-center mb-20">
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full mb-6"
+            className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full mb-6"
           >
-            <Circle className="w-2 h-2 fill-primary text-primary animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Reward Protocol</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">System Protocol</span>
           </motion.div>
-          <h2 className="font-headline text-4xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight leading-none">
-            The Path To <span className="text-primary text-glow">Rewards</span>
+          <h2 className="font-headline text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tight leading-none">
+            The Reward <span className="text-blue-400 text-glow-blue">Workflow</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
-            Follow our verified three-step process to unlock premium digital keys instantly.
+          <p className="text-white/40 text-lg max-w-xl mx-auto font-medium">
+            A simple, secure, and fully automated process to get your digital codes.
           </p>
         </div>
 
-        {/* Timeline Content */}
-        <div className="relative">
-          {/* Vertical Glowing Line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-primary/50 via-primary to-transparent opacity-20 hidden md:block" />
+        {/* Steps Container */}
+        <div className="relative flex flex-col lg:flex-row items-stretch justify-between gap-12 lg:gap-6">
           
-          <div className="space-y-16 md:space-y-0">
-            {steps.map((step, idx) => (
-              <div key={step.id} className="relative md:min-h-[300px] flex items-center">
-                
-                {/* Timeline Dot (Desktop) */}
-                <div className="absolute left-1/2 -translate-x-1/2 z-20 hidden md:block">
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    className="w-12 h-12 rounded-full bg-black border-2 border-primary flex items-center justify-center shadow-[0_0_20px_rgba(250,70,22,0.4)]"
-                  >
-                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
-                  </motion.div>
+          {/* Animated Wire Flow (Desktop Only) */}
+          <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[2px] -translate-y-1/2 z-0 overflow-hidden">
+            {/* Base Line */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-cyan-400/40 to-blue-500/20" />
+            {/* Flowing Pulse */}
+            <div className="absolute top-0 bottom-0 w-24 bg-gradient-to-r from-transparent via-cyan-300 to-transparent animate-data-flow blur-sm" />
+            <div className="absolute top-0 bottom-0 w-12 bg-white animate-data-flow" />
+          </div>
+
+          {steps.map((step, idx) => (
+            <motion.div
+              key={step.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.15 }}
+              viewport={{ once: true }}
+              className="relative z-10 flex-1 flex"
+            >
+              <div className={cn(
+                "w-full p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] backdrop-blur-xl border border-white/10",
+                "transition-all duration-500 hover:scale-[1.03] hover:bg-white/[0.05] hover:border-blue-500/30",
+                "group shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex flex-col"
+              )}>
+                {/* Step Marker */}
+                <div className="absolute -top-4 -left-4 w-10 h-10 rounded-xl bg-blue-500 text-white font-black flex items-center justify-center text-xs shadow-lg border-2 border-[#050505] z-20 group-hover:scale-110 transition-transform">
+                  0{step.id}
                 </div>
 
-                {/* Card Container */}
-                <div className={cn(
-                  "w-full md:w-[45%] flex",
-                  step.align === 'left' ? "md:mr-auto justify-end" : "md:ml-auto justify-start"
-                )}>
-                  <motion.div
-                    initial={{ opacity: 0, x: step.align === 'left' ? -50 : 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    whileHover={{ scale: 1.02 }}
-                    className="w-full glass-card p-8 md:p-10 rounded-2xl border-white/10 relative group bg-white/[0.02] backdrop-blur-xl shadow-[inset_0_0_40px_rgba(255,255,255,0.02)]"
-                  >
-                    {/* Hover Glow */}
-                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-                    
-                    {/* Step Number Badge */}
-                    <div className="absolute -top-4 -left-4 md:top-8 md:-right-4 bg-primary text-white w-10 h-10 rounded-xl flex items-center justify-center font-black shadow-xl z-10 border-2 border-black">
-                      {step.id}
-                    </div>
+                {/* Inner Glow Overlay */}
+                <div className="absolute inset-0 bg-radial-gradient from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2.5rem]" />
 
-                    <div className="relative z-10">
-                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 border border-primary/20 group-hover:border-primary/40 transition-all">
-                        {step.icon}
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white mb-4 uppercase tracking-tight leading-none group-hover:text-primary transition-colors">
-                        {step.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
-                        {step.description}
-                      </p>
-                    </div>
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all">
+                    {step.icon}
+                  </div>
+                  
+                  <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight leading-none group-hover:text-blue-400 transition-colors">
+                    {step.title}
+                  </h3>
+                  
+                  <p className="text-white/50 text-sm md:text-base leading-relaxed font-medium">
+                    {step.description}
+                  </p>
 
-                    {/* Decorative Corner Accents */}
-                    <div className="absolute bottom-4 right-4 opacity-5 group-hover:opacity-20 transition-opacity pointer-events-none">
+                  {/* Icon Watermark */}
+                  <div className="mt-auto pt-8 flex justify-end opacity-5 group-hover:opacity-10 transition-opacity">
+                    <div className="scale-150 rotate-12">
                       {step.icon}
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Bottom CTA Overlay Hint */}
-        <div className="mt-24 text-center">
-          <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.4em] mb-4">
-            Secured By 256-bit AES Encryption
-          </p>
-          <div className="flex justify-center gap-8 items-center opacity-20">
-            <div className="h-px bg-white/20 flex-grow max-w-[100px]" />
-            <ShieldCheck className="w-6 h-6 text-white" />
-            <div className="h-px bg-white/20 flex-grow max-w-[100px]" />
-          </div>
+        {/* Trust Hint */}
+        <div className="mt-20 flex items-center justify-center gap-4 text-[10px] font-black text-white/10 uppercase tracking-[0.4em]">
+          <span>Optimized Logic</span>
+          <div className="w-1 h-1 bg-blue-500/20 rounded-full" />
+          <span>Secured Nodes</span>
+          <div className="w-1 h-1 bg-blue-500/20 rounded-full" />
+          <span>Instant Confirmation</span>
         </div>
       </div>
+
+      <style jsx global>{`
+        .text-glow-blue {
+          text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+        }
+      `}</style>
     </section>
   );
 }
