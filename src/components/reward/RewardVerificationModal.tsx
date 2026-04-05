@@ -6,8 +6,8 @@ import { VerificationModal } from './VerificationModal';
 import { IframeModal } from './IframeModal';
 
 /**
- * @fileOverview Refined Orchestrator for Reward Verification and Delivery.
- * Manages states: Verifying -> Reward Iframe.
+ * @fileOverview Orchestrator for Reward Verification and Delivery.
+ * Manages the transition between the security check and the glassmorphism iframe.
  */
 
 interface RewardVerificationModalProps {
@@ -29,13 +29,13 @@ export function RewardVerificationModal({
 
   useEffect(() => {
     if (!isOpen) {
-      // Reset view when modal closes
+      // Reset view after close animation completes
       const timer = setTimeout(() => setView('verifying'), 300);
       document.body.style.overflow = 'unset';
       return () => clearTimeout(timer);
     }
 
-    // Disable background scrolling
+    // Lock scroll for focus
     document.body.style.overflow = 'hidden';
   }, [isOpen]);
 
@@ -46,14 +46,14 @@ export function RewardVerificationModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-8">
+          {/* Backdrop with Dynamic Blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={view === 'verifying' ? undefined : onClose}
-            className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+            onClick={view === 'reward' ? onClose : undefined}
+            className="absolute inset-0 bg-black/80 backdrop-blur-[8px]"
           />
 
           <AnimatePresence mode="wait">
@@ -62,10 +62,10 @@ export function RewardVerificationModal({
                 key="verifying"
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10 }}
                 className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 md:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden"
               >
-                {/* Visual Accents */}
+                {/* Brand Identity Accents */}
                 <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
                 
