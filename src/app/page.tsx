@@ -7,6 +7,7 @@ import { FAQ } from '@/components/sections/FAQ';
 import { Footer } from '@/components/layout/Footer';
 import { CommunityHub } from '@/components/sections/CommunityHub';
 import { TrustBadges } from '@/components/sections/TrustBadges';
+import { GlassDivider } from '@/components/ui/GlassDivider';
 
 /**
  * @fileOverview Redesigned Homepage Layout.
@@ -24,9 +25,13 @@ export default function Home() {
       {/* 2. Trending Gift Cards (Immediate conversion) */}
       <TrendingRewards />
 
+      <GlassDivider />
+
       {/* 3. Trust & Credibility */}
       <TrustBadges />
       
+      <GlassDivider className="h-[60px] opacity-50" />
+
       {/* 4. Education */}
       <HowItWorks />
 
