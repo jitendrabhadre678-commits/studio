@@ -1,33 +1,23 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Zap, Star, ArrowUpRight, ShieldCheck, Flame } from 'lucide-react';
 import { giftCards } from '@/lib/gift-cards';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RewardVerificationModal } from '@/components/reward/RewardVerificationModal';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Redesigned Trending Rewards Section.
- * Features: Modern SaaS aesthetics, high-fidelity glassmorphism, and responsive grid.
+ * Now navigates to dedicated product detail pages on click.
  */
 
 export function TrendingRewards() {
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    brand: '',
-    value: ''
-  });
+  const router = useRouter();
 
-  const handleClaimClick = (brand: string, value: string) => {
-    setModalState({
-      isOpen: true,
-      brand,
-      value
-    });
+  const handleCardClick = (slug: string) => {
+    router.push(`/product/${slug}`);
   };
 
   return (
@@ -57,7 +47,7 @@ export function TrendingRewards() {
             transition={{ delay: 0.2 }}
             className="text-white/40 text-sm md:text-lg max-w-xl mx-auto font-medium"
           >
-            Choose a reward and complete 1 quick step to unlock your unique code instantly.
+            Select a reward to view full details and unlock your unique code.
           </motion.p>
         </div>
 
@@ -73,7 +63,7 @@ export function TrendingRewards() {
               className="group"
             >
               <Card 
-                onClick={() => handleClaimClick(card.brand, card.values[0])}
+                onClick={() => handleCardClick(card.slug)}
                 className={cn(
                   "relative h-full glass-card border-white/10 bg-white/[0.02] hover:bg-white/[0.05]",
                   "hover:border-primary/40 hover:shadow-[0_10px_40px_rgba(250,70,22,0.1)]",
@@ -145,13 +135,6 @@ export function TrendingRewards() {
           </div>
         </div>
       </div>
-
-      <RewardVerificationModal 
-        isOpen={modalState.isOpen}
-        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
-        brand={modalState.brand}
-        value={modalState.value}
-      />
     </section>
   );
 }

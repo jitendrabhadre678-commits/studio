@@ -5,6 +5,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Zap, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   Carousel,
   CarouselContent,
@@ -18,6 +19,7 @@ import { Button } from "@/components/ui/button";
 
 export function FeaturedRewards() {
   const [api, setApi] = useState<CarouselApi>();
+  const router = useRouter();
   const featured = giftCards.filter((c) => c.featured);
 
   useEffect(() => {
@@ -32,21 +34,8 @@ export function FeaturedRewards() {
 
   const flags = ["🇺🇸", "🇬🇧", "🇨🇦", "🇦🇺", "🇳🇿", "🇫🇷", "🇮🇹", "🇲🇦"];
 
-  const handleLockerTrigger = () => {
-    if (typeof window !== 'undefined') {
-      if (!document.getElementById('ogjs')) {
-        const s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.id = 'ogjs';
-        s.src = 'https://gameflashx.space/cl/js/277ood';
-        document.head.appendChild(s);
-      } else {
-        const win = window as any;
-        if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
-          win.ogads_locker.lock();
-        }
-      }
-    }
+  const handleCardClick = (slug: string) => {
+    router.push(`/product/${slug}`);
   };
 
   return (
@@ -98,7 +87,8 @@ export function FeaturedRewards() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}
-                    className="rounded-2xl p-6 border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/10 hover:scale-[1.03] overflow-hidden"
+                    onClick={() => handleCardClick(card.slug)}
+                    className="rounded-2xl p-6 border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/10 hover:scale-[1.03] overflow-hidden cursor-pointer"
                     style={{ 
                       background: 'linear-gradient(145deg, rgba(26,26,26,0.8), rgba(17,17,17,0.9))'
                     }}
@@ -145,10 +135,9 @@ export function FeaturedRewards() {
                     </div>
 
                     <Button 
-                      onClick={handleLockerTrigger}
-                      className="relative w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-primary/20"
+                      className="relative w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-primary/20 pointer-events-none"
                     >
-                      Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
+                      View Details <ChevronRight className="ml-2 w-4 h-4" />
                     </Button>
                   </motion.div>
                 </CarouselItem>

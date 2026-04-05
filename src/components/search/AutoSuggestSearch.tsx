@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -45,7 +46,7 @@ export function AutoSuggestSearch() {
       title: c.brand,
       category: c.category,
       type: 'Reward',
-      href: `/${c.slug}`,
+      href: `/product/${c.slug}`,
       imageUrl: c.imageUrl || `https://picsum.photos/seed/${c.id}/100/100`,
       priceHint: "Verified Reward"
     }));
@@ -66,7 +67,7 @@ export function AutoSuggestSearch() {
               title: data.name,
               category: data.category,
               type: 'Reward',
-              href: `/${data.seoSlug || doc.id}`,
+              href: `/product/${data.seoSlug || doc.id}`,
               imageUrl: data.imageUrl,
               priceHint: "Verified Reward"
             };
@@ -105,9 +106,6 @@ export function AutoSuggestSearch() {
       const category = (product.category || "").toLowerCase();
       return title.includes(term) || category.includes(term);
     });
-
-    // Debug Logs
-    console.log(`Searching for: "${term}"`, `Found: ${matches.length} results`);
 
     return matches.slice(0, 6);
   }, [searchQuery, allProducts]);
@@ -333,7 +331,7 @@ export function AutoSuggestSearch() {
 
             {/* Footer Status */}
             <div className="bg-white/[0.02] p-3 text-center border-t border-white/5">
-              <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+              <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
                 <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
                 Live Network Active
               </p>
