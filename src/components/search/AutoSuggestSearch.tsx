@@ -10,7 +10,7 @@ import { blogPosts } from '@/lib/blog-posts';
 
 /**
  * @fileOverview Functional Auto-Suggest Search Bar.
- * Implements state-based filtering, highlighting, and empty state handling.
+ * Updated for mobile navbar integration with rounded-xl and 36-40px height.
  */
 
 type SearchResult = {
@@ -102,77 +102,72 @@ export function AutoSuggestSearch() {
     const parts = text.split(new RegExp(`(${match})`, 'gi'));
     return parts.map((part, i) => 
       part.toLowerCase() === match.toLowerCase() 
-        ? <span key={i} className="text-[#FA4616] font-black">{part}</span> 
+        ? <span key={i} className="text-primary font-black">{part}</span> 
         : part
     );
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto lg:mx-0" ref={searchRef}>
+    <div className="relative w-full" ref={searchRef}>
       <div className={cn(
-        "relative flex items-center bg-white/5 border rounded-2xl transition-all duration-300 group",
-        isOpen ? "border-[#FA4616] bg-black/40 ring-4 ring-[#FA4616]/10" : "border-white/10 hover:border-white/20"
+        "relative flex items-center bg-white/5 border rounded-xl transition-all duration-300 group",
+        isOpen ? "border-primary bg-black/40 ring-2 ring-primary/10" : "border-white/10 hover:border-white/20"
       )}>
         <Search className={cn(
-          "ml-4 w-4 h-4 transition-colors",
-          isOpen ? "text-[#FA4616]" : "text-white/20 group-hover:text-white/40"
+          "ml-3 w-3.5 h-3.5 transition-colors",
+          isOpen ? "text-primary" : "text-white/20 group-hover:text-white/40"
         )} />
         <input 
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search rewards, guides..."
-          className="w-full h-11 bg-transparent border-none focus:ring-0 text-white text-sm px-3 placeholder:text-white/20 font-medium"
+          placeholder="Search rewards..."
+          className="w-full h-9 md:h-10 bg-transparent border-none focus:ring-0 text-white text-[12px] md:text-sm px-2 placeholder:text-white/20 font-medium"
         />
       </div>
 
       {/* Results Dropdown */}
       {isOpen && (
-        <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-[9999] bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-[calc(100%+8px)] left-0 right-0 z-[9999] bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           {filteredResults.length > 0 ? (
-            <div className="p-2 space-y-1">
+            <div className="p-1.5 space-y-0.5">
               {filteredResults.map((result) => (
                 <button
                   key={result.id}
                   onClick={() => handleResultClick(result.href)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all text-left group/item"
+                  className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-white/5 transition-all text-left group/item"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 group-hover/item:border-[#FA4616]/30 transition-colors shrink-0">
-                      <result.icon className="w-4 h-4 text-white/40 group-hover/item:text-[#FA4616]" />
+                    <div className="w-7 h-7 rounded-md bg-white/5 flex items-center justify-center border border-white/5 group-hover/item:border-primary/30 transition-colors shrink-0">
+                      <result.icon className="w-3.5 h-3.5 text-white/40 group-hover/item:text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-white/80 truncate">
+                      <p className="text-[11px] font-bold text-white/80 truncate">
                         {highlightMatch(result.title, searchQuery)}
                       </p>
                       <span className={cn(
-                        "text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border mt-1 inline-block",
+                        "text-[7px] font-black uppercase tracking-widest px-1 py-0.5 rounded border mt-0.5 inline-block",
                         result.type === 'Reward' && "text-green-500 border-green-500/20 bg-green-500/5",
                         result.type === 'Guide' && "text-blue-500 border-blue-500/20 bg-blue-500/5",
-                        result.type === 'Feature' && "text-[#FA4616] border-[#FA4616]/20 bg-[#FA4616]/5"
+                        result.type === 'Feature' && "text-primary border-primary/20 bg-primary/5"
                       )}>
                         {result.type}
                       </span>
                     </div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-white/10 group-hover/item:text-[#FA4616] transition-colors" />
+                  <ChevronRight className="w-3 h-3 text-white/10 group-hover/item:text-primary transition-colors" />
                 </button>
               ))}
             </div>
           ) : (
-            <div className="p-10 text-center flex flex-col items-center gap-3">
-              <AlertCircle className="w-8 h-8 text-white/10" />
+            <div className="p-8 text-center flex flex-col items-center gap-2">
+              <AlertCircle className="w-6 h-6 text-white/10" />
               <div>
-                <p className="text-sm font-bold text-white/60">No results found</p>
-                <p className="text-[10px] text-white/20 uppercase tracking-widest mt-1">Try a different keyword</p>
+                <p className="text-xs font-bold text-white/60">No results</p>
+                <p className="text-[8px] text-white/20 uppercase tracking-widest mt-0.5">Try another keyword</p>
               </div>
             </div>
           )}
-          <div className="bg-white/5 p-3 text-center border-t border-white/5">
-            <p className="text-[9px] font-black text-white/20 uppercase tracking-widest">
-              Direct routing enabled
-            </p>
-          </div>
         </div>
       )}
     </div>
