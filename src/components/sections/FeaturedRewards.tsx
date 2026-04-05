@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -97,14 +98,14 @@ export function FeaturedRewards() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}
-                    className="rounded-[24px] p-6 border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card"
+                    className="rounded-[2.5rem] p-6 border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card shadow-2xl hover:shadow-primary/10"
                     style={{ 
                       background: 'linear-gradient(145deg, rgba(26,26,26,0.8), rgba(17,17,17,0.9))'
                     }}
                   >
                     {/* Unique Gradient Background Banner */}
                     <div 
-                      className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-6 shadow-2xl border border-white/5 flex items-center justify-center p-4 transition-transform duration-700 group-hover/card:scale-[1.05]"
+                      className="relative aspect-[16/9] w-full rounded-[1.5rem] overflow-hidden mb-6 shadow-2xl border border-white/5 flex items-center justify-center p-4 transition-transform duration-700 group-hover/card:scale-[1.05]"
                       style={{ background: card.gradient }}
                     >
                       <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
@@ -118,7 +119,7 @@ export function FeaturedRewards() {
                       </div>
                     </div>
 
-                    <div className="flex-grow">
+                    <div className="flex-grow px-2">
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-1">
@@ -145,7 +146,7 @@ export function FeaturedRewards() {
 
                     <Button 
                       onClick={handleLockerTrigger}
-                      className="relative w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-primary/20"
+                      className="relative w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-primary/20"
                     >
                       Unlock Reward <ChevronRight className="ml-2 w-4 h-4" />
                     </Button>
@@ -155,8 +156,8 @@ export function FeaturedRewards() {
             </CarouselContent>
             
             <div className="hidden xl:block">
-              <CarouselPrevious className="-left-16 bg-black/60 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-14 w-14" />
-              <CarouselNext className="-right-16 bg-black/60 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-14 w-14" />
+              <CarouselPrevious className="-left-16 bg-black/60 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-14 w-14 rounded-full" />
+              <CarouselNext className="-right-16 bg-black/60 border-white/10 text-white hover:bg-primary hover:border-primary transition-all h-14 w-14 rounded-full" />
             </div>
           </Carousel>
         </div>
