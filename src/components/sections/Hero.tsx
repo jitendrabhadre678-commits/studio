@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Zap, ChevronRight, Sparkles } from 'lucide-react';
@@ -10,7 +11,27 @@ import { Zap, ChevronRight, Sparkles } from 'lucide-react';
  * Features a glowing vertical light beam background with floating particles.
  */
 
+interface Particle {
+  left: string;
+  top: string;
+  delay: string;
+  duration: string;
+}
+
 export function Hero() {
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    // Generate particle properties only on the client to avoid hydration mismatch
+    const generatedParticles = [...Array(15)].map(() => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 10}s`,
+      duration: `${10 + Math.random() * 10}s`
+    }));
+    setParticles(generatedParticles);
+  }, []);
+
   const handleScrollToTrending = () => {
     const element = document.getElementById('trending');
     if (element) {
@@ -38,15 +59,15 @@ export function Hero() {
 
       {/* 2. LAYER: FLOATING PARTICLES */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {[...Array(15)].map((_, i) => (
+        {particles.map((p, i) => (
           <div 
             key={i}
             className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-float-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 10}s`,
-              animationDuration: `${10 + Math.random() * 10}s`
+              left: p.left,
+              top: p.top,
+              animationDelay: p.delay,
+              animationDuration: p.duration
             }}
           />
         ))}
