@@ -8,10 +8,11 @@ import { Footer } from '@/components/layout/Footer';
 import { CommunityHub } from '@/components/sections/CommunityHub';
 import { TrustBadges } from '@/components/sections/TrustBadges';
 import { WaveDivider } from '@/components/ui/WaveDivider';
+import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
 
 /**
- * @fileOverview Redesigned Homepage Layout with Seamless Liquid Wave Transitions.
- * Order: Hero -> Wave -> Trending Rewards -> Wave (Up) -> Trust Signals -> Wave (Down) -> How it Works -> Social Proof -> Community -> FAQ -> Footer.
+ * @fileOverview Redesigned Homepage Layout with Seamless Liquid Wave Transitions & Cinematic Radial Glows.
+ * Order: Hero -> Wave -> Trending Rewards -> Radial Glow -> Trust Signals -> Wave (Down) -> How it Works -> Radial Glow -> Social Proof -> Community -> FAQ -> Footer.
  */
 
 export default function Home() {
@@ -31,7 +32,8 @@ export default function Home() {
         <TrendingRewards />
       </div>
 
-      <WaveDivider direction="up" className="relative z-20" />
+      {/* Cinematic Transition: Trending -> Trust */}
+      <RadialGlowDivider intensity="high" className="z-20 -mt-20" />
 
       {/* 3. Trust & Credibility */}
       <div className="relative z-10 bg-black/10">
@@ -45,7 +47,8 @@ export default function Home() {
         <HowItWorks />
       </div>
 
-      <WaveDivider direction="up" className="relative z-20" />
+      {/* Cinematic Transition: How it Works -> Reviews */}
+      <RadialGlowDivider intensity="medium" className="z-20 -mt-10" />
 
       {/* 5. Social Proof */}
       <div className="relative z-10 bg-black/5">
