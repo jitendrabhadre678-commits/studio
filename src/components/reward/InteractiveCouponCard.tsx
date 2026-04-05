@@ -19,12 +19,12 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
   return (
     <>
       <div className="relative group mb-4 md:mb-6">
-        <div className="glass-card rounded-[2.5rem] transition-all duration-500 bg-[#0a0a0a] shadow-xl hover:shadow-primary/5 hover:border-primary/30">
+        <div className="glass-card rounded-2xl transition-all duration-500 bg-[#0a0a0a] shadow-lg hover:shadow-primary/5 hover:border-primary/30 overflow-hidden hover:scale-[1.01] border border-white/10">
           <div className="p-6 md:p-10">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 md:gap-8">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-8 flex-grow">
                 <div className="relative shrink-0">
-                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-[1.5rem] md:rounded-[2rem] bg-primary/10 flex items-center justify-center border border-primary/20 transition-transform group-hover:scale-105 duration-500">
+                  <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 transition-transform group-hover:scale-105 duration-500">
                     <Gift className="w-8 h-8 md:w-12 md:h-12 text-primary" />
                   </div>
                   <div className="absolute -top-1.5 -right-1.5 bg-primary rounded-full p-1.5 border-2 border-black shadow-lg">
@@ -50,7 +50,7 @@ export function InteractiveCouponCard({ brand, value, description }: Interactive
               <div className="w-full lg:w-auto shrink-0 mt-2 lg:mt-0">
                 <Button 
                   onClick={() => setIsModalOpen(true)}
-                  className="w-full lg:w-80 h-14 md:h-20 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] rounded-2xl md:rounded-[1.5rem] shadow-2xl transition-all text-xs md:text-base hover:scale-[1.02] active:scale-95"
+                  className="w-full lg:w-80 h-14 md:h-20 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] rounded-xl md:rounded-2xl shadow-xl transition-all text-xs md:text-base hover:scale-[1.02] active:scale-95"
                 >
                   Reveal Reward Code <Zap className="ml-2 w-4 h-4 md:w-6 md:h-6" />
                 </Button>

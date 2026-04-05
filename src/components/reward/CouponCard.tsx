@@ -36,16 +36,16 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
 
   return (
     <div className="relative group perspective-1000">
-      <div className="relative glass-card rounded-[2.5rem] overflow-hidden border-white/10 transition-all duration-500 hover:border-primary/40 hover:shadow-[0_0_60px_rgba(250,70,22,0.15)] shadow-2xl">
+      <div className="relative glass-card rounded-2xl overflow-hidden border border-white/10 transition-all duration-500 hover:border-primary/40 hover:shadow-[0_10px_40px_rgba(250,70,22,0.1)] shadow-lg hover:scale-[1.03]">
         
         {/* Ticket Cutouts */}
-        <div className="absolute top-1/2 -left-4 -translate-y-1/2 w-8 h-8 bg-black rounded-full z-20" />
-        <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-black rounded-full z-20" />
+        <div className="absolute top-1/2 -left-4 -translate-y-1/2 w-8 h-8 bg-black rounded-full z-20 border border-white/10" />
+        <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-black rounded-full z-20 border border-white/10" />
         
         {/* Main Content Area */}
-        <div className="p-8 md:p-12 flex flex-col min-h-[360px]">
+        <div className="p-8 md:p-12 flex flex-col min-h-[360px] bg-[#0a0a0a]/40 backdrop-blur-sm">
           <div className="flex justify-between items-start mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
               <Ticket className="w-7 h-7 text-primary" />
             </div>
             <div className="text-right">
@@ -61,7 +61,7 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
 
           <Button 
             onClick={() => setIsRevealed(true)}
-            className="w-full h-16 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase tracking-widest rounded-2xl group/btn transition-all"
+            className="w-full h-16 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase tracking-widest rounded-xl group/btn transition-all"
           >
             Claim Coupon <Zap className="ml-2 w-5 h-5 text-primary group-hover/btn:scale-125 transition-transform" />
           </Button>
@@ -86,7 +86,7 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
 
               {!isUnlocked ? (
                 <div className="space-y-8">
-                  <div className="w-20 h-20 bg-primary/20 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 border border-primary/30 animate-pulse shadow-xl">
+                  <div className="w-20 h-20 bg-primary/20 rounded-xl flex items-center justify-center mx-auto mb-6 border border-primary/30 animate-pulse shadow-xl">
                     <Lock className="w-10 h-10 text-primary" />
                   </div>
                   <h4 className="text-2xl font-black text-white uppercase tracking-tight">Locked Coupon</h4>
@@ -95,7 +95,7 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
                   </p>
                   <Button 
                     onClick={handleUnlock}
-                    className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-[0_0_40px_rgba(250,70,22,0.4)]"
+                    className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl shadow-[0_0_40px_rgba(250,70,22,0.4)]"
                   >
                     Unlock Code <ArrowRight className="ml-2 w-6 h-6" />
                   </Button>
@@ -106,12 +106,12 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
                   animate={{ opacity: 1, scale: 1 }}
                   className="space-y-8"
                 >
-                  <div className="w-20 h-20 bg-green-500/20 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 border border-green-500/30 shadow-xl">
+                  <div className="w-20 h-20 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 border border-green-500/30 shadow-xl">
                     <ShieldCheck className="w-10 h-10 text-green-500" />
                   </div>
                   <h4 className="text-2xl font-black text-white uppercase tracking-tight">Coupon Unlocked!</h4>
                   
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 font-mono text-xl font-bold text-primary tracking-tighter mb-8 relative group/code overflow-hidden">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6 font-mono text-xl font-bold text-primary tracking-tighter mb-8 relative group/code overflow-hidden">
                     <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/code:opacity-100 transition-opacity" />
                     {couponCode}
                   </div>
@@ -119,7 +119,7 @@ export function CouponCard({ brand, value, description, slug }: CouponCardProps)
                   <Button 
                     onClick={handleCopy}
                     className={cn(
-                      "w-full h-16 font-black uppercase tracking-widest rounded-2xl transition-all duration-300 shadow-xl",
+                      "w-full h-16 font-black uppercase tracking-widest rounded-xl transition-all duration-300 shadow-xl",
                       isCopied ? "bg-green-500 text-white" : "bg-white text-black hover:bg-white/90"
                     )}
                   >

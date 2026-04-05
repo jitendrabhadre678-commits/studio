@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Redesigned Trending Rewards Section.
- * Features: High-fidelity glassmorphism, visual ratings, and mobile-optimized grid.
+ * Features: Modern SaaS aesthetics, high-fidelity glassmorphism, and responsive grid.
  */
 
 export function TrendingRewards() {
@@ -75,13 +75,13 @@ export function TrendingRewards() {
               <Card 
                 onClick={() => handleClaimClick(card.brand, card.values[0])}
                 className={cn(
-                  "relative h-full glass-card border-white/5 bg-white/[0.02] hover:bg-white/[0.05]",
-                  "hover:border-primary/40 hover:shadow-[0_20px_60px_rgba(250,70,22,0.15)]",
-                  "transition-all duration-500 cursor-pointer rounded-[2.5rem] overflow-hidden flex flex-col group/card shadow-2xl"
+                  "relative h-full glass-card border-white/10 bg-white/[0.02] hover:bg-white/[0.05]",
+                  "hover:border-primary/40 hover:shadow-[0_10px_40px_rgba(250,70,22,0.1)]",
+                  "transition-all duration-500 cursor-pointer rounded-2xl overflow-hidden flex flex-col group/card shadow-lg hover:scale-[1.03]"
                 )}
               >
                 {/* "FREE" Badge */}
-                <div className="absolute top-6 right-6 z-20 bg-primary/90 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xl scale-90 group-hover/card:scale-100 transition-transform">
+                <div className="absolute top-4 right-4 z-20 bg-primary/90 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xl scale-90 group-hover/card:scale-100 transition-transform">
                   <span className="text-[8px] font-black text-white uppercase tracking-widest">FREE</span>
                 </div>
 
@@ -101,7 +101,7 @@ export function TrendingRewards() {
                   </div>
                 </div>
 
-                <CardContent className="p-6 md:p-8 flex flex-col flex-grow">
+                <CardContent className="p-6 md:p-8 flex flex-col flex-grow bg-[#0a0a0a]/40 backdrop-blur-sm">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-base md:text-xl font-black text-white group-hover/card:text-primary transition-colors leading-tight truncate">
                       {card.brand} {card.values[0]}

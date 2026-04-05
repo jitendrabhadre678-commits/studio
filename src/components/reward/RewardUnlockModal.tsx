@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -80,12 +81,12 @@ export function RewardUnlockModal({
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) onClose();
     }}>
-      <DialogContent className="max-w-[95vw] sm:max-w-md bg-[#020617] border-white/10 p-0 overflow-hidden sm:rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] outline-none">
-        <div className="pt-8 px-8 flex justify-center border-b border-white/5 pb-6">
+      <DialogContent className="max-w-[95vw] sm:max-w-md bg-[#020617] border-white/10 p-0 overflow-hidden sm:rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.8)] outline-none">
+        <div className="pt-8 px-8 flex justify-center border-b border-white/5 pb-6 bg-[#0a0a0a]">
           <Logo className="h-8" />
         </div>
 
-        <div className="p-6 md:p-10 overflow-y-auto max-h-[80vh] custom-scrollbar">
+        <div className="p-6 md:p-10 overflow-y-auto max-h-[80vh] custom-scrollbar bg-[#0a0a0a]/80 backdrop-blur-xl">
           <AnimatePresence mode="wait">
             {step === 'info' && (
               <motion.div 
@@ -95,7 +96,7 @@ export function RewardUnlockModal({
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="text-center"
               >
-                <div className="relative w-full aspect-[16/9] md:w-48 md:h-28 mx-auto mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <div className="relative w-full aspect-[16/9] md:w-48 md:h-28 mx-auto mb-8 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
                   <Image 
                     src={imageData.imageUrl} 
                     alt={card.brand} 
@@ -121,7 +122,7 @@ export function RewardUnlockModal({
 
                 <Button 
                   onClick={handleContinue}
-                  className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/30 transition-all hover:scale-105 active:scale-95"
+                  className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl shadow-xl shadow-primary/30 transition-all hover:scale-105 active:scale-95"
                 >
                   Start Verification <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
@@ -156,7 +157,7 @@ export function RewardUnlockModal({
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center"
               >
-                <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-primary/20">
+                <div className="w-20 h-20 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-8 border border-primary/20">
                   <ExternalLink className="w-10 h-10 text-primary" />
                 </div>
                 
@@ -168,7 +169,7 @@ export function RewardUnlockModal({
                 <div className="space-y-4">
                   <Button 
                     onClick={handleOpenOffer}
-                    className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-primary/20 transition-all active:scale-95"
+                    className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl shadow-2xl shadow-primary/20 transition-all active:scale-95"
                   >
                     Complete Offer to Unlock <Zap className="ml-2 w-5 h-5" />
                   </Button>
@@ -189,7 +190,7 @@ export function RewardUnlockModal({
                 animate={{ opacity: 1 }}
                 className="text-center py-6"
               >
-                <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-white/10 animate-pulse">
+                <div className="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center mx-auto mb-8 border border-white/10 animate-pulse">
                   <ShieldCheck className="w-10 h-10 text-white/40" />
                 </div>
                 
@@ -200,7 +201,7 @@ export function RewardUnlockModal({
 
                 <Button 
                   onClick={handleCheckStatus}
-                  className="w-full h-16 bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95"
+                  className="w-full h-16 bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
                 >
                   Verify Now
                 </Button>
@@ -221,7 +222,7 @@ export function RewardUnlockModal({
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center"
               >
-                <div className="w-24 h-24 bg-green-500/20 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-green-500/30">
+                <div className="w-24 h-24 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-8 border border-green-500/30">
                   <CheckCircle2 className="w-12 h-12 text-green-500" />
                 </div>
                 
@@ -230,7 +231,7 @@ export function RewardUnlockModal({
                   Validation received! Your reward is being generated. Preview of your unique code:
                 </p>
 
-                <div className="bg-black/60 border-2 border-dashed border-primary/30 rounded-2xl p-8 mb-10 relative group overflow-hidden">
+                <div className="bg-black/60 border-2 border-dashed border-primary/30 rounded-xl p-8 mb-10 relative group overflow-hidden">
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <span className="text-3xl font-mono font-black text-primary tracking-[0.3em] [text-shadow:0_0_20px_rgba(250,70,22,0.4)]">
                     XXXX-XXXX-AB12
@@ -238,7 +239,7 @@ export function RewardUnlockModal({
                 </div>
 
                 <Button 
-                  className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/30 transition-all"
+                  className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-xl shadow-xl shadow-primary/30 transition-all"
                   onClick={handleFinalize}
                 >
                   Finalize & View My Rewards
