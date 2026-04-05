@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useFirestore } from '@/firebase';
 import { collection, query, limit, getDocs, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { giftCards } from '@/lib/gift-cards';
 
 /**
  * @fileOverview Advanced Real-time Search System.
@@ -36,30 +37,50 @@ export function AutoSuggestSearch() {
   const firestore = useFirestore();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // 1. Initial Load: Pre-fetch search index for local zero-latency filtering
+  // 1. Initial Load: Seed with static data and fetch Firestore index
   useEffect(() => {
+    // Start with static data to ensure search works immediately
+    const staticData: SearchResult[] = giftCards.map(c => ({
+      id: c.id,
+      title: c.brand,
+      category: c.category,
+      type: 'Reward',
+      href: `/${c.slug}`,
+      imageUrl: c.imageUrl || `https://picsum.photos/seed/${c.id}/100/100`,
+      priceHint: "Verified Reward"
+    }));
+    
+    setAllProducts(staticData);
+
     const fetchBrands = async () => {
       try {
         const brandsRef = collection(firestore, 'giftCardBrands');
         const q = query(brandsRef, orderBy('name'), limit(100));
         const snapshot = await getDocs(q);
         
-        const products: SearchResult[] = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.name,
-            category: data.category,
-            type: 'Reward',
-            href: `/${data.seoSlug || doc.id}`,
-            imageUrl: data.imageUrl,
-            priceHint: "Verified Reward"
-          };
-        });
-        
-        setAllProducts(products);
+        if (!snapshot.empty) {
+          const dbProducts: SearchResult[] = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              title: data.name,
+              category: data.category,
+              type: 'Reward',
+              href: `/${data.seoSlug || doc.id}`,
+              imageUrl: data.imageUrl,
+              priceHint: "Verified Reward"
+            };
+          });
+          
+          // Merge and remove duplicates by title
+          setAllProducts(prev => {
+            const combined = [...prev, ...dbProducts];
+            const unique = Array.from(new Map(combined.map(item => [item.title, item])).values());
+            return unique;
+          });
+        }
       } catch (error) {
-        console.error("Failed to preload search index:", error);
+        console.error("Failed to preload Firestore search index:", error);
       } finally {
         setIsLoading(false);
       }
@@ -79,19 +100,16 @@ export function AutoSuggestSearch() {
     if (searchQuery.length < 1) return [];
 
     const term = searchQuery.toLowerCase().trim();
-    const prefixMatches: SearchResult[] = [];
-    const partialMatches: SearchResult[] = [];
-
-    allProducts.forEach(product => {
-      const title = product.title.toLowerCase();
-      if (title.startsWith(term)) {
-        prefixMatches.push(product);
-      } else if (title.includes(term)) {
-        partialMatches.push(product);
-      }
+    const matches = allProducts.filter(product => {
+      const title = (product.title || "").toLowerCase();
+      const category = (product.category || "").toLowerCase();
+      return title.includes(term) || category.includes(term);
     });
 
-    return [...prefixMatches, ...partialMatches].slice(0, 6);
+    // Debug Logs
+    console.log(`Searching for: "${term}"`, `Found: ${matches.length} results`);
+
+    return matches.slice(0, 6);
   }, [searchQuery, allProducts]);
 
   // 3. Trending Items (Shown when input is empty)
@@ -315,10 +333,10 @@ export function AutoSuggestSearch() {
 
             {/* Footer Status */}
             <div className="bg-white/[0.02] p-3 text-center border-t border-white/5">
-              <span className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
+              <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
                 <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
                 Live Network Active
-              </span>
+              </p>
             </div>
           </motion.div>
         )}
