@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Zap, Gift, ChevronRight, AlertCircle, Clock, TrendingUp, Loader2 } from 'lucide-react';
+import { Search, Gift, ChevronRight, AlertCircle, Clock, TrendingUp, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useFirestore } from '@/firebase';
@@ -25,8 +24,6 @@ type SearchResult = {
   priceHint?: string;
 };
 
-const TRENDING_KEYWORDS = ["Amazon", "Roblox", "Steam", "PayPal Cash", "Xbox"];
-
 export function AutoSuggestSearch() {
   const [searchQuery, setSearchQuery] = useState('');
   const [allProducts, setAllProducts] = useState<SearchResult[]>([]);
@@ -39,7 +36,7 @@ export function AutoSuggestSearch() {
   const firestore = useFirestore();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // 1. Initial Load: Pre-fetch all searchable brands for local filtering
+  // 1. Initial Load: Pre-fetch search index for local zero-latency filtering
   useEffect(() => {
     const fetchBrands = async () => {
       try {
@@ -70,20 +67,18 @@ export function AutoSuggestSearch() {
 
     fetchBrands();
 
-    // Load recent searches
+    // Load recent searches from localStorage
     const saved = localStorage.getItem('recent_searches');
     if (saved) {
       try { setRecentSearches(JSON.parse(saved)); } catch (e) { setRecentSearches([]); }
     }
   }, [firestore]);
 
-  // 2. Intelligent Local Filtering Logic
+  // 2. Local Filtering Logic (Triggers from 1 character)
   const results = useMemo(() => {
     if (searchQuery.length < 1) return [];
 
     const term = searchQuery.toLowerCase().trim();
-    
-    // Split into prefix matches and partial matches for better UX ranking
     const prefixMatches: SearchResult[] = [];
     const partialMatches: SearchResult[] = [];
 
@@ -99,7 +94,12 @@ export function AutoSuggestSearch() {
     return [...prefixMatches, ...partialMatches].slice(0, 6);
   }, [searchQuery, allProducts]);
 
-  // 3. Interactions & State Management
+  // 3. Trending Items (Shown when input is empty)
+  const trendingItems = useMemo(() => {
+    return allProducts.slice(0, 4);
+  }, [allProducts]);
+
+  // Keyboard Navigation
   useEffect(() => {
     setActiveIndex(-1);
   }, [searchQuery]);
@@ -109,13 +109,15 @@ export function AutoSuggestSearch() {
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex(prev => (prev < results.length - 1 ? prev + 1 : prev));
+      const max = searchQuery.length < 1 ? trendingItems.length - 1 : results.length - 1;
+      setActiveIndex(prev => (prev < max ? prev + 1 : prev));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActiveIndex(prev => (prev > 0 ? prev - 1 : -1));
     } else if (e.key === 'Enter') {
-      if (activeIndex >= 0 && results[activeIndex]) {
-        handleResultClick(results[activeIndex]);
+      const list = searchQuery.length < 1 ? trendingItems : results;
+      if (activeIndex >= 0 && list[activeIndex]) {
+        handleResultClick(list[activeIndex]);
       }
     } else if (e.key === 'Escape') {
       setIsOpen(false);
@@ -136,16 +138,16 @@ export function AutoSuggestSearch() {
   };
 
   const highlightMatch = (text: string, match: string) => {
-    if (!match) return text;
+    if (!match) return <span className="font-bold">{text}</span>;
     const parts = text.split(new RegExp(`(${match})`, 'gi'));
     return parts.map((part, i) => 
       part.toLowerCase() === match.toLowerCase() 
         ? <span key={i} className="text-primary font-black">{part}</span> 
-        : part
+        : <span key={i} className="font-bold">{part}</span>
     );
   };
 
-  // Click Outside
+  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -158,6 +160,7 @@ export function AutoSuggestSearch() {
 
   return (
     <div className="relative w-full" ref={searchRef} onKeyDown={handleKeyDown}>
+      {/* Search Input Container */}
       <div className={cn(
         "relative flex items-center bg-white/5 border rounded-xl transition-all duration-300 group",
         isOpen ? "border-primary bg-black/40 ring-2 ring-primary/10" : "border-white/10 hover:border-white/20"
@@ -186,6 +189,7 @@ export function AutoSuggestSearch() {
         )}
       </div>
 
+      {/* Dropdown Results */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
@@ -194,15 +198,15 @@ export function AutoSuggestSearch() {
             exit={{ opacity: 0, y: 8 }}
             className="absolute top-[calc(100%+8px)] left-0 right-0 z-[9999] bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden"
           >
-            {/* NO INPUT: Show Recent and Trending */}
+            {/* NO INPUT: Show Recent and Trending Reward Items */}
             {searchQuery.length < 1 && (
-              <div className="p-4 space-y-6">
+              <div className="p-2 space-y-4 max-h-[450px] overflow-y-auto">
                 {recentSearches.length > 0 && (
                   <div>
-                    <p className="px-2 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                    <p className="px-3 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
                       <Clock className="w-3 h-3" /> Recent Searches
                     </p>
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                       {recentSearches.map((term, i) => (
                         <button 
                           key={i}
@@ -217,17 +221,32 @@ export function AutoSuggestSearch() {
                 )}
 
                 <div>
-                  <p className="px-2 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-3 h-3" /> Trending Now
+                  <p className="px-3 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-3 h-3 text-primary" /> Trending Rewards
                   </p>
-                  <div className="flex flex-wrap gap-2 px-2">
-                    {TRENDING_KEYWORDS.map((kw) => (
-                      <button 
-                        key={kw}
-                        onClick={() => setSearchQuery(kw)}
-                        className="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-white/60 hover:text-primary hover:border-primary/30 transition-all"
+                  <div className="space-y-1">
+                    {trendingItems.map((item, idx) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleResultClick(item)}
+                        onMouseEnter={() => setActiveIndex(idx)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-2.5 rounded-lg transition-all text-left",
+                          activeIndex === idx ? "bg-white/10" : "hover:bg-white/5"
+                        )}
                       >
-                        {kw}
+                        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 shrink-0 overflow-hidden">
+                          {item.imageUrl ? (
+                            <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <Gift className="w-4 h-4 text-white/20" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-white truncate uppercase tracking-tight">{item.title}</p>
+                          <span className="text-[8px] font-black text-primary uppercase tracking-widest">{item.category}</span>
+                        </div>
+                        <ChevronRight className="w-3 h-3 text-white/10" />
                       </button>
                     ))}
                   </div>
@@ -235,7 +254,7 @@ export function AutoSuggestSearch() {
               </div>
             )}
 
-            {/* WITH INPUT: Show Dynamic Results */}
+            {/* WITH INPUT: Show Filtered Results */}
             {searchQuery.length >= 1 && (
               <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                 {results.length > 0 ? (
@@ -259,7 +278,7 @@ export function AutoSuggestSearch() {
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[12px] font-black text-white/90 truncate uppercase tracking-tight">
+                            <p className="text-[12px] text-white/90 truncate uppercase tracking-tight">
                               {highlightMatch(result.title, searchQuery)}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
@@ -273,12 +292,10 @@ export function AutoSuggestSearch() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-1">
-                           <ChevronRight className={cn(
-                             "w-3 h-3 transition-colors",
-                             activeIndex === idx ? "text-primary" : "text-white/10"
-                           )} />
-                        </div>
+                        <ChevronRight className={cn(
+                          "w-3 h-3 transition-colors",
+                          activeIndex === idx ? "text-primary" : "text-white/10"
+                        )} />
                       </button>
                     ))}
                   </div>
@@ -298,10 +315,10 @@ export function AutoSuggestSearch() {
 
             {/* Footer Status */}
             <div className="bg-white/[0.02] p-3 text-center border-t border-white/5">
-              <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
+              <span className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
                 <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
                 Live Network Active
-              </p>
+              </span>
             </div>
           </motion.div>
         )}
