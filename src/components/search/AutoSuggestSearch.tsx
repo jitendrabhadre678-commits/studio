@@ -267,7 +267,7 @@ export function AutoSuggestSearch() {
             {/* Footer Status */}
             <div className="bg-white/[0.02] p-3 text-center border-t border-white/5">
               <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
-                <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
+                <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
                 Live Network Active
               </p>
             </div>
