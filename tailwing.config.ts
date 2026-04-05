@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -90,6 +91,14 @@ export default {
           from: { transform: 'translateX(-50%)' },
           to: { transform: 'translateX(0)' },
         },
+        'slow-zoom': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        },
+        'shine': {
+          '0%': { left: '-100%' },
+          '100%': { left: '100%' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -99,6 +108,8 @@ export default {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'marquee-left': 'marquee-left 40s linear infinite',
         'marquee-right': 'marquee-right 40s linear infinite',
+        'slow-zoom': 'slow-zoom 20s ease-in-out infinite',
+        'shine': 'shine 8s linear infinite',
       },
     },
   },
