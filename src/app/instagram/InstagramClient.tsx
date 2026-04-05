@@ -1,10 +1,12 @@
+
 'use client';
 
+import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
-import { Zap, ArrowRight, Star, ShieldCheck, Trophy, Gift, CreditCard, Gamepad2, Smartphone } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Zap, ArrowRight, Star, Gift, CreditCard, Gamepad2, Smartphone, Trophy } from 'lucide-react';
+import { RewardVerificationModal } from '@/components/reward/RewardVerificationModal';
 
 /**
  * @fileOverview Client component for the /instagram landing page.
@@ -12,30 +14,31 @@ import { cn } from '@/lib/utils';
  */
 
 const rewards = [
-  { name: 'Amazon', badge: 'Most Popular', icon: <Gift className="w-6 h-6" /> },
-  { name: 'Steam', icon: <Smartphone className="w-6 h-6" /> },
-  { name: 'Roblox', icon: <Gamepad2 className="w-6 h-6" /> },
-  { name: 'PayPal', badge: 'Cash Reward', icon: <CreditCard className="w-6 h-6" /> },
-  { name: 'Xbox', icon: <Trophy className="w-6 h-6" /> },
-  { name: 'PlayStation', icon: <Gamepad2 className="w-6 h-6" /> },
+  { name: 'Amazon', value: '$25', badge: 'Most Popular', icon: <Gift className="w-6 h-6" /> },
+  { name: 'Steam', value: '$20', icon: <Smartphone className="w-6 h-6" /> },
+  { name: 'Roblox', value: '2,500 Robux', icon: <Gamepad2 className="w-6 h-6" /> },
+  { name: 'PayPal', value: '$50', badge: 'Cash Reward', icon: <CreditCard className="w-6 h-6" /> },
+  { name: 'Xbox', value: '$25', icon: <Trophy className="w-6 h-6" /> },
+  { name: 'PlayStation', value: '$25', icon: <Gamepad2 className="w-6 h-6" /> },
 ];
 
 export default function InstagramClient() {
-  const handleLockerTrigger = () => {
-    if (typeof window !== 'undefined') {
-      if (!document.getElementById('ogjs')) {
-        const s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.id = 'ogjs';
-        s.src = 'https://gameflashx.space/cl/js/277ood';
-        document.head.appendChild(s);
-      } else {
-        const win = window as any;
-        if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
-          win.ogads_locker.lock();
-        }
-      }
-    }
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    brand: '',
+    value: ''
+  });
+
+  const handleRewardClick = (brand: string, value: string) => {
+    setModalState({
+      isOpen: true,
+      brand,
+      value
+    });
+  };
+
+  const handleGlobalClaim = () => {
+    handleRewardClick('Premium', 'Selected');
   };
 
   return (
@@ -62,7 +65,7 @@ export default function InstagramClient() {
             </p>
 
             <Button 
-              onClick={handleLockerTrigger}
+              onClick={handleGlobalClaim}
               className="w-full h-16 bg-gradient-to-r from-[#ff4d00] to-[#ff7a00] hover:scale-[1.02] active:scale-[0.98] text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-[0_10px_40px_rgba(255,77,0,0.4)] text-base md:text-lg"
             >
               CLAIM YOUR FREE REWARD NOW <ArrowRight className="ml-2 w-6 h-6" />
@@ -73,7 +76,7 @@ export default function InstagramClient() {
           <section className="mb-16">
             <h2 className="text-xl font-black text-white text-center mb-8 uppercase tracking-widest">Choose Your Reward</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {rewards.map((reward, i) => (
+              {rewards.map((reward) => (
                 <div 
                   key={reward.name}
                   className="bg-[#1a1a1a] border border-[#ff4d00]/20 rounded-2xl p-5 flex flex-col items-center text-center relative group hover:border-[#ff4d00]/60 transition-all duration-300"
@@ -86,9 +89,10 @@ export default function InstagramClient() {
                   <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center mb-4 border border-white/5 group-hover:bg-[#ff4d00]/10 transition-colors">
                     <div className="text-[#ff4d00]">{reward.icon}</div>
                   </div>
-                  <h3 className="text-sm font-black text-white mb-4 uppercase tracking-tight">{reward.name}</h3>
+                  <h3 className="text-sm font-black text-white mb-1 uppercase tracking-tight">{reward.name}</h3>
+                  <p className="text-[10px] font-bold text-white/40 mb-4 uppercase tracking-widest">{reward.value}</p>
                   <Button 
-                    onClick={handleLockerTrigger}
+                    onClick={() => handleRewardClick(reward.name, reward.value)}
                     variant="ghost"
                     className="w-full h-9 bg-transparent hover:bg-[#ff4d00] border border-[#ff4d00] text-[#ff4d00] hover:text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all"
                   >
@@ -138,7 +142,7 @@ export default function InstagramClient() {
               </p>
               
               <Button 
-                onClick={handleLockerTrigger}
+                onClick={handleGlobalClaim}
                 className="w-full h-14 bg-gradient-to-r from-[#ff4d00] to-[#ff7a00] hover:scale-[1.02] active:scale-[0.98] text-white font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#ff4d00]/20"
               >
                 GET MY FREE GIFT CARD <ArrowRight className="ml-2 w-5 h-5" />
@@ -148,6 +152,13 @@ export default function InstagramClient() {
 
         </div>
       </div>
+
+      <RewardVerificationModal 
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+        brand={modalState.brand}
+        value={modalState.value}
+      />
 
       <Footer />
     </main>

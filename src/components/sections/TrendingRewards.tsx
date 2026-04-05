@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -6,29 +7,26 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, Zap, Users, Filter } from 'lucide-react';
 import { giftCards, categories } from '@/lib/gift-cards';
 import { motion, AnimatePresence } from 'framer-motion';
+import { RewardVerificationModal } from '@/components/reward/RewardVerificationModal';
 
 export function TrendingRewards() {
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    brand: '',
+    value: ''
+  });
 
   const filteredCards = activeCategory === 'All' 
     ? giftCards 
     : giftCards.filter(c => c.category === activeCategory);
 
-  const handleLockerTrigger = () => {
-    if (typeof window !== 'undefined') {
-      if (!document.getElementById('ogjs')) {
-        const s = document.createElement('script');
-        s.type = 'text/javascript';
-        s.id = 'ogjs';
-        s.src = 'https://gameflashx.space/cl/js/277ood';
-        document.head.appendChild(s);
-      } else {
-        const win = window as any;
-        if (win.ogads_locker && typeof win.ogads_locker.lock === 'function') {
-          win.ogads_locker.lock();
-        }
-      }
-    }
+  const handleClaimClick = (brand: string, value: string) => {
+    setModalState({
+      isOpen: true,
+      brand,
+      value
+    });
   };
 
   return (
@@ -83,6 +81,7 @@ export function TrendingRewards() {
           <AnimatePresence mode="popLayout">
             {filteredCards.map((card, idx) => {
               const unlockedThisMonth = 100 + (parseInt(card.id) * 45) + (idx * 12);
+              const displayValue = card.values[0];
               
               return (
                 <motion.div
@@ -145,7 +144,7 @@ export function TrendingRewards() {
 
                         <div className="mt-auto">
                           <Button 
-                            onClick={handleLockerTrigger}
+                            onClick={() => handleClaimClick(card.brand, displayValue)}
                             className="w-full h-12 rounded-xl bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-white font-black uppercase tracking-widest shadow-lg transition-all duration-300"
                           >
                             Claim Reward <ChevronRight className="ml-2 w-4 h-4" />
@@ -160,6 +159,13 @@ export function TrendingRewards() {
           </AnimatePresence>
         </div>
       </div>
+
+      <RewardVerificationModal 
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+        brand={modalState.brand}
+        value={modalState.value}
+      />
     </section>
   );
 }
