@@ -1,9 +1,10 @@
+
 {
   "placeholderImages": [
     {
       "id": "hero-bg",
       "description": "Futuristic gaming setup background",
-      "imageUrl": "https://picsum.photos/seed/hero/1920/1080",
+      "imageUrl": "https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775372153/34ced28077ef3b3c8f4fd932a9b422eb_ldfobb.jpg",
       "imageHint": "gaming futuristic"
     },
     {
@@ -53,102 +54,6 @@
       "description": "Apple gift card visual",
       "imageUrl": "https://picsum.photos/seed/apple/400/250",
       "imageHint": "apple brand"
-    },
-    {
-      "id": "xbox",
-      "description": "Xbox gift card visual",
-      "imageUrl": "https://picsum.photos/seed/xbox/400/250",
-      "imageHint": "xbox gaming"
-    },
-    {
-      "id": "playstation",
-      "description": "PlayStation gift card visual",
-      "imageUrl": "https://picsum.photos/seed/playstation/400/250",
-      "imageHint": "playstation logo"
-    },
-    {
-      "id": "walmart",
-      "description": "Walmart gift card visual",
-      "imageUrl": "https://picsum.photos/seed/walmart/400/250",
-      "imageHint": "walmart shopping"
-    },
-    {
-      "id": "target",
-      "description": "Target gift card visual",
-      "imageUrl": "https://picsum.photos/seed/target/400/250",
-      "imageHint": "target retail"
-    },
-    {
-      "id": "best-buy",
-      "description": "Best Buy gift card visual",
-      "imageUrl": "https://picsum.photos/seed/bestbuy/400/250",
-      "imageHint": "electronics store"
-    },
-    {
-      "id": "ebay",
-      "description": "eBay gift card visual",
-      "imageUrl": "https://picsum.photos/seed/ebay/400/250",
-      "imageHint": "ebay logo"
-    },
-    {
-      "id": "nintendo",
-      "description": "Nintendo gift card visual",
-      "imageUrl": "https://picsum.photos/seed/nintendo/400/250",
-      "imageHint": "nintendo gaming"
-    },
-    {
-      "id": "itunes",
-      "description": "iTunes gift card visual",
-      "imageUrl": "https://picsum.photos/seed/itunes/400/250",
-      "imageHint": "itunes music"
-    },
-    {
-      "id": "spotify",
-      "description": "Spotify gift card visual",
-      "imageUrl": "https://picsum.photos/seed/spotify/400/250",
-      "imageHint": "spotify player"
-    },
-    {
-      "id": "disney",
-      "description": "Disney+ gift card visual",
-      "imageUrl": "https://picsum.photos/seed/disney/400/250",
-      "imageHint": "disney movies"
-    },
-    {
-      "id": "starbucks",
-      "description": "Starbucks gift card visual",
-      "imageUrl": "https://picsum.photos/seed/starbucks/400/250",
-      "imageHint": "starbucks coffee"
-    },
-    {
-      "id": "mcdonalds",
-      "description": "McDonald's gift card visual",
-      "imageUrl": "https://picsum.photos/seed/mcdonalds/400/250",
-      "imageHint": "mcdonalds burger"
-    },
-    {
-      "id": "doordash",
-      "description": "DoorDash gift card visual",
-      "imageUrl": "https://picsum.photos/seed/doordash/400/250",
-      "imageHint": "food delivery"
-    },
-    {
-      "id": "uber",
-      "description": "Uber gift card visual",
-      "imageUrl": "https://picsum.photos/seed/uber/400/250",
-      "imageHint": "uber car"
-    },
-    {
-      "id": "visa",
-      "description": "Visa gift card visual",
-      "imageUrl": "https://picsum.photos/seed/visa/400/250",
-      "imageHint": "credit card"
-    },
-    {
-      "id": "vanilla",
-      "description": "Vanilla gift card visual",
-      "imageUrl": "https://picsum.photos/seed/vanilla/400/250",
-      "imageHint": "gift card"
     }
   ]
 }
