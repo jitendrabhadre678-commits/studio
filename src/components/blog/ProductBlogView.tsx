@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BlogPostTemplate } from '@/components/blog/BlogPostTemplate';
+import BlogPostTemplate from '@/components/blog/BlogPostTemplate';
 import { ProductBlogOutput } from '@/ai/flows/generate-product-blog-flow';
 import { 
   CheckCircle2, 

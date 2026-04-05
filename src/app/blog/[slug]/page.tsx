@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 import { blogPosts } from '@/lib/blog-posts';
 import { giftCards } from '@/lib/gift-cards';
 import { generateProductBlog } from '@/ai/flows/generate-product-blog-flow';
-import { BlogPostTemplate } from '@/components/blog/BlogPostTemplate';
+import BlogPostTemplate from '@/components/blog/BlogPostTemplate';
 import { ProductBlogView } from '@/components/blog/ProductBlogView';
 import { Button } from '@/components/ui/button';
 import { Zap, Clock, User, Globe, ArrowRight } from 'lucide-react';
@@ -47,7 +47,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   <span className="font-bold text-white/80">{staticPost.author.name}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-white/40" />
+                  <Clock className="h-4 w-4 text-white/40" />
                   <span>{staticPost.date}</span>
                 </div>
               </div>
