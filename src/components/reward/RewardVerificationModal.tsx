@@ -3,12 +3,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Loader2, CheckCircle2, Cpu, Globe, Zap, Smartphone } from 'lucide-react';
+import { ShieldCheck, Loader2, CheckCircle2, Zap, Smartphone, Shield, UserCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 /**
- * @fileOverview High-trust reward verification modal.
- * Uses psychological UX steps to build credibility before redirection.
+ * @fileOverview Refined Security Verification Modal.
+ * Implements senior UX writer requirements for trust-based validation.
  */
 
 interface RewardVerificationModalProps {
@@ -20,10 +21,9 @@ interface RewardVerificationModalProps {
 }
 
 const VERIFICATION_STEPS = [
-  { id: 1, label: "Checking device hardware...", icon: Smartphone },
-  { id: 2, label: "Validating regional availability...", icon: Globe },
-  { id: 3, label: "Synchronizing secure reward node...", icon: Cpu },
-  { id: 4, label: "Confirming eligibility...", icon: ShieldCheck }
+  { id: 1, label: "Checking device security...", icon: Shield },
+  { id: 2, label: "Verifying human activity...", icon: UserCheck },
+  { id: 3, label: "Confirming reward eligibility...", icon: ShieldCheck }
 ];
 
 export function RewardVerificationModal({ 
@@ -48,31 +48,32 @@ export function RewardVerificationModal({
     // Disable background scrolling
     document.body.style.overflow = 'hidden';
 
-    // Sequence timing logic
-    let stepTimer: NodeJS.Timeout;
-    let progressInterval: NodeJS.Timeout;
-
     const startSequence = async () => {
-      // Progress bar smooth animation
-      progressInterval = setInterval(() => {
+      // Smooth progress bar animation
+      const totalTime = 3000 + Math.random() * 3000; // 3-6 seconds
+      const intervalSpeed = 40;
+      const increment = 100 / (totalTime / intervalSpeed);
+
+      const progressInterval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) return 100;
-          return prev + 0.8;
+          return prev + increment;
         });
-      }, 40);
+      }, intervalSpeed);
 
-      // Step progression with random delays
+      // Step progression
+      const stepDelay = totalTime / VERIFICATION_STEPS.length;
+      
       for (let i = 0; i < VERIFICATION_STEPS.length; i++) {
         setCurrentStep(i);
-        const delay = 800 + Math.random() * 1200; // 0.8s to 2s per step
-        await new Promise(resolve => stepTimer = setTimeout(resolve, delay));
+        await new Promise(resolve => setTimeout(resolve, stepDelay));
       }
 
-      // Final State
+      clearInterval(progressInterval);
       setProgress(100);
       setIsFinished(true);
 
-      // Final pause for success message then redirect
+      // Brief pause for success state before redirect
       setTimeout(() => {
         window.location.href = redirectUrl;
       }, 1500);
@@ -82,8 +83,6 @@ export function RewardVerificationModal({
 
     return () => {
       document.body.style.overflow = 'unset';
-      clearTimeout(stepTimer);
-      clearInterval(progressInterval);
     };
   }, [isOpen, redirectUrl]);
 
@@ -96,21 +95,22 @@ export function RewardVerificationModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            className="absolute inset-0 bg-black/85 backdrop-blur-md"
           />
 
           {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-md bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-10 shadow-[0_0_50px_rgba(250,70,22,0.15)] overflow-hidden"
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 md:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden"
           >
-            {/* Ambient Glow */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[60px] pointer-events-none" />
+            {/* Trust Accent Glow */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
             
             <div className="text-center relative z-10">
-              {/* Header Icon */}
+              {/* Animated Header Icon */}
               <div className="relative w-20 h-20 mx-auto mb-8">
                 {!isFinished ? (
                   <div className="relative w-full h-full flex items-center justify-center">
@@ -121,7 +121,7 @@ export function RewardVerificationModal({
                           key={currentStep}
                           initial={{ opacity: 0, scale: 0.5 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className="text-primary/40"
+                          className="text-primary/60"
                         >
                           {React.createElement(VERIFICATION_STEPS[currentStep].icon, { className: "w-8 h-8" })}
                         </motion.div>
@@ -130,45 +130,45 @@ export function RewardVerificationModal({
                   </div>
                 ) : (
                   <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
-                    className="w-full h-full bg-green-500/20 rounded-[2rem] flex items-center justify-center border border-green-500/30"
+                    initial={{ scale: 0, rotate: -45 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    className="w-full h-full bg-green-500/20 rounded-[2rem] flex items-center justify-center border border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.2)]"
                   >
                     <CheckCircle2 className="w-10 h-10 text-green-500" />
                   </motion.div>
                 )}
               </div>
 
-              {/* Text Content */}
+              {/* Verified Content */}
               <div className="space-y-3 mb-10">
                 <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-tight">
-                  {!isFinished ? "Verifying Request..." : "Verification Successful ✅"}
+                  {!isFinished ? "Security Verification" : "Verification Complete ✅"}
                 </h3>
-                <p className="text-muted-foreground text-sm font-medium">
+                <p className="text-muted-foreground text-sm font-medium leading-relaxed px-4">
                   {!isFinished 
-                    ? `Matching ${value} ${brand} reward for your session.` 
-                    : "Eligibility confirmed. Redirecting to your reward portal..."}
+                    ? "To protect against bots and ensure only real users can claim rewards, we need to quickly verify your request." 
+                    : "Eligibility confirmed. Redirecting you to claim your reward..."}
                 </p>
               </div>
 
-              {/* Progress Tracker */}
+              {/* Progress & Steps Tracker */}
               <div className="space-y-6">
-                <div className="relative h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                   <motion.div 
                     className="h-full bg-primary shadow-[0_0_15px_rgba(250,70,22,0.5)]"
                     animate={{ width: `${progress}%` }}
-                    transition={{ type: 'spring', damping: 20 }}
+                    transition={{ type: 'tween', ease: 'linear' }}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-2.5">
                   {VERIFICATION_STEPS.map((step, idx) => (
                     <div 
                       key={step.id}
                       className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300",
-                        idx === currentStep ? "bg-primary/5 border-primary/20" : "bg-transparent border-transparent opacity-30",
-                        idx < currentStep && "opacity-100 bg-green-500/5"
+                        "flex items-center gap-3 px-5 py-3.5 rounded-2xl border transition-all duration-500",
+                        idx === currentStep ? "bg-primary/5 border-primary/20 scale-[1.02]" : "bg-transparent border-transparent opacity-20",
+                        idx < currentStep && "opacity-100 bg-green-500/5 border-green-500/10"
                       )}
                     >
                       {idx < currentStep ? (
@@ -177,7 +177,7 @@ export function RewardVerificationModal({
                         <step.icon className={cn("w-4 h-4", idx === currentStep ? "text-primary" : "text-white/20")} />
                       )}
                       <span className={cn(
-                        "text-[11px] font-black uppercase tracking-widest",
+                        "text-[11px] font-black uppercase tracking-widest transition-colors duration-500",
                         idx === currentStep ? "text-white" : "text-white/40",
                         idx < currentStep && "text-green-500"
                       )}>
@@ -188,14 +188,19 @@ export function RewardVerificationModal({
                 </div>
               </div>
 
-              {/* Footer Trust Signal */}
-              <div className="mt-10 pt-6 border-t border-white/5 flex items-center justify-center gap-4 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  SSL Encrypted
+              {/* Bottom Trust Signal */}
+              <div className="mt-10 pt-6 border-t border-white/5 text-center">
+                <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest leading-relaxed max-w-[280px] mx-auto">
+                  This step helps us prevent abuse and keep rewards available for genuine users.
+                </p>
+                <div className="mt-4 flex items-center justify-center gap-4 text-[8px] font-black text-white/10 uppercase tracking-[0.3em]">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+                    SSL Secure
+                  </div>
+                  <div className="w-1 h-1 bg-white/10 rounded-full" />
+                  <span>256-bit Encryption</span>
                 </div>
-                <div className="w-1 h-1 bg-white/10 rounded-full" />
-                <span>Node: US-SEC-04</span>
               </div>
             </div>
           </motion.div>
@@ -204,5 +209,3 @@ export function RewardVerificationModal({
     </AnimatePresence>
   );
 }
-
-import React from 'react';
