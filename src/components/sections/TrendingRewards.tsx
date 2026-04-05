@@ -1,25 +1,25 @@
-
 "use client";
 
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Zap, Users, Filter } from 'lucide-react';
-import { giftCards, categories } from '@/lib/gift-cards';
+import { Zap, Star, ArrowUpRight, ShieldCheck, Flame } from 'lucide-react';
+import { giftCards } from '@/lib/gift-cards';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RewardVerificationModal } from '@/components/reward/RewardVerificationModal';
+import { cn } from '@/lib/utils';
+
+/**
+ * @fileOverview Redesigned Trending Rewards Section.
+ * Features: High-fidelity glassmorphism, visual ratings, and mobile-optimized grid.
+ */
 
 export function TrendingRewards() {
-  const [activeCategory, setActiveCategory] = useState<string>('All');
   const [modalState, setModalState] = useState({
     isOpen: false,
     brand: '',
     value: ''
   });
-
-  const filteredCards = activeCategory === 'All' 
-    ? giftCards 
-    : giftCards.filter(c => c.category === activeCategory);
 
   const handleClaimClick = (brand: string, value: string) => {
     setModalState({
@@ -30,133 +30,118 @@ export function TrendingRewards() {
   };
 
   return (
-    <section id="trending" className="py-16 md:py-24 px-4 relative overflow-hidden">
+    <section id="trending" className="py-24 px-4 relative scroll-mt-20">
       <div className="container mx-auto">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 md:mb-16 gap-8">
-          <div className="max-w-2xl text-center lg:text-left w-full">
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mb-4"
-            >
-              <Zap className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">Popular Rewards</span>
-            </motion.div>
-            <h2 className="font-headline text-3xl md:text-6xl font-black mb-6 text-white leading-tight uppercase tracking-tight">
-              Explore Our <span className="text-primary text-glow-pomegranate">Reward Gallery</span>
-            </h2>
-            <p className="text-muted-foreground text-sm md:text-lg leading-relaxed mb-4">
-              Choose from a wide range of digital gift cards and premium rewards. Complete simple tasks and unlock your favorite brands in just a few steps.
-            </p>
-            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-4">
-              Trusted platform • Fast rewards • Easy steps
-            </p>
-          </div>
-          
-          <div className="flex flex-col gap-4 w-full lg:w-auto">
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1 px-1 justify-center lg:justify-start">
-              <Filter className="w-3 h-3" /> Filter Categories
-            </div>
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start overflow-x-auto pb-2 scrollbar-hide">
-              <button 
-                onClick={() => setActiveCategory('All')}
-                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border ${activeCategory === 'All' ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white border-white/5'}`}
-              >
-                All
-              </button>
-              {categories.map(cat => (
-                <button 
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border ${activeCategory === cat ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20' : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white border-white/5'}`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Section Header */}
+        <div className="text-center mb-16 space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full"
+          >
+            <Flame className="w-4 h-4 text-primary animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">Trending Now</span>
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="font-headline text-4xl md:text-6xl font-black text-white uppercase tracking-tight"
+          >
+            🔥 Trending <span className="text-primary">Gift Cards</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-white/40 text-sm md:text-lg max-w-xl mx-auto font-medium"
+          >
+            Choose a reward and complete 1 quick step to unlock your unique code instantly.
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[400px]">
-          <AnimatePresence mode="popLayout">
-            {filteredCards.map((card, idx) => {
-              const unlockedThisMonth = 100 + (parseInt(card.id) * 45) + (idx * 12);
-              const displayValue = card.values[0];
-              
-              return (
-                <motion.div
-                  key={card.id}
-                  id={card.slug}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  className="group scroll-mt-32 h-full"
+        {/* Rewards Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+          {giftCards.slice(0, 12).map((card, idx) => (
+            <motion.div
+              key={card.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              viewport={{ once: true }}
+              className="group"
+            >
+              <Card 
+                onClick={() => handleClaimClick(card.brand, card.values[0])}
+                className={cn(
+                  "relative h-full glass-card border-white/5 bg-white/[0.02] hover:bg-white/[0.05]",
+                  "hover:border-primary/40 hover:shadow-[0_0_40px_rgba(250,70,22,0.15)]",
+                  "transition-all duration-500 cursor-pointer rounded-[2rem] overflow-hidden flex flex-col group/card"
+                )}
+              >
+                {/* "FREE" Badge */}
+                <div className="absolute top-4 right-4 z-20 bg-primary/90 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 shadow-xl scale-90 group-hover/card:scale-100 transition-transform">
+                  <span className="text-[8px] font-black text-white uppercase tracking-widest">FREE</span>
+                </div>
+
+                {/* Card Visual / Gradient */}
+                <div 
+                  className="relative aspect-[16/10] w-full flex items-center justify-center p-6 overflow-hidden"
+                  style={{ background: card.gradient }}
                 >
-                  <Card className="glass-card border-white/5 hover:border-primary/40 transition-all duration-500 rounded-3xl h-full flex flex-col group/card shadow-2xl overflow-hidden bg-[#0a0a0a]">
-                    <CardContent className="p-0 flex flex-col h-full">
-                      <div 
-                        className="relative aspect-[16/10] w-full overflow-hidden flex items-center justify-center p-4 transition-transform duration-700 md:group-hover/card:scale-[1.05]"
-                        style={{ background: card.gradient }}
-                      >
-                        <div className="absolute inset-0 bg-black/10 transition-colors" />
-                        <span className="relative z-10 font-headline font-black text-white text-xl md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.4)] leading-none select-none">
-                          {card.brand}
-                        </span>
-                        {card.trending && (
-                          <div className="absolute top-3 right-3 bg-primary text-white text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest shadow-xl z-20">
-                            Hot 🔥
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="p-5 md:p-6 flex flex-col flex-grow">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="min-w-0">
-                            <span className="text-[9px] font-black text-primary uppercase tracking-[0.25em] mb-1 block">
-                              {card.category} Reward
-                            </span>
-                            <h3 className="text-xl md:text-2xl font-black text-white truncate">{card.brand}</h3>
-                          </div>
-                          <div className="flex flex-col items-end shrink-0">
-                             <div className="flex items-center gap-1 text-[10px] font-black text-green-500 uppercase tracking-widest">
-                               <Users className="w-3 h-3" /> {unlockedThisMonth}
-                             </div>
-                             <span className="text-[8px] text-muted-foreground uppercase tracking-widest">This Month</span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-xs text-muted-foreground leading-relaxed mb-6 line-clamp-2">
-                          {card.description}
-                        </p>
+                  <div className="absolute inset-0 bg-black/20 group-hover/card:bg-transparent transition-colors duration-700" />
+                  <span className="relative z-10 font-headline font-black text-white text-lg md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.3)] select-none">
+                    {card.brand}
+                  </span>
+                  
+                  {/* Subtle Background Icon Decoration */}
+                  <div className="absolute -bottom-4 -right-4 opacity-10 group-hover/card:rotate-12 transition-transform duration-700">
+                    <Zap className="w-24 h-24 text-white" />
+                  </div>
+                </div>
 
-                        <div className="flex flex-wrap gap-1.5 mb-8">
-                          {card.values.slice(0, 3).map((v) => (
-                            <div 
-                              key={v}
-                              className="bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-[9px] font-black text-white/60"
-                            >
-                              {v}
-                            </div>
-                          ))}
-                        </div>
+                <CardContent className="p-5 md:p-6 flex flex-col flex-grow">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-base md:text-xl font-black text-white group-hover/card:text-primary transition-colors leading-tight truncate">
+                      {card.brand} {card.values[0]}
+                    </h3>
+                    <ArrowUpRight className="w-4 h-4 text-white/20 group-hover/card:text-primary group-hover/card:translate-x-1 group-hover/card:-translate-y-1 transition-all" />
+                  </div>
 
-                        <div className="mt-auto">
-                          <Button 
-                            onClick={() => handleClaimClick(card.brand, displayValue)}
-                            className="w-full h-12 rounded-xl bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-white font-black uppercase tracking-widest shadow-lg transition-all duration-300"
-                          >
-                            Claim Reward <ChevronRight className="ml-2 w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
+                  <p className="text-[10px] md:text-xs text-white/40 font-medium mb-4 line-clamp-1">
+                    {card.description}
+                  </p>
+
+                  <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+                    {/* Visual Star Rating */}
+                    <div className="flex items-center gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                      ))}
+                      <span className="text-[10px] font-black text-white/20 ml-1.5">5.0</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-green-500" />
+                      <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Verified</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom CTA Overlay Hint */}
+        <div className="mt-16 text-center">
+          <p className="text-[10px] font-black text-white/10 uppercase tracking-[0.4em] mb-4">
+            Security Protected Reward Network
+          </p>
+          <div className="flex justify-center gap-8 items-center opacity-20">
+            <div className="h-px bg-white/20 flex-grow max-w-[100px]" />
+            <ShieldCheck className="w-6 h-6 text-white" />
+            <div className="h-px bg-white/20 flex-grow max-w-[100px]" />
+          </div>
         </div>
       </div>
 

@@ -1,64 +1,81 @@
 "use client";
 
 import { Button } from '@/components/ui/button';
-import { HeroSearch } from '@/components/search/HeroSearch';
+import { motion } from 'framer-motion';
+import { Zap, ChevronRight } from 'lucide-react';
 
 /**
- * @fileOverview Modern Hero Section with updated high-impact search bar.
+ * @fileOverview Redesigned Hero Section with focused messaging and primary CTA.
  */
 
 export function Hero() {
-  const handleScrollToSection = (id: string) => {
-    const element = document.getElementById(id);
+  const handleScrollToTrending = () => {
+    const element = document.getElementById('trending');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <section className="relative pt-12 md:pt-24 pb-20 px-4 text-center">
-      {/* Decorative Ambient Glows */}
-      <div className="absolute top-1/4 -left-20 w-64 md:w-96 h-64 md:h-96 bg-[#FA4616]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-20 w-64 md:w-96 h-64 md:h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
+    <section className="relative pt-24 md:pt-40 pb-20 px-4 text-center overflow-hidden">
+      {/* Deep Purple/Blue Ambient Glows */}
+      <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto relative z-10">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-[10px] border border-white/10 mb-6">
-          <span className="text-[10px] md:text-[12px] font-black text-white tracking-[0.5px] uppercase">
-            ⚡ Premium Rewards Network
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 mb-8"
+        >
+          <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+          <span className="text-[10px] md:text-[12px] font-black text-white/80 tracking-[0.2em] uppercase">
+            Official 2026 Reward Portal
           </span>
-        </div>
+        </motion.div>
 
-        <h1 className="font-headline text-4xl md:text-7xl font-black mb-6 leading-none text-white uppercase tracking-tight">
-          UNLOCK FREE GIFT CARD & <br />
-          <span className="text-[#FA4616] text-glow">PREMIUM REWARDS</span>
-        </h1>
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="font-headline text-5xl md:text-8xl font-black mb-8 leading-[0.9] text-white uppercase tracking-tighter"
+        >
+          Unlock Free <br />
+          <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-primary bg-clip-text text-transparent">
+            Gift Cards & Rewards
+          </span>
+        </motion.h1>
 
-        <p className="max-w-2xl mx-auto text-muted-foreground text-sm md:text-lg mb-12 leading-relaxed px-4">
-          The most reliable platform for gamers to earn and redeem digital gift cards. 
-          Complete tasks, watch clips, and unlock rewards instantly.
-        </p>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="max-w-xl mx-auto text-white/60 text-base md:text-xl mb-12 leading-relaxed font-medium"
+        >
+          Complete simple steps and claim premium rewards from your favorite brands. 
+          The most trusted destination for gamers and shoppers.
+        </motion.p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row justify-center gap-4 mb-20 w-full md:w-auto px-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex flex-col sm:flex-row justify-center gap-4 px-4"
+        >
           <Button 
-            onClick={() => handleScrollToSection('trending')}
-            className="w-full md:w-auto bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-black h-16 px-12 rounded-2xl text-lg md:text-xl transition-all shadow-2xl shadow-[#FA4616]/20"
+            onClick={handleScrollToTrending}
+            className="w-full sm:w-auto h-16 px-12 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-lg rounded-2xl shadow-[0_10px_40px_rgba(250,70,22,0.3)] transition-all hover:scale-[1.05] active:scale-95"
           >
-            Unlock Now
+            Start Earning Now
           </Button>
           <Button 
-            onClick={() => handleScrollToSection('how-it-works')}
             variant="outline" 
-            className="w-full md:w-auto border-white/10 text-white hover:bg-white/5 bg-white/5 h-16 px-12 rounded-2xl text-lg md:text-xl transition-all"
+            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+            className="w-full sm:w-auto h-16 px-12 bg-white/5 border-white/10 text-white font-black uppercase tracking-widest text-lg rounded-2xl hover:bg-white/10 transition-all"
           >
-            How it Works
+            Learn More <ChevronRight className="ml-2 w-5 h-5" />
           </Button>
-        </div>
-
-        {/* High-Impact Hero Search Bar */}
-        <div className="w-full max-w-4xl mx-auto px-4">
-          <HeroSearch />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
