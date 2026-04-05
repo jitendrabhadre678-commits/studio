@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
@@ -11,45 +10,59 @@ import { TrustBadges } from '@/components/sections/TrustBadges';
 import { WaveDivider } from '@/components/ui/WaveDivider';
 
 /**
- * @fileOverview Redesigned Homepage Layout with Liquid Wave Transitions.
+ * @fileOverview Redesigned Homepage Layout with Seamless Liquid Wave Transitions.
  * Order: Hero -> Wave -> Trending Rewards -> Wave (Up) -> Trust Signals -> Wave (Down) -> How it Works -> Social Proof -> Community -> FAQ -> Footer.
  */
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#050505] via-[#0f0c29] to-[#050505] selection:bg-primary selection:text-white overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-br from-[#050505] via-[#0f0c29] to-[#050505] selection:bg-primary selection:text-white overflow-x-hidden">
       <Header />
       
       {/* 1. Hero Section */}
-      <Hero />
+      <div className="relative">
+        <Hero />
+      </div>
       
-      <WaveDivider direction="down" className="opacity-80" />
+      <WaveDivider direction="down" className="relative z-20" />
 
       {/* 2. Trending Gift Cards */}
-      <TrendingRewards />
+      <div className="relative z-10 bg-black/5">
+        <TrendingRewards />
+      </div>
 
-      <WaveDivider direction="up" className="opacity-60" />
+      <WaveDivider direction="up" className="relative z-20" />
 
       {/* 3. Trust & Credibility */}
-      <TrustBadges />
+      <div className="relative z-10 bg-black/10">
+        <TrustBadges />
+      </div>
       
-      <WaveDivider direction="down" className="opacity-40" />
+      <WaveDivider direction="down" className="relative z-20" />
 
       {/* 4. Education */}
-      <HowItWorks />
+      <div className="relative z-10">
+        <HowItWorks />
+      </div>
 
-      <WaveDivider direction="up" className="opacity-30" />
+      <WaveDivider direction="up" className="relative z-20" />
 
       {/* 5. Social Proof */}
-      <ReviewsSection />
+      <div className="relative z-10 bg-black/5">
+        <ReviewsSection />
+      </div>
 
-      <WaveDivider direction="down" className="opacity-20" />
+      <WaveDivider direction="down" className="relative z-20" />
 
       {/* 6. Community Engagement */}
-      <CommunityHub />
+      <div className="relative z-10">
+        <CommunityHub />
+      </div>
 
       {/* 7. Support & Closure */}
-      <FAQ />
+      <div className="relative z-10 bg-black/20">
+        <FAQ />
+      </div>
 
       <Footer />
     </main>
