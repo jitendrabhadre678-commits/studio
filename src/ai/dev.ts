@@ -1,4 +1,6 @@
+
 import { config } from 'dotenv';
 config();
 
 import '@/ai/flows/generate-gift-card-description-flow.ts';
+import '@/ai/flows/generate-product-blog-flow.ts';
