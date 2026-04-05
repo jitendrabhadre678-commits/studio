@@ -1,7 +1,8 @@
+
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent } from '@/components/ui/card';
-import { Zap, ChevronRight } from 'lucide-react';
+import { Zap, ChevronRight, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
 /**
@@ -10,6 +11,18 @@ import Link from 'next/link';
  */
 
 const customPosts = [
+  {
+    title: "The Ultimate Guide to Earning Free Gift Cards in 2026",
+    slug: "how-to-earn-free-gift-cards",
+    description: "Discover the most reliable methods to unlock digital rewards and gaming currency. A complete walkthrough for 2026.",
+    category: "Master Guide",
+    date: "March 2026",
+    author: {
+      name: "Alex Rivera",
+      initials: "AR"
+    },
+    featured: true
+  },
   {
     title: "How to Get a Free Amazon Gift Card in 2026",
     slug: "free-amazon-gift-card-2026",
@@ -46,12 +59,16 @@ const customPosts = [
 ];
 
 export default function BlogIndexPage() {
+  const featuredPost = customPosts.find(p => p.featured);
+  const regularPosts = customPosts.filter(p => !p.featured);
+
   return (
     <main className="min-h-screen bg-[#0f0f0f] text-white font-body selection:bg-[#ff4d00] selection:text-white">
       <Header />
       
       <div className="pt-32 pb-20 px-4">
         <div className="container mx-auto">
+          {/* Header */}
           <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="inline-flex items-center gap-2 bg-[#ff4d00]/10 border border-[#ff4d00]/20 px-4 py-1.5 rounded-full mb-6">
               <Zap className="w-3.5 h-3.5 text-[#ff4d00]" />
@@ -65,8 +82,51 @@ export default function BlogIndexPage() {
             </p>
           </div>
 
+          {/* Featured Post */}
+          {featuredPost && (
+            <div className="mb-12">
+              <Link href={`/blog/${featuredPost.slug}`} className="group">
+                <Card className="bg-[#1a1a1a] border-[#ff4d00]/20 group-hover:border-[#ff4d00]/50 transition-all duration-500 overflow-hidden rounded-[3rem] shadow-[0_0_50px_rgba(255,77,0,0.1)]">
+                  <CardContent className="p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
+                    <div className="w-full md:w-1/2 space-y-6">
+                      <div className="inline-flex items-center gap-2 bg-[#ff4d00]/20 border border-[#ff4d00]/40 px-4 py-1 rounded-full">
+                        <Zap className="w-4 h-4 text-[#ff4d00] fill-[#ff4d00]" />
+                        <span className="text-xs font-black uppercase text-[#ff4d00] tracking-widest">Featured Master Guide</span>
+                      </div>
+                      <h2 className="text-3xl md:text-5xl font-black text-white group-hover:text-[#ff4d00] transition-colors leading-tight uppercase tracking-tight">
+                        {featuredPost.title}
+                      </h2>
+                      <p className="text-lg text-white/60 leading-relaxed">
+                        {featuredPost.description}
+                      </p>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-[#ff4d00] flex items-center justify-center text-white font-black">
+                          {featuredPost.author.initials}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-white uppercase">{featuredPost.author.name}</p>
+                          <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Editorial Lead • {featuredPost.date}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full md:w-1/2 aspect-video bg-white/5 rounded-[2rem] border border-white/5 flex items-center justify-center relative overflow-hidden group-hover:border-[#ff4d00]/20 transition-all">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#ff4d00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <BookOpen className="w-24 h-24 text-white/10 group-hover:text-[#ff4d00]/20 transition-all group-hover:scale-110" />
+                      <div className="absolute bottom-8 right-8">
+                        <div className="h-14 w-14 rounded-full bg-[#ff4d00] flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-transform">
+                          <ChevronRight className="w-8 h-8" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          )}
+
+          {/* Grid Posts */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {customPosts.map((post) => (
+            {regularPosts.map((post) => (
               <Link key={post.slug} href={`/blog/${post.slug}`} className="group h-full">
                 <Card className="bg-[#1a1a1a] border-white/5 group-hover:border-[#ff4d00]/40 transition-all duration-500 overflow-hidden rounded-[2rem] h-full flex flex-col shadow-2xl">
                   <CardContent className="p-8 flex flex-col h-full relative">
