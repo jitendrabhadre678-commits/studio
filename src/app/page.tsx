@@ -1,3 +1,4 @@
+
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
@@ -9,6 +10,7 @@ import { CommunityHub } from '@/components/sections/CommunityHub';
 import { TrustBadges } from '@/components/sections/TrustBadges';
 import { WaveDivider } from '@/components/ui/WaveDivider';
 import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
+import { FloatingShowcase } from '@/components/sections/FloatingShowcase';
 
 /**
  * @fileOverview Refined Homepage with Sharper Glass Panels.
@@ -64,7 +66,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. FAQ Panel */}
+      {/* 7. Floating Showcase - Kinetic Visual Anchor */}
+      <FloatingShowcase />
+
+      {/* 8. FAQ Panel */}
       <section className="container mx-auto px-4 my-8 mb-24 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
           <FAQ />
