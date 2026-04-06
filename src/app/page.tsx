@@ -1,6 +1,5 @@
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
-import { TrendingRewards } from '@/components/sections/TrendingRewards';
 import { HowItWorks } from '@/components/sections/HowItWorks';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { FAQ } from '@/components/sections/FAQ';
@@ -12,8 +11,8 @@ import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
 import { FloatingShowcase } from '@/components/sections/FloatingShowcase';
 
 /**
- * @fileOverview Refined Homepage with Liquid Wave Transitions.
- * All major content hubs now feature smooth SVG transitions for a premium SaaS feel.
+ * @fileOverview Refined Homepage with Liquid Transitions.
+ * Optimized layout after removing the rewards gallery to focus on platform trust and workflow.
  */
 
 export default function Home() {
@@ -26,24 +25,15 @@ export default function Home() {
         <Hero />
       </div>
       
-      {/* 2. Trending Rewards Panel - Liquid Entry & Exit */}
-      <section className="container mx-auto px-4 mt-[-60px] relative z-20">
-        <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
-          <WaveDivider direction="up" className="opacity-40" />
-          <TrendingRewards />
-          <WaveDivider direction="down" className="opacity-40" />
-        </div>
-      </section>
-
-      {/* 3. Trust & Credibility Panel */}
-      <section className="container mx-auto px-4 my-8 relative z-10">
+      {/* 2. Trust & Credibility Panel - Direct transition from Hero */}
+      <section className="container mx-auto px-4 mt-8 mb-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
           <TrustBadges />
         </div>
       </section>
 
-      {/* 4. Workflow Panel */}
-      <section className="container mx-auto px-4 my-8 relative z-10">
+      {/* 3. Workflow Panel */}
+      <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
           <WaveDivider direction="up" className="opacity-30" />
           <HowItWorks />
@@ -51,26 +41,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Social Proof Panel */}
-      <section className="container mx-auto px-4 my-8 relative z-10">
+      {/* 4. Social Proof Panel */}
+      <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
           <ReviewsSection />
         </div>
       </section>
 
-      {/* 6. Community Panel */}
-      <section className="container mx-auto px-4 my-8 relative z-10">
+      {/* 5. Community Panel */}
+      <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
           <CommunityHub />
           <div className="h-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
         </div>
       </section>
 
-      {/* 7. Floating Showcase - Kinetic Visual Anchor */}
+      {/* 6. Floating Showcase - Kinetic Visual Anchor */}
       <FloatingShowcase />
 
-      {/* 8. FAQ Panel */}
-      <section className="container mx-auto px-4 my-8 mb-24 relative z-10">
+      {/* 7. FAQ Panel */}
+      <section className="container mx-auto px-4 mt-12 mb-24 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
           <FAQ />
         </div>
