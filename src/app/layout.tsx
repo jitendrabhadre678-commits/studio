@@ -1,4 +1,3 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import {Toaster} from '@/components/ui/toaster';
@@ -8,6 +7,7 @@ import {ReferralTracker} from '@/components/referral/ReferralTracker';
 import {SupportChat} from '@/components/support/SupportChat';
 import {LiveActivity} from '@/components/sections/LiveActivity';
 import {ScrollTriggerPopup} from '@/components/modals/ScrollTriggerPopup';
+import {GlobalFloatingBackground} from '@/components/layout/GlobalFloatingBackground';
 
 export const metadata: Metadata = {
   title: 'GameFlashX — Free Gift Cards & Gaming Rewards 2026',
@@ -52,11 +52,17 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased selection:bg-primary selection:text-white" suppressHydrationWarning>
+      <body className="font-body antialiased selection:bg-primary selection:text-white relative bg-[#050b18]" suppressHydrationWarning>
         <FirebaseClientProvider>
           <AuthRedirectListener />
           <ReferralTracker />
-          {children}
+          
+          <GlobalFloatingBackground />
+          
+          <div className="relative z-10">
+            {children}
+          </div>
+          
           <LiveActivity />
           <ScrollTriggerPopup />
           <SupportChat />
