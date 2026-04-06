@@ -13,12 +13,11 @@ import {
   Sparkles, 
   ShieldCheck, 
   Clock,
-  Info,
   Loader2,
   AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
-import { useUser, useFirestore, updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
+import { useUser, updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
 import { doc, getDoc, serverTimestamp, increment, collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 
@@ -32,6 +31,7 @@ export default function VerificationSuccessPage() {
   const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'already_claimed' | 'error'>('verifying');
   const [countdown, setCountdown] = useState(5);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -39,6 +39,17 @@ export default function VerificationSuccessPage() {
       setStatus('error');
       return;
     }
+
+    // 1. Smooth Progress Bar Animation (3 seconds)
+    const progressInterval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 30);
 
     const processReward = async () => {
       try {
@@ -54,38 +65,42 @@ export default function VerificationSuccessPage() {
         const now = Date.now();
         const REWARD_COOLDOWN = 2 * 60 * 1000; // 2 Minutes in ms
 
-        // 1. Abuse Prevention Check
+        // 2. Abuse Prevention Check
         if (userData.lastRewardTime) {
-          const lastClaim = userData.lastRewardTime.toDate ? userData.lastRewardTime.toDate().getTime() : new Date(userData.lastRewardTime).getTime();
+          const lastClaim = userData.lastRewardTime.toDate 
+            ? userData.lastRewardTime.toDate().getTime() 
+            : new Date(userData.lastRewardTime).getTime();
+            
           if (now - lastClaim < REWARD_COOLDOWN) {
-            setStatus('already_claimed');
+            setTimeout(() => setStatus('already_claimed'), 3000);
             return;
           }
         }
 
-        // 2. Perform Atomic Updates
-        const rewardAmount = 0.10;
-        
-        // Update User Profile
-        updateDocumentNonBlocking(userRef, {
-          availableBalance: increment(rewardAmount),
-          lastRewardTime: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
+        // 3. Wait for progress to finish before final UI update
+        setTimeout(() => {
+          const rewardAmount = 0.10;
+          
+          // Atomic Updates
+          updateDocumentNonBlocking(userRef, {
+            availableBalance: increment(rewardAmount),
+            lastRewardTime: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
 
-        // Add to Reward History
-        addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'rewards'), {
-          userId: user.uid,
-          amount: rewardAmount,
-          description: "CPA Verification Reward",
-          type: "taskCompletion",
-          status: "completed",
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
+          addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'rewards'), {
+            userId: user.uid,
+            amount: rewardAmount,
+            description: "CPA Reward Added",
+            type: "taskCompletion",
+            status: "completed",
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
 
-        // 3. Finalize UI State
-        setTimeout(() => setStatus('success'), 2000);
+          setStatus('success');
+        }, 3000);
+
       } catch (err) {
         console.error("Reward Processing Error:", err);
         setStatus('error');
@@ -93,6 +108,7 @@ export default function VerificationSuccessPage() {
     };
 
     processReward();
+    return () => clearInterval(progressInterval);
   }, [user, isUserLoading, firestore]);
 
   // Handle Countdown Redirect
@@ -126,22 +142,32 @@ export default function VerificationSuccessPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             className="glass-card rounded-2xl p-8 md:p-16 border-white/10 shadow-2xl relative overflow-hidden text-center bg-white/[0.03] backdrop-blur-2xl"
           >
-            {/* Ambient Background Glow */}
             <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-[100px] pointer-events-none ${
               status === 'success' ? 'bg-green-500/10' : 'bg-primary/10'
             }`} />
 
             <AnimatePresence mode="wait">
               {status === 'verifying' && (
-                <motion.div key="verifying" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-8 py-10">
+                <motion.div key="verifying" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-10 py-10">
                   <div className="relative w-24 h-24 mx-auto">
                     <Loader2 className="w-full h-full text-primary animate-spin" strokeWidth={1.5} />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <ShieldCheck className="w-8 h-8 text-primary/40" />
                     </div>
                   </div>
-                  <h2 className="text-2xl font-black text-white uppercase tracking-tight animate-pulse">Syncing with Reward Node...</h2>
-                  <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">Validating Session Security</p>
+                  
+                  <div className="space-y-4">
+                    <h2 className="text-2xl font-black text-white uppercase tracking-tight">Verifying completion...</h2>
+                    <div className="max-w-xs mx-auto space-y-2">
+                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                        <motion.div 
+                          className="h-full bg-primary"
+                          animate={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.3em]">Validating Session Security</p>
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -152,7 +178,6 @@ export default function VerificationSuccessPage() {
                     <div className="relative w-full h-full bg-gradient-to-br from-green-400 to-green-600 rounded-[2.5rem] flex items-center justify-center border-4 border-black shadow-2xl">
                       <CheckCircle2 className="w-12 h-12 md:w-16 md:h-16 text-white" />
                     </div>
-                    {/* Pop Animation Effect */}
                     <motion.div initial={{ y: 0, opacity: 0 }} animate={{ y: -60, opacity: [0, 1, 0] }} transition={{ duration: 1.5 }} className="absolute inset-0 flex items-center justify-center font-black text-green-400 text-3xl">
                       +$0.10
                     </motion.div>
@@ -163,7 +188,7 @@ export default function VerificationSuccessPage() {
                       Reward <span className="text-green-500">Secured</span> ✅
                     </h1>
                     <p className="text-white/80 text-lg font-medium max-w-md mx-auto">
-                      Incredible! You earned <span className="text-white font-black">$0.10</span>. Your verification was successful.
+                      Verification Successful! You earned <span className="text-white font-black">$0.10</span>.
                     </p>
                   </div>
 
@@ -171,9 +196,9 @@ export default function VerificationSuccessPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <ShieldCheck className="w-5 h-5 text-green-500" />
-                        <span className="text-xs font-black text-white uppercase">Status: Verified</span>
+                        <span className="text-xs font-black text-white uppercase">Reward Added Successfully</span>
                       </div>
-                      <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Code: OG-PROCESSED</span>
+                      <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">ID: OG-SECURE</span>
                     </div>
                     <div className="pt-2 border-t border-white/5 flex items-center gap-3">
                       <Clock className="w-5 h-5 text-primary" />
