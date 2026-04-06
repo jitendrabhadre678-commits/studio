@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from 'framer-motion';
@@ -68,10 +67,7 @@ const socialPlatforms = [
 
 export function CommunityHub() {
   return (
-    <section className="py-24 px-4 relative overflow-hidden">
-      {/* Background Ambient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-
+    <div className="py-24 px-6 md:px-12 relative overflow-hidden">
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <motion.div 
@@ -100,34 +96,9 @@ export function CommunityHub() {
               viewport={{ once: true }}
               className="group"
             >
-              <div 
-                className={cn(
-                  "relative h-full glass-card p-8 rounded-[18px] border-white/[0.12] backdrop-blur-[14px]",
-                  "transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center"
-                )}
-                style={{ 
-                  boxShadow: `0 0 0 rgba(0,0,0,0)` 
-                }}
-              >
-                {/* Border Glow on Hover */}
-                <div 
-                  className="absolute inset-0 rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{ boxShadow: `0 0 30px ${platform.glow}` }}
-                />
-
-                <div className={cn(
-                  "w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-6",
-                  "border border-white/10 group-hover:scale-110 transition-all duration-300 relative overflow-hidden"
-                )}>
-                  <div className={cn("absolute inset-0 opacity-20 bg-gradient-to-br", platform.color)} />
-                  <div className={cn("relative z-10 text-white transition-colors duration-300", 
-                    platform.name === "Instagram" && "group-hover:text-[#dc2743]",
-                    platform.name === "YouTube" && "group-hover:text-[#FF0000]",
-                    platform.name === "Discord" && "group-hover:text-[#5865F2]",
-                    platform.name === "Whop Community" && "group-hover:text-[#00A3FF]"
-                  )}>
-                    {platform.icon}
-                  </div>
+              <div className="relative h-full bg-white/5 border border-white/5 p-8 rounded-3xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center">
+                <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10">
+                  {platform.icon}
                 </div>
 
                 <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight">{platform.name}</h3>
@@ -137,10 +108,7 @@ export function CommunityHub() {
 
                 <Button 
                   asChild
-                  className={cn(
-                    "w-full h-12 rounded-xl font-black uppercase tracking-widest text-[10px]",
-                    "bg-white/5 border border-white/10 hover:bg-white/10 text-white transition-all shadow-lg"
-                  )}
+                  className="w-full h-12 rounded-xl font-black uppercase tracking-widest text-[10px] bg-white/5 border border-white/10 hover:bg-white/10 text-white"
                 >
                   <a href={platform.link} target="_blank" rel="noopener noreferrer">
                     {platform.cta} <ArrowRight className="ml-2 w-3.5 h-3.5" />
@@ -151,6 +119,6 @@ export function CommunityHub() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

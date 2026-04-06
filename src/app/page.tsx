@@ -9,11 +9,10 @@ import { CommunityHub } from '@/components/sections/CommunityHub';
 import { TrustBadges } from '@/components/sections/TrustBadges';
 import { WaveDivider } from '@/components/ui/WaveDivider';
 import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
-import { GlassDivider } from '@/components/ui/GlassDivider';
 
 /**
- * @fileOverview Redesigned Homepage Layout with Orchestrated Minimal Dividers.
- * Visual Rhythm: Hero -> Wave -> Trending -> Radial Glow -> Trust -> Wave (Up) -> How it Works -> Radial Glow -> Reviews -> Wave -> Community -> Minimal Line -> FAQ -> Footer.
+ * @fileOverview Redesigned Homepage with Floating Glass Panels.
+ * Sections are now encapsulated in glassmorphism cards with rounded corners and consistent spacing.
  */
 
 export default function Home() {
@@ -21,57 +20,56 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-[#050505] via-[#0f0c29] to-[#050505] selection:bg-primary selection:text-white overflow-x-hidden">
       <Header />
       
-      {/* 1. Hero Section */}
+      {/* 1. Hero Section - Full Width Entry */}
       <div className="relative">
         <Hero />
       </div>
       
-      <WaveDivider direction="down" className="relative z-20" />
+      {/* 2. Trending Rewards Panel */}
+      <section className="container mx-auto px-4 mt-[-60px] relative z-20">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+          <TrendingRewards />
+          <WaveDivider direction="down" className="opacity-50" />
+        </div>
+      </section>
 
-      {/* 2. Trending Gift Cards */}
-      <div className="relative z-10 bg-[#050505]">
-        <TrendingRewards />
-      </div>
+      {/* 3. Trust & Credibility Panel */}
+      <section className="container mx-auto px-4 my-10 relative z-10">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
+          <TrustBadges />
+        </div>
+      </section>
 
-      {/* Cinematic Transition: Trending -> Trust */}
-      <RadialGlowDivider intensity="high" className="z-20 -mt-10" />
+      {/* 4. Workflow Panel */}
+      <section className="container mx-auto px-4 my-10 relative z-10">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+          <WaveDivider direction="up" className="opacity-30" />
+          <HowItWorks />
+          <RadialGlowDivider intensity="low" />
+        </div>
+      </section>
 
-      {/* 3. Trust & Credibility */}
-      <div className="relative z-10 bg-[#050505]">
-        <TrustBadges />
-      </div>
-      
-      <WaveDivider direction="up" className="relative z-20" />
+      {/* 5. Social Proof Panel */}
+      <section className="container mx-auto px-4 my-10 relative z-10">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+          <ReviewsSection />
+        </div>
+      </section>
 
-      {/* 4. Education (Horizontal Wire Flow) */}
-      <div className="relative z-10 bg-transparent">
-        <HowItWorks />
-      </div>
+      {/* 6. Community Panel */}
+      <section className="container mx-auto px-4 my-10 relative z-10">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+          <CommunityHub />
+          <div className="h-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+        </div>
+      </section>
 
-      {/* Cinematic Transition: How it Works -> Reviews */}
-      <RadialGlowDivider intensity="medium" className="z-20" />
-
-      {/* 5. Social Proof */}
-      <div className="relative z-10 bg-[#050505]">
-        <ReviewsSection />
-      </div>
-
-      <WaveDivider direction="down" className="relative z-20" />
-
-      {/* 6. Community Engagement */}
-      <div className="relative z-10 bg-[#050505]">
-        <CommunityHub />
-      </div>
-
-      {/* 7. Logic Break: Minimal Separator */}
-      <div className="py-10">
-        <GlassDivider className="z-20" />
-      </div>
-
-      {/* 8. Support & Closure */}
-      <div className="relative z-10 bg-black/20">
-        <FAQ />
-      </div>
+      {/* 7. FAQ Panel */}
+      <section className="container mx-auto px-4 my-10 mb-24 relative z-10">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
+          <FAQ />
+        </div>
+      </section>
 
       <Footer />
     </main>

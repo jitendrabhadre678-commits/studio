@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from 'framer-motion';
@@ -6,8 +5,8 @@ import { Gift, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Redesigned "How It Works" Section.
- * Features a horizontal flow connected by an animated "Wire Flow" energy line.
+ * @fileOverview How It Works Section.
+ * Content is optimized for the parent glass panel container.
  */
 
 const steps = [
@@ -33,11 +32,8 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-32 px-4 relative overflow-hidden bg-transparent scroll-mt-20">
-      {/* Background Ambient Glows */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="container mx-auto max-w-6xl relative">
+    <div id="how-it-works" className="py-24 px-6 md:px-12 relative scroll-mt-20">
+      <div className="max-w-6xl mx-auto relative">
         {/* Header */}
         <div className="text-center mb-20">
           <motion.div 
@@ -61,12 +57,9 @@ export function HowItWorks() {
         <div className="relative flex flex-col lg:flex-row items-stretch justify-between gap-12 lg:gap-6">
           
           {/* Animated Wire Flow (Desktop Only) */}
-          <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[2px] -translate-y-1/2 z-0 overflow-hidden">
-            {/* Base Line */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-cyan-400/40 to-blue-500/20" />
-            {/* Flowing Pulse */}
-            <div className="absolute top-0 bottom-0 w-24 bg-gradient-to-r from-transparent via-cyan-300 to-transparent animate-data-flow blur-sm" />
-            <div className="absolute top-0 bottom-0 w-12 bg-white animate-data-flow" />
+          <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[2px] -translate-y-1/2 z-0 overflow-hidden opacity-20">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500" />
+            <div className="absolute top-0 bottom-0 w-24 bg-gradient-to-r from-transparent via-white to-transparent animate-data-flow" />
           </div>
 
           {steps.map((step, idx) => (
@@ -79,46 +72,24 @@ export function HowItWorks() {
               className="relative z-10 flex-1 flex"
             >
               <div className={cn(
-                "w-full p-8 md:p-10 rounded-[2.5rem] bg-white/[0.03] backdrop-blur-xl border border-white/10",
-                "transition-all duration-500 hover:scale-[1.03] hover:bg-white/[0.05] hover:border-blue-500/30",
-                "group shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex flex-col"
+                "w-full p-8 rounded-3xl bg-white/5 border border-white/5",
+                "transition-all duration-500 hover:border-blue-500/30",
+                "group flex flex-col"
               )}>
-                {/* Step Marker */}
-                <div className="absolute -top-4 -left-4 w-10 h-10 rounded-xl bg-blue-500 text-white font-black flex items-center justify-center text-xs shadow-lg border-2 border-[#050505] z-20 group-hover:scale-110 transition-transform">
-                  0{step.id}
+                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8">
+                  {step.icon}
                 </div>
-
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all">
-                    {step.icon}
-                  </div>
-                  
-                  <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight leading-none group-hover:text-blue-400 transition-colors">
-                    {step.title}
-                  </h3>
-                  
-                  <p className="text-white/50 text-sm md:text-base leading-relaxed font-medium">
-                    {step.description}
-                  </p>
-
-                  <div className="mt-auto pt-8 flex justify-end opacity-5 group-hover:opacity-10 transition-opacity">
-                    <div className="scale-150 rotate-12">
-                      {step.icon}
-                    </div>
-                  </div>
-                </div>
+                
+                <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight leading-none">
+                  {step.title}
+                </h3>
+                
+                <p className="text-white/50 text-sm leading-relaxed font-medium">
+                  {step.description}
+                </p>
               </div>
             </motion.div>
           ))}
-        </div>
-
-        {/* Trust Hint */}
-        <div className="mt-20 flex items-center justify-center gap-4 text-[10px] font-black text-white/10 uppercase tracking-[0.4em]">
-          <span>Optimized Logic</span>
-          <div className="w-1 h-1 bg-blue-500/20 rounded-full" />
-          <span>Secured Nodes</span>
-          <div className="w-1 h-1 bg-blue-500/20 rounded-full" />
-          <span>Instant Confirmation</span>
         </div>
       </div>
 
@@ -127,6 +98,6 @@ export function HowItWorks() {
           text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
         }
       `}</style>
-    </section>
+    </div>
   );
 }

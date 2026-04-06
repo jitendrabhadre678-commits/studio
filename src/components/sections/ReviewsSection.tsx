@@ -11,7 +11,7 @@ export function ReviewsSection() {
   const homeReviews = reviews.slice(0, 8);
 
   return (
-    <section className="py-24 px-4 bg-black/20">
+    <div className="py-20 px-6 md:px-12 relative">
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <motion.div 
@@ -39,7 +39,7 @@ export function ReviewsSection() {
               transition={{ delay: idx * 0.05 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-[#1a1a1a] border-white/5 h-full hover:border-primary/20 transition-all duration-300 shadow-xl rounded-2xl overflow-hidden">
+              <Card className="bg-white/5 border-white/5 h-full hover:border-primary/20 transition-all duration-300 shadow-xl rounded-2xl overflow-hidden">
                 <CardContent className="p-6 flex flex-col h-full">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex gap-0.5">
@@ -83,6 +83,6 @@ export function ReviewsSection() {
           </Button>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

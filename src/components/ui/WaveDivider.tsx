@@ -4,35 +4,35 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * Clean Liquid Wave Divider.
- * Removed all glassmorphism blurs and overlays for a minimal, geometric transition.
+ * Refined Liquid Wave Divider.
+ * Features ultra-smooth, rounded organic curves for premium panel transitions.
  */
 
 interface WaveDividerProps {
   direction?: 'up' | 'down';
   className?: string;
+  opacity?: number;
 }
 
-export function WaveDivider({ direction = 'down', className }: WaveDividerProps) {
+export function WaveDivider({ direction = 'down', className, opacity = 0.05 }: WaveDividerProps) {
   const isUp = direction === 'up';
 
   return (
     <div className={cn(
-      "relative w-full h-[60px] md:h-[100px] overflow-hidden z-20 pointer-events-none select-none block",
-      isUp ? "-mt-[30px] md:-mt-[50px]" : "-mb-[30px] md:-mb-[50px]",
+      "relative w-full h-[60px] md:h-[120px] overflow-hidden pointer-events-none select-none",
       className
     )}>
-      {/* Wave Animation Layer */}
       <motion.div
         animate={{
-          x: ["-1%", "1%", "-1%"],
+          x: ["-2%", "2%", "-2%"],
+          scaleY: [1, 1.05, 1]
         }}
         transition={{
-          duration: 15,
+          duration: 20,
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="w-[102%] h-full relative left-[-1%]"
+        className="w-[104%] h-full relative left-[-2%]"
       >
         <svg
           viewBox="0 0 1440 120"
@@ -43,18 +43,20 @@ export function WaveDivider({ direction = 'down', className }: WaveDividerProps)
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Minimal Solid Path - Syncs with deep background #050505 */}
+          {/* Smooth Organic Path */}
           <path
-            d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64L1440,120L0,120Z"
-            fill="#050505"
+            d="M0,64 C240,120 480,20 720,64 C960,108 1200,20 1440,64 L1440,120 L0,120 Z"
+            fill="currentColor"
+            className="text-white/[0.03]"
           />
           
-          {/* Sublte top edge line for depth */}
+          {/* Subtle Accent Line */}
           <path
-            d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64"
+            d="M0,64 C240,120 480,20 720,64 C960,108 1200,20 1440,64"
             fill="none"
-            stroke="rgba(255,255,255,0.05)"
-            strokeWidth="1"
+            stroke="rgba(255,255,255,0.1)"
+            strokeWidth="2"
+            strokeLinecap="round"
           />
         </svg>
       </motion.div>

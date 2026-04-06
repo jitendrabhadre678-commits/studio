@@ -1,4 +1,3 @@
-
 "use client";
 
 import { ShieldCheck, Globe, Zap, Users } from "lucide-react";
@@ -12,8 +11,8 @@ export function TrustBadges() {
   ];
 
   return (
-    <section className="py-12 border-y border-white/5 bg-black/20">
-      <div className="container mx-auto px-4">
+    <div className="py-10 px-4">
+      <div className="container mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {badges.map((badge, idx) => (
             <div key={idx} className="flex items-center gap-4 group">
@@ -28,6 +27,6 @@ export function TrustBadges() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
