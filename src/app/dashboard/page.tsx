@@ -7,28 +7,15 @@ import {
   LayoutDashboard, 
   User, 
   Wallet, 
-  Smartphone,
-  Gamepad2,
-  ArrowUpRight,
   Loader2,
   Home,
   ShieldCheck,
   Users,
-  Clock,
   Zap
 } from 'lucide-react';
 import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogDescription,
-  DialogFooter 
-} from '@/components/ui/dialog';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { TaskHistory } from '@/components/dashboard/TaskHistory';
@@ -40,11 +27,6 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   
-  // Modal States
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
-  const [selectedTaskType, setSelectedTaskType] = useState<'apps' | 'games' | null>(null);
-
   const userRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
@@ -57,16 +39,6 @@ export default function Dashboard() {
       router.push('/');
     }
   }, [user, isUserLoading, router]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const hasStartedTask = sessionStorage.getItem('task_started');
-      if (hasStartedTask) {
-        setIsReturnModalOpen(true);
-        sessionStorage.removeItem('task_started');
-      }
-    }
-  }, []);
 
   if (isUserLoading || !user) {
     return (
@@ -88,40 +60,6 @@ export default function Dashboard() {
     { id: 'profile', label: 'Profile', icon: User, href: '/account-settings' },
   ];
 
-  const offerCards = [
-    {
-      id: 'apps',
-      title: 'Test Apps & Earn Cash',
-      description: 'Get paid to test new mobile applications and share your feedback.',
-      icon: Smartphone,
-      stats: '184+ This Month'
-    },
-    {
-      id: 'games',
-      title: 'Play Games & Earn Cash',
-      description: 'Earn rewards for playing and reaching milestones in top-rated games.',
-      icon: Gamepad2,
-      stats: '472 This Month'
-    }
-  ];
-
-  const handleStartTask = (id: string) => {
-    setSelectedTaskType(id as 'apps' | 'games');
-    setIsTaskModalOpen(true);
-  };
-
-  const handleTaskRedirect = () => {
-    if (!selectedTaskType) return;
-    
-    const links = {
-      apps: "https://gameflashx.space/cl/i/277ood",
-      games: "https://gameflashx.space/cl/i/7jj1vk"
-    };
-
-    sessionStorage.setItem('task_started', 'true');
-    window.location.href = links[selectedTaskType];
-  };
-
   const handleWithdraw = () => {
     if (balance < MIN_WITHDRAWAL) return;
     
@@ -134,6 +72,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-black text-white">
+      {/* Sidebar */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-40 w-64 bg-[#0a0a0a] border-r border-white/5 transition-transform duration-300 lg:translate-x-0 lg:static",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -183,13 +122,14 @@ export default function Dashboard() {
 
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
+          {/* Header */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 animate-in fade-in duration-700">
             <div className="w-full">
               <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-2">
                 Welcome, <span className="text-primary">{username}</span>
               </h1>
               <p className="text-white/60 font-bold uppercase tracking-widest text-sm mb-4">
-                Start completing tasks to unlock your rewards.
+                Monitor your progress and manage your earnings.
               </p>
               <div className="flex items-center gap-3 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
                 Your account is active and secure
@@ -231,52 +171,7 @@ export default function Dashboard() {
             </div>
           </header>
 
-          <section id="offers" className="scroll-mt-10 mb-20">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1.5 bg-primary rounded-full" />
-              <h2 className="text-2xl font-black uppercase tracking-tight">Available Tasks</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {offerCards.map((offer) => (
-                <Card 
-                  className="glass-card border-white/5 bg-[#0a0a0a] hover:border-primary/40 transition-all duration-500 group overflow-hidden rounded-[2rem]"
-                  key={offer.id}
-                >
-                  <CardContent className="p-8 flex flex-col h-full">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 text-primary border border-white/10">
-                        <offer.icon className="w-7 h-7" />
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-1">Activity</p>
-                        <p className="text-lg font-black text-white">
-                          {offer.stats}
-                        </p>
-                      </div>
-                    </div>
-
-                    <h3 className="font-black uppercase tracking-tight mb-3 text-xl">
-                      {offer.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-8">
-                      {offer.description}
-                    </p>
-
-                    <div className="mt-auto">
-                      <Button 
-                        onClick={() => handleStartTask(offer.id)}
-                        className="w-full h-14 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl bg-white/5 hover:bg-primary border border-white/10 hover:border-primary text-white"
-                      >
-                        Start Task <ArrowUpRight className="ml-2 w-5 h-5" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-
+          {/* Activity Section */}
           <section id="history" className="mb-20">
             <div className="flex items-center gap-3 mb-8">
               <div className="h-8 w-1.5 bg-primary rounded-full" />
@@ -284,76 +179,22 @@ export default function Dashboard() {
             </div>
             {firestore && user && <TaskHistory userId={user.uid} firestore={firestore} />}
           </section>
-        </div>
-      </main>
 
-      <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
-          <div className="p-8 md:p-10">
-            <DialogHeader className="mb-8 text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/20">
-                <ShieldCheck className="w-8 h-8 text-primary" />
-              </div>
-              <DialogTitle className="text-3xl font-black text-white uppercase tracking-tight">
-                Partner Offer <span className="text-primary">Available</span>
-              </DialogTitle>
-              <DialogDescription className="text-muted-foreground text-base mt-4 leading-relaxed text-left" asChild>
-                <div>
-                  You are about to access a partner task.
-                  <br /><br />
-                  Complete the app testing or game task to qualify for your reward. 
-                  Your payment will be sent directly to your registered email address.
-                  <br /><br />
-                  <span className="text-white font-bold uppercase tracking-widest text-[10px]">Processing Time:</span>
-                  <ul className="list-disc pl-5 mt-2 space-y-1 text-xs">
-                    <li>Usually within 1 hour after submission</li>
-                    <li>In some cases, it may take 12–24 hours depending on demand</li>
-                  </ul>
-                  <br />
-                  Make sure your Gameflashx email is linked with PayPal to receive payments.
-                  <br /><br />
-                  Thank you for your participation.
-                </div>
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button 
-                onClick={handleTaskRedirect}
-                className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95"
-              >
-                Continue <ArrowUpRight className="ml-2 w-6 h-6" />
-              </Button>
-            </DialogFooter>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isReturnModalOpen} onOpenChange={setIsReturnModalOpen}>
-        <DialogContent className="sm:max-w-[450px] bg-[#0a0a0a] border-white/10 rounded-[2.5rem] p-0 overflow-hidden shadow-2xl">
-          <div className="p-8 md:p-10 text-center">
-            <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-green-500/20">
-              <Clock className="w-8 h-8 text-green-500" />
+          {/* Tips Section */}
+          <div className="p-8 md:p-12 glass-card rounded-[3rem] border-white/5 relative overflow-hidden text-center">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <ShieldCheck className="w-48 h-48 text-primary" />
             </div>
-            <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4">
-              Review in <span className="text-green-500">Progress</span>
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              Your task has been submitted successfully.
-              <br /><br />
-              Your testing review is now in progress.
-              Once verified, your reward will be sent to your registered email. 
-              <br /><br />
-              Thank you.
+            <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tight">Earning Tips</h3>
+            <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed">
+              Invite your friends to the platform using your unique referral link to boost your daily earnings. You earn a bonus for every active user you bring to the community!
             </p>
-            <Button 
-              onClick={() => setIsReturnModalOpen(false)}
-              className="w-full h-14 bg-white/5 hover:bg-white/10 text-white border border-white/10 font-black uppercase tracking-widest rounded-xl transition-all"
-            >
-              Understood
+            <Button asChild className="mt-8 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl px-8 h-12 uppercase font-black text-xs tracking-widest">
+              <Link href="/refer">Go to Refer & Earn</Link>
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </main>
     </div>
   );
 }
