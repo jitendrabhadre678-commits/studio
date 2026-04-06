@@ -1,3 +1,4 @@
+
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
