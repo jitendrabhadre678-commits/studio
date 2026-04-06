@@ -8,8 +8,9 @@ import { Zap, ArrowRight, ShieldCheck, Globe, Lock } from 'lucide-react';
 import Image from 'next/image';
 
 /**
- * @fileOverview Optimized Premium Luxury Hero Section.
- * Features: High-conversion typography, clean glass UI, and subtle side-floating depth.
+ * @fileOverview Cinematic Premium Hero Section.
+ * Features: High-fidelity background with zoom animation, multi-layer overlays, 
+ * and side-floating depth-of-field reward elements.
  */
 
 const SIDE_ICONS = [
@@ -17,8 +18,6 @@ const SIDE_ICONS = [
   { id: 'roblox', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', pos: { top: '65%', left: '85%' }, size: 'w-14', depth: 0.6, opacity: 0.3 },
   { id: 'steam', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463571/3_20260406_134035_0002_rkpbkk.png', pos: { top: '15%', right: '10%' }, size: 'w-18', depth: 0.3, opacity: 0.2, blur: true },
 ];
-
-const MAIN_HERO_LOGO = "https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png";
 
 export function Hero() {
   const mouseX = useMotionValue(0);
@@ -49,16 +48,37 @@ export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center text-white overflow-hidden bg-[#050505] py-20 px-4">
       
-      {/* 1. ATMOSPHERIC BACKGROUND */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-[#050510] to-[#0a0a20]" />
+      {/* 1. CINEMATIC BACKGROUND ARCHITECTURE */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Main Image Layer with Zoom Animation */}
+        <div className="absolute inset-0 scale-105 animate-slow-zoom">
+          <Image 
+            src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775485427/b45e6a18d5c4edf0f2803f39b65c6881_cobc8c.jpg"
+            alt="Cinematic Reward Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        {/* OVERLAY STACK */}
+        {/* a. Global Dark Overlay */}
+        <div className="absolute inset-0 bg-black/65" />
         
-        {/* Centralized Focus Glows */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(0,150,255,0.2)_0%,transparent_60%)] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(255,70,22,0.08)_0%,transparent_70%)] pointer-events-none" />
+        {/* b. Vertical Gradient (Top/Bottom Grounding) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+        
+        {/* c. Center Spotlight Glow (Cyan/Blue) */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,150,255,0.2),transparent_60%)]" />
+        
+        {/* d. Secondary Warm Glow (Orange/Gold) */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,100,0,0.08),transparent_70%)]" />
+
+        {/* e. Selective Edge Blur Mask */}
+        <div className="absolute inset-0 backdrop-blur-[2px] [mask-image:radial-gradient(circle,transparent_40%,black_100%)]" />
       </div>
 
-      {/* 2. SUBTLE SIDE FLOATERS */}
+      {/* 2. SUBTLE SIDE FLOATERS (Depth of Field) */}
       <div className="absolute inset-0 z-10 pointer-events-none select-none hidden lg:block">
         {SIDE_ICONS.map((icon) => (
           <ParallaxIcon key={icon.id} icon={icon} mouseX={smoothX} mouseY={smoothY} />
@@ -73,20 +93,20 @@ export function Hero() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center"
         >
-          {/* Subtle Top Badge - Verified Reward System */}
-          <div className="mb-10 inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl">
-            <ShieldCheck className="w-3.5 h-3.5 text-primary opacity-70" />
-            <span className="text-[10px] font-black text-white/60 tracking-[0.2em] uppercase">Verified Reward System</span>
+          {/* Verified Badge */}
+          <div className="mb-10 inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl opacity-70">
+            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+            <span className="text-[10px] font-black text-white/80 tracking-[0.2em] uppercase">Verified Reward System</span>
           </div>
 
           {/* MAIN HEADING */}
           <div className="space-y-5">
             <h1 className="font-headline text-5xl md:text-8xl font-[900] tracking-tighter uppercase leading-[0.95] text-white">
-              Unlock <span className="bg-gradient-to-r from-[#FA4616] via-[#ff7a00] to-[#0095FF] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(250,70,22,0.2)]">Premium</span> <br />
+              Unlock <span className="bg-gradient-to-r from-[#FA4616] to-[#0095FF] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(250,70,22,0.2)]">Premium</span> <br />
               Rewards <span className="text-white/90">in Minutes</span>
             </h1>
 
-            <p className="text-white/70 text-sm md:text-lg font-medium max-w-lg mx-auto leading-relaxed mt-4">
+            <p className="text-white/70 text-sm md:text-lg font-medium max-w-md mx-auto leading-relaxed mt-4">
               Complete simple steps and unlock real gift cards instantly.
             </p>
 
