@@ -84,6 +84,7 @@
     @apply bg-white/5 backdrop-blur-2xl border border-white/10;
   }
   .glass-card {
+    position: relative;
     background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -91,11 +92,30 @@
     overflow: hidden;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
+  
+  .glass-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    animation: glass-sweep 10s infinite;
+    pointer-events: none;
+  }
+
   .glass-card:hover {
     @media (min-width: 1024px) {
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(255, 255, 255, 0.15);
-      transform: translateY(-8px) scale(1.02);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(250, 70, 22, 0.1);
     }
   }
   
@@ -107,6 +127,12 @@
 @keyframes grid-move {
   0% { transform: translate(0, 0); }
   100% { transform: translate(-80px, 80px); }
+}
+
+@keyframes glass-sweep {
+  0% { left: -100%; }
+  20% { left: 100%; }
+  100% { left: 100%; }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

@@ -39,7 +39,7 @@ export function ReviewsSection() {
               transition={{ delay: idx * 0.05 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-white/5 border-white/5 h-full hover:border-primary/20 transition-all duration-300 shadow-xl rounded-2xl overflow-hidden">
+              <Card className="bg-white/5 border-white/5 h-full hover:border-primary/20 transition-all duration-300 shadow-xl rounded-xl overflow-hidden">
                 <CardContent className="p-6 flex flex-col h-full">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex gap-0.5">
@@ -47,9 +47,9 @@ export function ReviewsSection() {
                         <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                       ))}
                     </div>
-                    <div className="flex items-center gap-1">
-                      <CheckCircle2 className="w-2.5 h-2.5 text-green-500" />
-                      <span className="text-[8px] text-green-500 font-black uppercase tracking-widest">{review.date}</span>
+                    <div className="flex items-center gap-1 text-white/20">
+                      <CheckCircle2 className="w-2.5 h-2.5" />
+                      <span className="text-[8px] font-bold uppercase tracking-widest">{review.date}</span>
                     </div>
                   </div>
 
@@ -63,7 +63,7 @@ export function ReviewsSection() {
                       <span className="text-xs">{review.flag}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-[9px] font-black text-primary uppercase tracking-widest">
+                      <div className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-bold text-white/40 uppercase tracking-widest">
                         {review.value} {review.rewardBrand}
                       </div>
                       <span className="text-[9px] text-white/40 font-bold uppercase tracking-widest">{review.country}</span>

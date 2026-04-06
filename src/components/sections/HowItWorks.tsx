@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview How It Works Section.
- * Content is optimized for the parent glass panel container.
+ * Refined with rounded-xl steps and subtle glass reflection sweep.
  */
 
 const steps = [
@@ -72,11 +72,10 @@ export function HowItWorks() {
               className="relative z-10 flex-1 flex"
             >
               <div className={cn(
-                "w-full p-8 rounded-3xl bg-white/5 border border-white/5",
-                "transition-all duration-500 hover:border-blue-500/30",
+                "w-full p-8 rounded-xl glass-card",
                 "group flex flex-col"
               )}>
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8">
+                <div className="w-16 h-16 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8">
                   {step.icon}
                 </div>
                 

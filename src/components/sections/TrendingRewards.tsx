@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Trending Rewards Section.
- * Content is optimized for the parent glass panel container.
+ * Features sharper rounded-xl cards with animated glass reflections.
  */
 
 export function TrendingRewards() {
@@ -55,7 +55,7 @@ export function TrendingRewards() {
               className={cn(
                 "relative h-full glass-card border-white/10 bg-white/[0.02] hover:bg-white/[0.05]",
                 "hover:border-primary/40 hover:shadow-[0_10px_40px_rgba(250,70,22,0.1)]",
-                "transition-all duration-500 cursor-pointer rounded-2xl overflow-hidden flex flex-col group/card shadow-lg hover:scale-[1.03]"
+                "transition-all duration-500 cursor-pointer rounded-xl overflow-hidden flex flex-col group/card shadow-lg"
               )}
             >
               {/* "FREE" Badge */}
@@ -98,9 +98,9 @@ export function TrendingRewards() {
                     <span className="text-[10px] font-black text-white/20 ml-1.5">5.0</span>
                   </div>
                   
-                  <div className="flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-green-500" />
-                    <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">Verified</span>
+                  <div className="flex items-center gap-1 text-white/20">
+                    <ShieldCheck className="w-3 h-3" />
+                    <span className="text-[8px] font-bold uppercase tracking-widest">Verified</span>
                   </div>
                 </div>
               </CardContent>
