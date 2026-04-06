@@ -1,4 +1,3 @@
-
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -91,13 +90,18 @@ export default {
           from: { transform: 'translateX(-50%)' },
           to: { transform: 'translateX(0)' },
         },
+        'slow-zoom': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        },
         'shine': {
           '0%': { left: '-100%' },
           '100%': { left: '100%' },
         },
-        'beam-shimmer': {
-          '0%, 100%': { opacity: '0.4', transform: 'translateX(-50%) scaleX(1)' },
-          '50%': { opacity: '0.8', transform: 'translateX(-50%) scaleX(1.2)' },
+        'shake': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-5px)' },
+          '75%': { transform: 'translateX(5px)' },
         },
         'float-particle': {
           '0%, 100%': { transform: 'translateY(0) translateX(0)', opacity: '0' },
@@ -119,8 +123,9 @@ export default {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'marquee-left': 'marquee-left 40s linear infinite',
         'marquee-right': 'marquee-right 40s linear infinite',
+        'slow-zoom': 'slow-zoom 20s ease-in-out infinite',
         'shine': 'shine 8s linear infinite',
-        'beam-shimmer': 'beam-shimmer 4s ease-in-out infinite',
+        'shake': 'shake 0.4s ease-in-out',
         'float-particle': 'float-particle 10s linear infinite',
         'data-flow': 'data-flow 3s linear infinite',
       },

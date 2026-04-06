@@ -5,6 +5,8 @@ import {FirebaseClientProvider} from '@/firebase/client-provider';
 import {AuthRedirectListener} from '@/components/auth/AuthRedirectListener';
 import {ReferralTracker} from '@/components/referral/ReferralTracker';
 import {SupportChat} from '@/components/support/SupportChat';
+import {LiveActivity} from '@/components/sections/LiveActivity';
+import {ScrollTriggerPopup} from '@/components/modals/ScrollTriggerPopup';
 
 export const metadata: Metadata = {
   title: 'GameFlashX — Free Gift Cards & Gaming Rewards 2026',
@@ -54,6 +56,8 @@ export default function RootLayout({
           <AuthRedirectListener />
           <ReferralTracker />
           {children}
+          <LiveActivity />
+          <ScrollTriggerPopup />
           <SupportChat />
           <Toaster />
         </FirebaseClientProvider>

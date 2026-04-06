@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -7,9 +6,8 @@ import {
   DialogTitle, DialogTrigger, DialogDescription 
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Wallet, CheckCircle2, Loader2, AlertCircle, ShieldCheck, Clock } from 'lucide-react';
-import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { useFirestore } from '@/firebase';
+import { Wallet, CheckCircle2, Loader2, ShieldCheck, Clock } from 'lucide-react';
+import { useFirestore, updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -17,10 +15,10 @@ import { cn } from '@/lib/utils';
 interface WithdrawalModalProps {
   balance: number;
   userRef: any;
-  walletAddress?: string;
+  paypalEmail?: string;
 }
 
-export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalModalProps) {
+export function WithdrawalModal({ balance, userRef, paypalEmail }: WithdrawalModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -28,8 +26,8 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
   const firestore = useFirestore();
   const { toast } = useToast();
   
-  const MIN_WITHDRAWAL = 10;
-  const canWithdraw = balance >= MIN_WITHDRAWAL && !!walletAddress;
+  const MIN_WITHDRAWAL = 5;
+  const canWithdraw = balance >= MIN_WITHDRAWAL;
 
   const handleWithdraw = async () => {
     if (!canWithdraw || isProcessing || !firestore || !userRef) return;
@@ -37,20 +35,18 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
     setIsProcessing(true);
     
     try {
-      // 1. Create transaction record
       addDocumentNonBlocking(collection(firestore, 'transactions'), {
         userId: userRef.id,
         type: 'withdrawal',
         amount: balance,
-        rewardName: `Crypto Withdrawal`,
+        rewardName: `PayPal Payout`,
         status: 'pending',
-        walletAddress: walletAddress,
+        paypalEmail: paypalEmail,
         createdAt: serverTimestamp()
       });
 
-      // 2. Deduct balance immediately
       updateDocumentNonBlocking(userRef, {
-        balance: 0,
+        availableBalance: 0,
         updatedAt: serverTimestamp()
       });
 
@@ -70,7 +66,6 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
     <Dialog open={isOpen} onOpenChange={(v) => {
       setIsOpen(v);
       if (!v) {
-        // Reset state after closing if it was successful
         setTimeout(() => setIsSuccess(false), 300);
       }
     }}>
@@ -81,7 +76,7 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
             className={cn(
               "h-12 px-8 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-xl",
               canWithdraw 
-                ? "bg-primary hover:bg-primary/90 text-white shadow-primary/20" 
+                ? "bg-primary hover:bg-primary/90 text-white shadow-primary/40" 
                 : "bg-white/5 border border-white/10 text-white/20 cursor-not-allowed"
             )}
           >
@@ -89,7 +84,7 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
           </Button>
           {!canWithdraw && (
             <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">
-              {!walletAddress ? "Connect wallet to withdraw" : `Min. withdrawal $${MIN_WITHDRAWAL.toFixed(2)}`}
+              Min. withdrawal $5.00
             </span>
           )}
         </div>
@@ -117,9 +112,9 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
                     <span className="text-xl font-black text-white">${balance.toFixed(2)}</span>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Destination Wallet</span>
+                    <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">PayPal Destination</span>
                     <p className="text-xs font-mono text-primary break-all bg-primary/5 p-3 rounded-lg border border-primary/10">
-                      {walletAddress}
+                      {paypalEmail}
                     </p>
                   </div>
                 </div>
@@ -156,7 +151,7 @@ export function WithdrawalModal({ balance, userRef, walletAddress }: WithdrawalM
                </div>
                <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tight">Request Sent!</h3>
                <p className="text-muted-foreground mb-10 leading-relaxed">
-                 Your withdrawal of <span className="text-white font-bold">${balance.toFixed(2)}</span> is being processed. You can track the status in your activity log.
+                 Your withdrawal of <span className="text-white font-bold">${balance.toFixed(2)}</span> is being processed.
                </p>
                <Button onClick={() => setIsOpen(false)} className="w-full bg-white text-black hover:bg-white/90 font-black h-14 rounded-xl uppercase tracking-widest">
                  Back to Dashboard

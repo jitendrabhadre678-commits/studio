@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
-import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { useFirestore } from '@/firebase';
+import { useFirestore, updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp, increment } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -19,7 +18,6 @@ export function DailyBonus({ userRef, userData }: { userRef: any, userData: any 
     setMounted(true);
   }, []);
 
-  // Prevent hydration mismatch by not rendering time-dependent UI until mounted
   if (!mounted || !userData) {
     return <div className="h-12 w-48 bg-white/5 rounded-xl animate-pulse" />;
   }
@@ -29,7 +27,6 @@ export function DailyBonus({ userRef, userData }: { userRef: any, userData: any 
   const isAvailable = !lastLogin || lastLogin.toDateString() !== today.toDateString();
   const streak = userData?.loginStreak || 0;
   
-  // Bonus scales with streak: $0.05, $0.10, $0.15, capped at $0.25
   const bonusAmount = Math.min(0.05 + (streak * 0.05), 0.25);
 
   const handleClaim = async () => {
@@ -38,7 +35,6 @@ export function DailyBonus({ userRef, userData }: { userRef: any, userData: any 
     setIsClaiming(true);
     
     try {
-      // 1. Create transaction
       addDocumentNonBlocking(collection(firestore, 'transactions'), {
         userId: userData.id,
         type: 'daily_bonus',
@@ -47,12 +43,11 @@ export function DailyBonus({ userRef, userData }: { userRef: any, userData: any 
         createdAt: serverTimestamp()
       });
 
-      // 2. Update user
       const isConsecutive = lastLogin && 
         new Date(lastLogin.getTime() + 86400000).toDateString() === today.toDateString();
       
       updateDocumentNonBlocking(userRef, {
-        balance: increment(bonusAmount),
+        availableBalance: increment(bonusAmount),
         totalEarnings: increment(bonusAmount),
         lastLoginAt: serverTimestamp(),
         loginStreak: isConsecutive ? increment(1) : 1

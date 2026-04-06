@@ -11,8 +11,7 @@ import {
   DialogTitle, 
   DialogDescription 
 } from '@/components/ui/dialog';
-import { updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { useFirestore } from '@/firebase';
+import { useFirestore, updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp, increment } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -108,7 +107,7 @@ export function SpinWheel({ userRef, userData }: { userRef: any, userData: any }
       });
 
       updateDocumentNonBlocking(userRef, {
-        balance: increment(value),
+        availableBalance: increment(value),
         totalEarnings: increment(value),
         lastSpinAt: serverTimestamp()
       });
