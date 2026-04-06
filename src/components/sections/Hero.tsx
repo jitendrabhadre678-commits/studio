@@ -3,48 +3,42 @@
 import { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Zap, ArrowRight, ShieldCheck, Globe, Lock } from 'lucide-react';
+import { Zap, ArrowRight, ShieldCheck, Globe, Lock, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Cinematic Premium Hero Section.
- * Enhanced with 3D liquid glass nodes containing specialized infrastructure icons.
+ * @fileOverview Ultra-Premium 3D Glass Hero Section.
+ * Features realistic glass text, orbiting liquid nodes, and a luxury blue spotlight design.
  */
-
-const SIDE_ICONS = [
-  { id: 'amazon', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png', pos: { top: '25%', left: '5%' }, size: 'w-12', depth: 0.4, opacity: 0.3, blur: true },
-  { id: 'roblox', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', pos: { top: '65%', left: '90%' }, size: 'w-10', depth: 0.6, opacity: 0.2 },
-  { id: 'steam', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463571/3_20260406_134035_0002_rkpbkk.png', pos: { top: '15%', right: '5%' }, size: 'w-14', depth: 0.3, opacity: 0.1, blur: true },
-];
 
 const SPECIAL_NODES = [
   { 
     id: 'security', 
     url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487684/Untitled_design_20260406_202944_0000_uw8yuv.png',
-    pos: 'top-[12%] left-[8%] md:top-[18%] md:left-[12%]',
+    pos: 'top-[-15%] left-[5%] md:top-[-25%] md:left-[10%]',
     delay: 0,
     scale: 1
   },
   { 
     id: 'dollar', 
     url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487682/Untitled_design_20260406_202119_0000_zlzp6a.png',
-    pos: 'top-[12%] right-[8%] md:top-[18%] md:right-[12%]',
-    delay: 1.2,
+    pos: 'top-[-15%] right-[5%] md:top-[-25%] md:right-[10%]',
+    delay: 1.5,
     scale: 0.95
   },
   { 
     id: 'gift', 
     url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487685/Untitled_design_20260406_202010_0000_m9gses.png',
-    pos: 'bottom-[12%] left-[8%] md:bottom-[18%] md:left-[12%]',
-    delay: 2.4,
+    pos: 'bottom-[-15%] left-[5%] md:bottom-[-25%] md:left-[10%]',
+    delay: 3,
     scale: 1.05
   },
   { 
     id: 'timer', 
     url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487688/Untitled_design_20260406_202607_0000_ekztnc.png',
-    pos: 'bottom-[12%] right-[8%] md:bottom-[18%] md:right-[12%]',
-    delay: 3.6,
+    pos: 'bottom-[-15%] right-[5%] md:bottom-[-25%] md:right-[10%]',
+    delay: 4.5,
     scale: 0.9
   }
 ];
@@ -78,168 +72,158 @@ export function Hero() {
   return (
     <section className="relative min-h-[95vh] flex items-center justify-center text-white overflow-hidden bg-[#050505] py-20 px-4">
       
-      {/* 1. CINEMATIC BACKGROUND ARCHITECTURE */}
+      {/* 1. CINEMATIC BACKGROUND IMAGE & GRADIENTS */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 scale-105 animate-slow-zoom">
+        <div className="absolute inset-0 scale-105 animate-slow-zoom opacity-40">
           <Image 
             src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775485427/b45e6a18d5c4edf0f2803f39b65c6881_cobc8c.jpg"
-            alt="Cinematic Reward Background"
+            alt="Cinematic Background"
             fill
             className="object-cover"
             priority
           />
         </div>
-        <div className="absolute inset-0 bg-black/65" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,150,255,0.2),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,100,0,0.08),transparent_70%)]" />
-        <div className="absolute inset-0 backdrop-blur-[2px] [mask-image:radial-gradient(circle,transparent_40%,black_100%)]" />
+        
+        {/* Core Luxury Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#050505] via-[#020617] to-black" />
+        
+        {/* Primary Blue Spotlight Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,150,255,0.25)_0%,transparent_65%)]" />
+        
+        {/* Particle/Noise Texture Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        
+        {/* Edge Softening */}
+        <div className="absolute inset-0 backdrop-blur-[1px] [mask-image:radial-gradient(circle,transparent_50%,black_100%)]" />
       </div>
 
-      {/* 2. SUBTLE SIDE FLOATERS (Depth of Field) */}
-      <div className="absolute inset-0 z-10 pointer-events-none select-none hidden lg:block">
-        {SIDE_ICONS.map((icon) => (
-          <ParallaxIcon key={icon.id} icon={icon} mouseX={smoothX} mouseY={smoothY} />
-        ))}
-      </div>
+      {/* 2. CORE CONTENT HUB */}
+      <div className="relative z-30 w-full max-w-5xl px-4">
+        
+        {/* HEADING & ORBITING NODES WRAPPER */}
+        <div className="relative mb-12">
+          
+          {/* ORBITING 3D GLASS NODES */}
+          <div className="absolute inset-0 z-20 pointer-events-none">
+            {SPECIAL_NODES.map((node) => (
+              <motion.div
+                key={node.id}
+                style={{ 
+                  x: useTransform(smoothX, [-1, 1], [-30, 30]),
+                  y: useTransform(smoothY, [-1, 1], [-30, 30])
+                }}
+                className={cn("absolute flex items-center justify-center", node.pos)}
+              >
+                <motion.div
+                  animate={{
+                    y: [0, -12, 0],
+                    rotate: [-3, 3, -3],
+                    scale: [node.scale, node.scale * 1.02, node.scale]
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: node.delay
+                  }}
+                  className="relative group"
+                >
+                  {/* Liquid Glass Container */}
+                  <div className={cn(
+                    "relative w-20 h-20 md:w-28 md:h-28 rounded-2xl md:rounded-3xl bg-white/[0.03] backdrop-blur-3xl border border-white/10 flex items-center justify-center p-5 md:p-7",
+                    "shadow-[inset_0_0_20px_rgba(255,255,255,0.05),0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(0,150,255,0.15)]",
+                    "animate-pulse-glow"
+                  )}>
+                    
+                    {/* Diagonal Shine Overlay */}
+                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-30 pointer-events-none" />
+                    
+                    {/* Outer Blue-White Glow */}
+                    <div className="absolute -inset-1 rounded-3xl bg-blue-500/5 blur-lg pointer-events-none" />
 
-      {/* 3. SPECIALIZED 3D LIQUID GLASS NODES */}
-      <div className="absolute inset-0 z-20 pointer-events-none select-none overflow-hidden">
-        {SPECIAL_NODES.map((node) => (
-          <motion.div
-            key={node.id}
-            style={{ 
-              x: useTransform(smoothX, [-1, 1], [-25, 25]),
-              y: useTransform(smoothY, [-1, 1], [-25, 25])
-            }}
-            className={cn("absolute flex items-center justify-center z-20", node.pos)}
-          >
-            <motion.div
-              animate={{
-                y: [0, -15, 0],
-                rotate: [-2, 2, -2],
-                scale: [node.scale, node.scale * 1.03, node.scale]
-              }}
-              transition={{
-                duration: 7,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: node.delay
-              }}
-              className="relative"
-            >
-              {/* Liquid Glass Container */}
-              <div className={cn(
-                "relative w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center p-6",
-                "shadow-[inset_0_0_25px_rgba(255,255,255,0.05),0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(0,150,255,0.1)]",
-                "opacity-80 md:opacity-100"
-              )}>
-                
-                {/* Specular Highlight */}
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/25 via-transparent to-transparent opacity-40 pointer-events-none" />
-                
-                {/* Outer Glow */}
-                <div className="absolute -inset-1 rounded-3xl bg-white/5 blur-md pointer-events-none" />
+                    {/* Icon Content */}
+                    <div className="relative z-10 w-full h-full">
+                      <Image 
+                        src={node.url}
+                        alt={node.id}
+                        fill
+                        className="object-contain drop-shadow-[0_0_20px_rgba(0,150,255,0.5)]"
+                      />
+                    </div>
 
-                {/* Icon Container */}
-                <div className="relative z-10 w-full h-full">
-                  <Image 
-                    src={node.url}
-                    alt={node.id}
-                    fill
-                    className="object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]"
-                  />
-                </div>
-
-                {/* Internal Refraction Glow */}
-                <div className="absolute inset-6 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
-              </div>
-            </motion.div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* 4. CORE CONTENT HUB */}
-      <div className="relative z-30 w-full max-w-4xl px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center"
-        >
-          <div className="mb-10 inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl opacity-70">
-            <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[10px] font-black text-white/80 tracking-[0.2em] uppercase">Verified Reward System</span>
+                    {/* Internal Depth Glow */}
+                    <div className="absolute inset-4 rounded-full bg-blue-400/5 blur-xl pointer-events-none" />
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
           </div>
 
-          <div className="space-y-5">
-            <h1 className="font-headline text-5xl md:text-8xl font-[900] tracking-tighter uppercase leading-[0.95] text-white">
-              Unlock <span className="bg-gradient-to-r from-[#FA4616] to-[#0095FF] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(250,70,22,0.2)]">Premium</span> <br />
-              Rewards <span className="text-white/90">in Minutes</span>
+          {/* MAIN HEADING - 3D GLASS STYLE */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center relative z-10"
+          >
+            <div className="mb-8 inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl bg-blue-500/5 border border-blue-500/10 backdrop-blur-xl shadow-2xl">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+              <span className="text-[10px] font-black text-blue-200/60 tracking-[0.2em] uppercase">Verified Reward Node</span>
+            </div>
+
+            <h1 className="font-headline text-5xl md:text-8xl font-[900] tracking-tighter uppercase leading-[0.9] text-white">
+              Unlock <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-400 drop-shadow-[0_0_35px_rgba(0,150,255,0.7)] filter">
+                Premium Rewards
+              </span> <br />
+              <span className="text-white/90">in Minutes</span>
             </h1>
 
-            <p className="text-white/70 text-sm md:text-lg font-medium max-w-md mx-auto leading-relaxed mt-4">
-              Complete simple steps and unlock real gift cards instantly.
+            <p className="text-white/50 text-sm md:text-lg font-medium max-w-md mx-auto leading-relaxed mt-8">
+              Complete simple steps, engage with verified partners, and unlock real gift cards instantly.
             </p>
+          </motion.div>
+        </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-10">
-              <Button 
-                onClick={() => scrollTo('trending')}
-                className="w-full sm:w-auto h-16 px-12 bg-gradient-to-r from-[#FA4616] to-[#E3191E] text-white font-black uppercase tracking-[0.2em] text-sm rounded-xl shadow-[0_15px_40px_rgba(250,70,22,0.35)] transition-all hover:scale-105 active:scale-95 group border-none"
-              >
-                Get Started ⚡
-              </Button>
+        {/* BUTTONS SECTION */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-16"
+        >
+          <Button 
+            onClick={() => scrollTo('trending')}
+            className="w-full sm:w-auto h-16 px-12 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-black uppercase tracking-[0.2em] text-sm rounded-xl shadow-[0_15px_40px_rgba(0,150,255,0.35)] transition-all hover:scale-105 active:scale-95 group border-none"
+          >
+            Get Started ⚡
+          </Button>
 
-              <button 
-                onClick={() => scrollTo('trending')}
-                className="w-full sm:w-auto h-16 px-10 rounded-xl border border-white/20 bg-white/5 backdrop-blur-xl text-[11px] font-black text-white/80 uppercase tracking-[0.2em] transition-all hover:bg-white/10 hover:border-white/30 active:scale-95"
-              >
-                Explore Gift Cards ↓
-              </button>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pt-16 mt-12 border-t border-white/5">
-              <div className="flex items-center gap-2">🔒 Verified Secure</div>
-              <div className="flex items-center gap-2">⚡ Instant Delivery</div>
-              <div className="flex items-center gap-2">🌍 Global Access</div>
-            </div>
-          </div>
+          <button 
+            onClick={() => scrollTo('trending')}
+            className="w-full sm:w-auto h-16 px-10 rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl text-[11px] font-black text-white/60 uppercase tracking-[0.2em] transition-all hover:bg-white/10 hover:border-white/30 active:scale-95"
+          >
+            Explore Gift Cards ↓
+          </button>
         </motion.div>
+
+        {/* TRUST INDICATORS BASEBAR */}
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mt-24 pt-10 border-t border-white/5">
+          <div className="flex items-center gap-2"><Lock className="w-3.5 h-3.5" /> Verified SSL</div>
+          <div className="flex items-center gap-2"><Zap className="w-3.5 h-3.5" /> Instant Codes</div>
+          <div className="flex items-center gap-2"><Globe className="w-3.5 h-3.5" /> Global Access</div>
+        </div>
+      </div>
+
+      {/* SUBTLE BACKGROUND FLOATERS (FAR DEPTH) */}
+      <div className="absolute inset-0 z-10 pointer-events-none select-none opacity-20 hidden lg:block">
+        <div className="absolute top-[20%] left-[5%] w-12 animate-float blur-[2px]">
+          <Image src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png" alt="bg" width={100} height={100} className="object-contain" />
+        </div>
+        <div className="absolute bottom-[20%] right-[5%] w-14 animate-float blur-[3px]" style={{ animationDelay: '2s' }}>
+          <Image src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463571/3_20260406_134035_0002_rkpbkk.png" alt="bg" width={100} height={100} className="object-contain" />
+        </div>
       </div>
     </section>
-  );
-}
-
-function ParallaxIcon({ icon, mouseX, mouseY }: { icon: any, mouseX: any, mouseY: any }) {
-  const x = useTransform(mouseX, [-1, 1], [icon.depth * -40, icon.depth * 40]);
-  const y = useTransform(mouseY, [-1, 1], [icon.depth * -40, icon.depth * 40]);
-
-  return (
-    <motion.div
-      style={{ 
-        top: icon.pos.top, 
-        left: icon.pos.left,
-        right: icon.pos.right,
-        x, 
-        y, 
-        zIndex: 10,
-        opacity: icon.opacity
-      }}
-      className={cn("absolute transform -translate-x-1/2 -translate-y-1/2", icon.blur ? 'blur-[3px]' : '')}
-    >
-      <motion.div
-        animate={{ y: [0, -15, 0] }}
-        transition={{ duration: 6 + Math.random() * 4, repeat: Infinity, ease: "easeInOut" }}
-        className={icon.size}
-      >
-        <Image 
-          src={icon.url} 
-          alt={icon.id} 
-          width={120} 
-          height={120} 
-          className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]" 
-        />
-      </motion.div>
-    </motion.div>
   );
 }
