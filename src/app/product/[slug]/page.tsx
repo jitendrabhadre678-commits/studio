@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { giftCards } from '@/lib/gift-cards';
@@ -7,10 +6,11 @@ import { Zap, ShieldCheck, Clock, Globe, Shield, Star, CheckCircle2 } from 'luci
 import { InteractiveCouponCard } from '@/components/reward/InteractiveCouponCard';
 import { SupportTrigger } from '@/components/support/SupportTrigger';
 import { Metadata } from 'next';
+import Image from 'next/image';
 
 /**
  * @fileOverview Individual Product Detail Page.
- * Optimized for high conversion and trust.
+ * Updated with premium logo visuals and brand-specific glows.
  */
 
 export async function generateStaticParams() {
@@ -37,7 +37,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   if (!card) return <div className="min-h-screen flex items-center justify-center text-white font-black text-4xl">404 - REWARD NOT FOUND</div>;
   
-  // Use the AI flow to generate a description for the specific card with a safety fallback
   let displayDescription = card.description;
   try {
     const aiDescription = await generateGiftCardDescription({
@@ -63,17 +62,35 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           {/* Hero Content Section */}
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
             <div className="relative animate-fade-in-up">
-              <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
-              
-              {/* Premium Gradient Card Visual */}
               <div 
-                className="relative glass-card aspect-[16/10] rounded-[2rem] overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group"
-                style={{ background: card.gradient }}
+                className="absolute inset-0 blur-[120px] rounded-full opacity-30" 
+                style={{ background: card.glowColor || '#FA4616' }}
+              />
+              
+              {/* Premium Logo Visual Container */}
+              <div 
+                className="relative glass-card aspect-[16/10] rounded-2xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group bg-[#0a0a0a]"
               >
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700" />
-                <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_30px_rgba(255,255,255,0.4)] px-8 leading-none">
-                  {card.brand}
-                </span>
+                <div 
+                  className="absolute inset-0 opacity-20 blur-3xl"
+                  style={{ background: `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` }}
+                />
+                
+                {card.logoUrl ? (
+                  <div className="relative z-10 w-32 md:w-48 h-32 md:h-48 transition-transform duration-700 group-hover:scale-110">
+                    <Image 
+                      src={card.logoUrl}
+                      alt={card.brand}
+                      fill
+                      className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                      priority
+                    />
+                  </div>
+                ) : (
+                  <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_30px_rgba(255,255,255,0.4)] px-8 leading-none">
+                    {card.brand}
+                  </span>
+                )}
                 
                 <div className="absolute bottom-8 right-8 bg-primary/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-white/20 animate-float hidden md:block">
                   <span className="text-xl font-headline font-black text-white uppercase tracking-tighter">
@@ -115,7 +132,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 Unlock Your <br /><span className="text-primary text-glow">{card.brand}</span> Code
               </h1>
               
-              <div className="glass-card p-8 rounded-3xl mb-10 border-white/10 relative overflow-hidden group">
+              <div className="glass-card p-8 rounded-2xl mb-10 border-white/10 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                    <Zap className="w-32 h-32" />
                 </div>

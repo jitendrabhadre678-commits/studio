@@ -17,6 +17,11 @@ import { giftCards } from "@/lib/gift-cards";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+/**
+ * @fileOverview Premium Featured Rewards Carousel.
+ * Uses high-fidelity logos and brand-specific glows for maximum impact.
+ */
+
 export function FeaturedRewards() {
   const [api, setApi] = useState<CarouselApi>();
   const router = useRouter();
@@ -31,8 +36,6 @@ export function FeaturedRewards() {
 
     return () => clearInterval(intervalId);
   }, [api]);
-
-  const flags = ["🇺🇸", "🇬🇧", "🇨🇦", "🇦🇺", "🇳🇿", "🇫🇷", "🇮🇹", "🇲🇦"];
 
   const handleCardClick = (slug: string) => {
     router.push(`/product/${slug}`);
@@ -56,19 +59,10 @@ export function FeaturedRewards() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-headline text-4xl md:text-6xl font-black text-white leading-tight"
+            className="font-headline text-4xl md:text-6xl font-black text-white leading-tight uppercase tracking-tight"
           >
-            🔥 Most Popular <span className="text-primary text-glow-pomegranate">Gift Cards</span>
+            🔥 Most Popular <span className="text-primary">Rewards</span>
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto"
-          >
-            Join thousands of users unlocking these premium rewards daily. Global support and instant delivery guaranteed.
-          </motion.p>
         </div>
 
         <div className="relative max-w-7xl mx-auto">
@@ -88,77 +82,52 @@ export function FeaturedRewards() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}
                     onClick={() => handleCardClick(card.slug)}
-                    className="rounded-2xl p-6 border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/10 hover:scale-[1.03] overflow-hidden cursor-pointer"
-                    style={{ 
-                      background: 'linear-gradient(145deg, rgba(26,26,26,0.8), rgba(17,17,17,0.9))'
-                    }}
+                    className="rounded-2xl border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/20 hover:scale-[1.03] overflow-hidden cursor-pointer"
                   >
-                    {/* Unique Gradient Background Banner with Logo */}
-                    <div 
-                      className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-6 shadow-xl border border-white/5 flex items-center justify-center p-4 transition-transform duration-700 group-hover/card:scale-[1.05]"
-                      style={{ background: card.gradient }}
-                    >
-                      <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
-                      
+                    {/* Visual Container */}
+                    <div className="relative aspect-[16/10] w-full flex items-center justify-center p-8 bg-white/[0.03] overflow-hidden">
                       {/* Brand-Specific Glow */}
                       <div 
-                        className="absolute inset-0 opacity-20 blur-xl"
-                        style={{ background: `radial-gradient(circle, ${card.glowColor || '#ffffff'}44, transparent 70%)` }}
+                        className="absolute inset-0 opacity-30 blur-2xl transition-opacity group-hover/card:opacity-50"
+                        style={{ background: `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` }}
                       />
 
                       {card.logoUrl ? (
-                        <div className="relative z-10 w-20 h-20">
+                        <div className="relative z-10 w-24 h-24 transition-transform duration-700 group-hover/card:scale-110">
                           <Image 
                             src={card.logoUrl}
                             alt={card.brand}
                             fill
-                            className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                            className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                             data-ai-hint="reward logo"
                           />
                         </div>
                       ) : (
-                        <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_25px_rgba(255,255,255,0.5)] px-4 leading-none select-none">
+                        <span className="relative z-10 font-headline font-black text-white text-3xl uppercase tracking-tighter text-center select-none">
                           {card.brand}
                         </span>
                       )}
-
-                      <div className="absolute bottom-3 left-3 flex gap-1 z-10">
-                        {flags.slice(0, 4).map((f, i) => (
-                          <span key={i} className="text-sm drop-shadow-md">{f}</span>
-                        ))}
-                      </div>
                     </div>
 
-                    <div className="flex-grow px-2">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-1">
-                            {card.category} Reward
-                          </p>
-                          <h3 className="text-2xl font-black text-white group-hover/card:text-primary transition-colors">{card.brand}</h3>
-                        </div>
-                        <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover/card:border-primary/50 transition-colors shrink-0">
-                          <Zap className="w-5 h-5 text-primary" />
-                        </div>
-                      </div>
+                    <div className="p-6 md:p-8 flex flex-col flex-grow bg-[#0a0a0a]/60 backdrop-blur-md border-t border-white/5">
+                      <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-2">
+                        {card.category} Reward
+                      </p>
+                      <h3 className="text-2xl font-black text-white mb-6 group-hover/card:text-primary transition-colors truncate">
+                        {card.brand}
+                      </h3>
 
-                      <div className="grid grid-cols-2 gap-2 mb-8">
-                        {card.values.map((val) => (
+                      <div className="grid grid-cols-2 gap-2 mt-auto">
+                        {card.values.slice(0, 2).map((val) => (
                           <div
                             key={val}
-                            className="bg-white/5 border border-white/10 rounded-lg py-2.5 text-center text-xs font-black text-white/80"
+                            className="bg-white/5 border border-white/10 rounded-lg py-2 text-center text-[10px] font-black text-white/60 uppercase tracking-widest"
                           >
                             {val}
                           </div>
                         ))}
                       </div>
                     </div>
-
-                    <Button 
-                      className="relative w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-primary/20 pointer-events-none"
-                    >
-                      View Details <ChevronRight className="ml-2 w-4 h-4" />
-                    </Button>
                   </motion.div>
                 </CarouselItem>
               ))}
