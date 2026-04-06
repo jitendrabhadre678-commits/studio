@@ -3,13 +3,14 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Zap, ShieldCheck, Globe, ArrowRight, Sparkles } from 'lucide-react';
+import { Zap, ShieldCheck, Globe, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 /**
- * @fileOverview Premium SaaS-Inspired Dark Hero Section with Side Vault Panels.
+ * @fileOverview Premium SaaS-Inspired Dark Hero Section with Cinematic Background.
  * Features a centered glass container flanked by vertical display columns 
- * containing floating gift card PNGs for enhanced depth.
+ * and a high-fidelity background image with atmospheric glows.
  */
 
 const LEFT_PANEL_LOGOS = [
@@ -29,6 +30,8 @@ const RIGHT_PANEL_LOGOS = [
 ];
 
 export function Hero() {
+  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl || '';
+
   const scrollTo = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -39,16 +42,30 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden bg-[#000000] py-20 md:py-0">
       
-      {/* ATMOSPHERIC BACKGROUND */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-[#050505] to-black" />
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] opacity-50" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] opacity-50" />
+      {/* CINEMATIC BACKGROUND IMAGE LAYER */}
+      <div className="absolute inset-0 z-0 select-none">
+        <Image 
+          src={heroImage} 
+          alt="Premium Gaming Setup" 
+          fill 
+          priority
+          className="object-cover object-center scale-[1.02] blur-[1px] opacity-80"
+          data-ai-hint="gaming setup"
+        />
+        
+        {/* ATMOSPHERIC OVERLAYS */}
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-40" />
+        
+        {/* CENTERED RADIANCE GLOWS */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(250,70,22,0.12)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle,rgba(37,99,235,0.04)_0%,transparent_60%)] pointer-events-none" />
       </div>
 
       {/* SIDE VAULT PANELS (DESKTOP) */}
       <div className="hidden xl:flex absolute inset-y-0 left-10 items-center z-10 pointer-events-none">
-        <div className="w-32 h-[70vh] bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl flex flex-col items-center justify-around p-6 shadow-2xl relative overflow-hidden">
+        <div className="w-32 h-[70vh] bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2rem] flex flex-col items-center justify-around p-6 shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5" />
           {LEFT_PANEL_LOGOS.map((logo) => (
             <div 
@@ -66,7 +83,7 @@ export function Hero() {
       </div>
 
       <div className="hidden xl:flex absolute inset-y-0 right-10 items-center z-10 pointer-events-none">
-        <div className="w-32 h-[70vh] bg-white/5 backdrop-blur-3xl border border-white/10 rounded-2xl flex flex-col items-center justify-around p-6 shadow-2xl relative overflow-hidden">
+        <div className="w-32 h-[70vh] bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2rem] flex flex-col items-center justify-around p-6 shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-blue-500/5" />
           {RIGHT_PANEL_LOGOS.map((logo) => (
             <div 
@@ -90,7 +107,7 @@ export function Hero() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="glass-card rounded-2xl p-8 md:p-16 shadow-[0_0_80px_rgba(0,0,0,0.6)] text-center relative overflow-hidden bg-white/[0.03] backdrop-blur-[40px] border-white/10">
+          <div className="glass-card rounded-[2.5rem] p-8 md:p-16 shadow-[0_0_80px_rgba(0,0,0,0.6)] text-center relative overflow-hidden bg-white/[0.03] backdrop-blur-[40px] border-white/10">
             
             {/* Top Badge */}
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 shadow-inner">
