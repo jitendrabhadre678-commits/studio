@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -113,6 +114,11 @@ export default {
           '5%': { opacity: '1' },
           '95%': { opacity: '1' },
           '100%': { transform: 'translateX(1000%)', opacity: '0' },
+        },
+        'glass-sweep': {
+          '0%': { left: '-100%' },
+          '20%': { left: '100%' },
+          '100%': { left: '100%' },
         }
       },
       animation: {
@@ -128,6 +134,7 @@ export default {
         'shake': 'shake 0.4s ease-in-out',
         'float-particle': 'float-particle 10s linear infinite',
         'data-flow': 'data-flow 3s linear infinite',
+        'glass-sweep': 'glass-sweep 10s infinite',
       },
     },
   },
