@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
+import { TrendingRewards } from '@/components/sections/TrendingRewards';
 import { HowItWorks } from '@/components/sections/HowItWorks';
 import { ReviewsSection } from '@/components/sections/ReviewsSection';
 import { FAQ } from '@/components/sections/FAQ';
@@ -12,7 +13,7 @@ import { FloatingShowcase } from '@/components/sections/FloatingShowcase';
 
 /**
  * @fileOverview Refined Homepage with Liquid Transitions.
- * Optimized layout after removing the rewards gallery to focus on platform trust and workflow.
+ * Restored the rewards catalog hub to maintain the primary conversion loop.
  */
 
 export default function Home() {
@@ -25,14 +26,23 @@ export default function Home() {
         <Hero />
       </div>
       
-      {/* 2. Trust & Credibility Panel - Direct transition from Hero */}
-      <section className="container mx-auto px-4 mt-8 mb-12 relative z-10">
+      {/* 2. Rewards Catalog Panel - Overlap with Hero */}
+      <section className="container mx-auto px-4 mt-[-60px] relative z-20">
+        <div className="glass-card rounded-[2.5rem] border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+          <WaveDivider direction="down" className="opacity-10" />
+          <TrendingRewards />
+          <WaveDivider direction="up" className="opacity-10" />
+        </div>
+      </section>
+
+      {/* 3. Trust & Credibility Panel */}
+      <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
           <TrustBadges />
         </div>
       </section>
 
-      {/* 3. Workflow Panel */}
+      {/* 4. Workflow Panel */}
       <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
           <WaveDivider direction="up" className="opacity-30" />
@@ -41,14 +51,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Social Proof Panel */}
+      {/* 5. Social Proof Panel */}
       <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
           <ReviewsSection />
         </div>
       </section>
 
-      {/* 5. Community Panel */}
+      {/* 6. Community Panel */}
       <section className="container mx-auto px-4 my-12 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
           <CommunityHub />
@@ -56,10 +66,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Floating Showcase - Kinetic Visual Anchor */}
+      {/* 7. Floating Showcase - Kinetic Visual Anchor */}
       <FloatingShowcase />
 
-      {/* 7. FAQ Panel */}
+      {/* 8. FAQ Panel */}
       <section className="container mx-auto px-4 mt-12 mb-24 relative z-10">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl p-4 bg-white/[0.03] backdrop-blur-xl">
           <FAQ />
