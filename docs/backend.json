@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -43,6 +44,11 @@
         "totalReferrals": {
           "type": "number",
           "description": "The total count of other users who have successfully signed up using this user's unique referral code."
+        },
+        "claimedOffers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of unique offer IDs already claimed by the user to prevent duplicates."
         },
         "createdAt": {
           "type": "string",
