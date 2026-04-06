@@ -1,10 +1,11 @@
+
 'use client';
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Premium Footer Wave Divider.
+ * Premium Footer Wave Divider.
  * Features deep organic SVG curves, backdrop blurs, and localized glow.
  */
 
@@ -32,7 +33,6 @@ export function FooterWave({ className }: { className?: string }) {
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Subtle Glow Layer */}
           <defs>
             <radialGradient id="footer-glow" cx="50%" cy="100%" r="50%">
               <stop offset="0%" stopColor="rgba(250, 70, 22, 0.08)" />
@@ -40,13 +40,11 @@ export function FooterWave({ className }: { className?: string }) {
             </radialGradient>
           </defs>
 
-          {/* Main Dark Fill Path (Seamless connection to footer) */}
           <path
             d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,42.7C840,32,960,32,1080,42.7C1200,53,1320,75,1380,85.3L1440,96L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
             className="fill-[#050505]"
           />
           
-          {/* Edge Highlight (Glass look) */}
           <path
             d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,42.7C840,32,960,32,1080,42.7C1200,53,1320,75,1380,85.3L1440,96"
             fill="none"
@@ -55,12 +53,10 @@ export function FooterWave({ className }: { className?: string }) {
             strokeLinecap="round"
           />
 
-          {/* Glow Overlay */}
           <rect width="100%" height="100%" fill="url(#footer-glow)" opacity="0.5" />
         </svg>
       </motion.div>
 
-      {/* Atmospheric Blur Fade */}
       <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-transparent to-black/20 backdrop-blur-[2px] pointer-events-none" />
     </div>
   );

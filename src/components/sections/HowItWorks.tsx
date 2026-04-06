@@ -33,7 +33,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-32 px-4 relative overflow-hidden bg-transparent">
+    <section id="how-it-works" className="py-32 px-4 relative overflow-hidden bg-transparent scroll-mt-20">
       {/* Background Ambient Glows */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -88,9 +88,6 @@ export function HowItWorks() {
                   0{step.id}
                 </div>
 
-                {/* Inner Glow Overlay */}
-                <div className="absolute inset-0 bg-radial-gradient from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2.5rem]" />
-
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-8 group-hover:bg-blue-500/20 group-hover:border-blue-500/40 transition-all">
                     {step.icon}
@@ -104,7 +101,6 @@ export function HowItWorks() {
                     {step.description}
                   </p>
 
-                  {/* Icon Watermark */}
                   <div className="mt-auto pt-8 flex justify-end opacity-5 group-hover:opacity-10 transition-opacity">
                     <div className="scale-150 rotate-12">
                       {step.icon}

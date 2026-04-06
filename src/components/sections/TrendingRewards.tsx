@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Redesigned Trending Rewards Section.
- * Now navigates to dedicated product detail pages on click.
+ * Features high-fidelity glass cards with verified badges and rating signals.
  */
 
 export function TrendingRewards() {
@@ -47,7 +47,7 @@ export function TrendingRewards() {
             transition={{ delay: 0.2 }}
             className="text-white/40 text-sm md:text-lg max-w-xl mx-auto font-medium"
           >
-            Select a reward to view full details and unlock your unique code.
+            Select a reward to view full details and unlock your unique code instantly.
           </motion.p>
         </div>
 
@@ -85,7 +85,6 @@ export function TrendingRewards() {
                     {card.brand}
                   </span>
                   
-                  {/* Subtle Background Icon Decoration */}
                   <div className="absolute -bottom-4 -right-4 opacity-10 group-hover/card:rotate-12 transition-transform duration-700">
                     <Zap className="w-24 h-24 text-white" />
                   </div>
@@ -104,7 +103,6 @@ export function TrendingRewards() {
                   </p>
 
                   <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
-                    {/* Visual Star Rating */}
                     <div className="flex items-center gap-0.5">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />

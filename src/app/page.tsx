@@ -10,10 +10,11 @@ import { CommunityHub } from '@/components/sections/CommunityHub';
 import { TrustBadges } from '@/components/sections/TrustBadges';
 import { WaveDivider } from '@/components/ui/WaveDivider';
 import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
+import { GlassDivider } from '@/components/ui/GlassDivider';
 
 /**
- * @fileOverview Redesigned Homepage Layout with Seamless Liquid Wave Transitions & Cinematic Radial Glows.
- * Order: Hero -> Wave -> Trending Rewards -> Radial Glow -> Trust Signals -> Wave (Down) -> How it Works -> Radial Glow -> Social Proof -> Community -> FAQ -> Footer.
+ * @fileOverview Redesigned Homepage Layout with Orchestrated Dividers.
+ * Visual Rhythm: Hero -> Wave -> Trending -> Radial Glow -> Trust -> Wave (Up) -> How it Works -> Radial Glow -> Reviews -> Wave -> Community -> FAQ -> Footer.
  */
 
 export default function Home() {
@@ -41,9 +42,9 @@ export default function Home() {
         <TrustBadges />
       </div>
       
-      <WaveDivider direction="down" className="relative z-20" />
+      <WaveDivider direction="up" className="relative z-20" />
 
-      {/* 4. Education */}
+      {/* 4. Education (Horizontal Wire Flow) */}
       <div className="relative z-10">
         <HowItWorks />
       </div>
@@ -63,7 +64,10 @@ export default function Home() {
         <CommunityHub />
       </div>
 
-      {/* 7. Support & Closure */}
+      {/* 7. Logic Break: Glass Separator */}
+      <GlassDivider className="z-20" />
+
+      {/* 8. Support & Closure */}
       <div className="relative z-10 bg-black/20">
         <FAQ />
       </div>

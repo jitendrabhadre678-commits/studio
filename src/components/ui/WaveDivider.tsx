@@ -5,9 +5,8 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * Premium Liquid Glass Wave Divider (Seamless Version)
+ * Premium Liquid Glass Wave Divider (Seamless Version).
  * Features organic SVG wave geometry, deep backdrop blur, and slow liquid movement.
- * Optimized to remove gaps between sections.
  */
 
 interface WaveDividerProps {
@@ -63,7 +62,7 @@ export function WaveDivider({ direction = 'down', className }: WaveDividerProps)
         </svg>
       </motion.div>
 
-      {/* Luxury Gradient Glows - Helps mask transitions */}
+      {/* Luxury Gradient Glows */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-primary/10 opacity-30 mix-blend-overlay pointer-events-none" />
       
       {/* Light Sweep Effect */}

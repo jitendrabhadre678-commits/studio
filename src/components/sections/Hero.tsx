@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Zap, ChevronRight, ShieldCheck, Sparkles } from 'lucide-react';
@@ -13,13 +14,19 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
  */
 
 export function Hero() {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg') || {
     imageUrl: "https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775372153/34ced28077ef3b3c8f4fd932a9b422eb_ldfobb.jpg",
     imageHint: "gaming futuristic"
   };
 
   return (
-    <section className="relative h-screen flex items-center justify-center text-white overflow-hidden bg-black">
+    <section className="relative h-[90vh] md:h-screen flex items-center justify-center text-white overflow-hidden bg-black">
       
       {/* 1. LAYER: BACKGROUND IMAGE WITH ANIMATION */}
       <div className="absolute inset-0 z-0">
@@ -35,22 +42,36 @@ export function Hero() {
         </div>
         
         {/* 2. LAYER: OVERLAYS */}
-        {/* Uniform Dark Wash */}
         <div className="absolute inset-0 bg-black/60 pointer-events-none" />
-        
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/80 pointer-events-none" />
       </div>
 
-      {/* 3. LAYER: CONTENT */}
+      {/* 3. LAYER: PARTICLES (Client Side Only to avoid hydration mismatch) */}
+      {mounted && (
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <div 
+              key={i}
+              className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-float-particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 10}s`,
+                animationDuration: `${10 + Math.random() * 10}s`
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* 4. LAYER: CONTENT */}
       <div className="relative z-10 text-center px-4 w-full max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          {/* Glassmorphism Container */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 md:p-16 shadow-2xl relative overflow-hidden group">
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 md:p-16 shadow-2xl relative overflow-hidden group">
             {/* Ambient Inner Glow */}
             <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-primary/20 transition-all duration-700" />
 
@@ -65,7 +86,7 @@ export function Hero() {
               Unlock <span className="text-primary text-glow">Premium</span> <br className="hidden md:block" /> Rewards
             </h1>
 
-            <p className="text-white/70 text-base md:text-xl leading-relaxed font-medium mb-10 max-w-lg mx-auto">
+            <p className="text-white/70 text-base md:xl leading-relaxed font-medium mb-10 max-w-lg mx-auto">
               Complete simple steps, engage with verified partners, and earn digital gift cards instantly.
             </p>
 

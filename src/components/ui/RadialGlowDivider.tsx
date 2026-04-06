@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * Premium Radial Glow Divider
+ * Premium Radial Glow Divider.
  * Features a semi-circle cinematic light wash (Orange -> Yellow -> Transparent).
- * Designed to sit between sections to provide atmospheric depth.
+ * Designed to provide atmospheric depth between logical sections.
  */
 
 interface RadialGlowDividerProps {
@@ -53,7 +53,7 @@ export function RadialGlowDivider({ className, intensity = 'medium' }: RadialGlo
         )}
       />
 
-      {/* 3. LAYER: Horizontal Edge Blending (Smooths the horizon) */}
+      {/* 3. LAYER: Horizontal Edge Blending */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
     </div>
   );
