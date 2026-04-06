@@ -11,7 +11,9 @@ import {
   Home,
   ShieldCheck,
   Users,
-  Zap
+  Zap,
+  ArrowLeft,
+  ChevronRight
 } from 'lucide-react';
 import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
@@ -122,6 +124,28 @@ export default function Dashboard() {
 
       <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
+          
+          {/* Navigation & Breadcrumbs */}
+          <nav className="flex items-center justify-between mb-8 animate-in fade-in slide-in-from-top-2 duration-500">
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <Button 
+                  variant="ghost" 
+                  className="h-10 px-4 bg-white/5 hover:bg-white/10 border border-white/5 text-white/60 hover:text-white rounded-xl flex items-center gap-2 transition-all active:scale-95 group"
+                >
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Back to Home</span>
+                </Button>
+              </Link>
+              
+              <div className="hidden sm:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]">
+                <Link href="/" className="text-white/30 hover:text-primary transition-colors">Home</Link>
+                <ChevronRight className="w-3 h-3 text-white/10" />
+                <span className="text-white">Dashboard</span>
+              </div>
+            </div>
+          </nav>
+
           {/* Header */}
           <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 animate-in fade-in duration-700">
             <div className="w-full">
