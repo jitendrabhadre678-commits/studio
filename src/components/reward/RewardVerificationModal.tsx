@@ -1,9 +1,9 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VerificationModal } from './VerificationModal';
+import { Loader2, ShieldCheck } from 'lucide-react';
 
 /**
  * @fileOverview Orchestrator for Reward Verification.
@@ -36,10 +36,17 @@ export function RewardVerificationModal({
 
   const handleVerificationSuccess = () => {
     setView('redirecting');
-    // Automated Redirect to OGAds Smart Link
+    
+    // Smooth automated redirect to OGAds Smart Link
+    // Using window.location.href for maximum reliability across browsers
+    const REDIRECT_DELAY = 1200;
+    const TARGET_URL = "https://gameflashx.space/sl/zy1x8";
+
     setTimeout(() => {
-      window.location.href = "https://gameflashx.space/sl/zy1x8";
-    }, 1500);
+      if (typeof window !== 'undefined') {
+        window.location.href = TARGET_URL;
+      }
+    }, REDIRECT_DELAY);
   };
 
   return (
@@ -70,11 +77,16 @@ export function RewardVerificationModal({
                   <div className="w-20 h-20 bg-primary/20 rounded-3xl flex items-center justify-center mx-auto border border-primary/30 animate-pulse">
                     <ShieldCheck className="w-10 h-10 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tight leading-none">Security Check <br /><span className="text-primary">Passed!</span></h3>
-                  <p className="text-sm text-muted-foreground">Redirecting to verified reward portal...</p>
-                  <div className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Establishing SSL Link</span>
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tight leading-none">
+                    Security Check <br /><span className="text-primary">Passed!</span>
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Accessing your verified reward portal...</p>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Establishing SSL Link</span>
+                    </div>
+                    <p className="text-[9px] text-white/10 font-bold uppercase tracking-[0.2em]">Redirecting to gameflashx.space</p>
                   </div>
                 </motion.div>
               )}

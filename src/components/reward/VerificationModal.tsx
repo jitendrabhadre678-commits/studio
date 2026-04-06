@@ -21,7 +21,8 @@ export function VerificationModal({ onSuccess }: VerificationModalProps) {
   const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
-    const totalTime = 3000 + Math.random() * 3000;
+    // Total time set to 2.5 seconds for optimal UX/Conversion balance
+    const totalTime = 2500;
     const intervalSpeed = 40;
     const increment = 100 / (totalTime / intervalSpeed);
 
@@ -30,7 +31,6 @@ export function VerificationModal({ onSuccess }: VerificationModalProps) {
     }, intervalSpeed);
 
     const stepDelay = totalTime / STEPS.length;
-    let stepTimer: NodeJS.Timeout;
 
     const runSteps = async () => {
       for (let i = 0; i < STEPS.length; i++) {
@@ -40,14 +40,14 @@ export function VerificationModal({ onSuccess }: VerificationModalProps) {
       clearInterval(progressInterval);
       setProgress(100);
       setIsFinished(true);
-      setTimeout(onSuccess, 1200);
+      // Brief pause on the checkmark before redirect
+      setTimeout(onSuccess, 800);
     };
 
     runSteps();
 
     return () => {
       clearInterval(progressInterval);
-      clearTimeout(stepTimer);
     };
   }, [onSuccess]);
 
