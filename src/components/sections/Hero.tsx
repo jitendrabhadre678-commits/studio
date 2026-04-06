@@ -1,22 +1,52 @@
-
-"use client";
+'use client';
 
 import { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Zap, ArrowRight, ShieldCheck, Globe, Lock } from 'lucide-react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Cinematic Premium Hero Section.
- * Features: High-fidelity background with zoom animation, multi-layer overlays, 
- * and side-floating depth-of-field reward elements.
+ * Enhanced with 3D liquid glass nodes containing specialized infrastructure icons.
  */
 
 const SIDE_ICONS = [
-  { id: 'amazon', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png', pos: { top: '25%', left: '8%' }, size: 'w-16', depth: 0.4, opacity: 0.4, blur: true },
-  { id: 'roblox', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', pos: { top: '65%', left: '85%' }, size: 'w-14', depth: 0.6, opacity: 0.3 },
-  { id: 'steam', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463571/3_20260406_134035_0002_rkpbkk.png', pos: { top: '15%', right: '10%' }, size: 'w-18', depth: 0.3, opacity: 0.2, blur: true },
+  { id: 'amazon', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png', pos: { top: '25%', left: '5%' }, size: 'w-12', depth: 0.4, opacity: 0.3, blur: true },
+  { id: 'roblox', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', pos: { top: '65%', left: '90%' }, size: 'w-10', depth: 0.6, opacity: 0.2 },
+  { id: 'steam', url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463571/3_20260406_134035_0002_rkpbkk.png', pos: { top: '15%', right: '5%' }, size: 'w-14', depth: 0.3, opacity: 0.1, blur: true },
+];
+
+const SPECIAL_NODES = [
+  { 
+    id: 'security', 
+    url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487684/Untitled_design_20260406_202944_0000_uw8yuv.png',
+    pos: 'top-[12%] left-[8%] md:top-[18%] md:left-[12%]',
+    delay: 0,
+    scale: 1
+  },
+  { 
+    id: 'dollar', 
+    url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487682/Untitled_design_20260406_202119_0000_zlzp6a.png',
+    pos: 'top-[12%] right-[8%] md:top-[18%] md:right-[12%]',
+    delay: 1.2,
+    scale: 0.95
+  },
+  { 
+    id: 'gift', 
+    url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487685/Untitled_design_20260406_202010_0000_m9gses.png',
+    pos: 'bottom-[12%] left-[8%] md:bottom-[18%] md:left-[12%]',
+    delay: 2.4,
+    scale: 1.05
+  },
+  { 
+    id: 'timer', 
+    url: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487688/Untitled_design_20260406_202607_0000_ekztnc.png',
+    pos: 'bottom-[12%] right-[8%] md:bottom-[18%] md:right-[12%]',
+    delay: 3.6,
+    scale: 0.9
+  }
 ];
 
 export function Hero() {
@@ -46,11 +76,10 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center text-white overflow-hidden bg-[#050505] py-20 px-4">
+    <section className="relative min-h-[95vh] flex items-center justify-center text-white overflow-hidden bg-[#050505] py-20 px-4">
       
       {/* 1. CINEMATIC BACKGROUND ARCHITECTURE */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Main Image Layer with Zoom Animation */}
         <div className="absolute inset-0 scale-105 animate-slow-zoom">
           <Image 
             src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775485427/b45e6a18d5c4edf0f2803f39b65c6881_cobc8c.jpg"
@@ -60,21 +89,10 @@ export function Hero() {
             priority
           />
         </div>
-
-        {/* OVERLAY STACK */}
-        {/* a. Global Dark Overlay */}
         <div className="absolute inset-0 bg-black/65" />
-        
-        {/* b. Vertical Gradient (Top/Bottom Grounding) */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-        
-        {/* c. Center Spotlight Glow (Cyan/Blue) */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,150,255,0.2),transparent_60%)]" />
-        
-        {/* d. Secondary Warm Glow (Orange/Gold) */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,100,0,0.08),transparent_70%)]" />
-
-        {/* e. Selective Edge Blur Mask */}
         <div className="absolute inset-0 backdrop-blur-[2px] [mask-image:radial-gradient(circle,transparent_40%,black_100%)]" />
       </div>
 
@@ -85,21 +103,75 @@ export function Hero() {
         ))}
       </div>
 
-      {/* 3. CORE CONTENT HUB */}
-      <div className="relative z-20 w-full max-w-4xl">
+      {/* 3. SPECIALIZED 3D LIQUID GLASS NODES */}
+      <div className="absolute inset-0 z-20 pointer-events-none select-none overflow-hidden">
+        {SPECIAL_NODES.map((node) => (
+          <motion.div
+            key={node.id}
+            style={{ 
+              x: useTransform(smoothX, [-1, 1], [-25, 25]),
+              y: useTransform(smoothY, [-1, 1], [-25, 25])
+            }}
+            className={cn("absolute flex items-center justify-center z-20", node.pos)}
+          >
+            <motion.div
+              animate={{
+                y: [0, -15, 0],
+                rotate: [-2, 2, -2],
+                scale: [node.scale, node.scale * 1.03, node.scale]
+              }}
+              transition={{
+                duration: 7,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: node.delay
+              }}
+              className="relative"
+            >
+              {/* Liquid Glass Container */}
+              <div className={cn(
+                "relative w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 flex items-center justify-center p-6",
+                "shadow-[inset_0_0_25px_rgba(255,255,255,0.05),0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(0,150,255,0.1)]",
+                "opacity-80 md:opacity-100"
+              )}>
+                
+                {/* Specular Highlight */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/25 via-transparent to-transparent opacity-40 pointer-events-none" />
+                
+                {/* Outer Glow */}
+                <div className="absolute -inset-1 rounded-3xl bg-white/5 blur-md pointer-events-none" />
+
+                {/* Icon Container */}
+                <div className="relative z-10 w-full h-full">
+                  <Image 
+                    src={node.url}
+                    alt={node.id}
+                    fill
+                    className="object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]"
+                  />
+                </div>
+
+                {/* Internal Refraction Glow */}
+                <div className="absolute inset-6 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
+              </div>
+            </motion.div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* 4. CORE CONTENT HUB */}
+      <div className="relative z-30 w-full max-w-4xl px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center"
         >
-          {/* Verified Badge */}
           <div className="mb-10 inline-flex items-center gap-2.5 px-5 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl opacity-70">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
             <span className="text-[10px] font-black text-white/80 tracking-[0.2em] uppercase">Verified Reward System</span>
           </div>
 
-          {/* MAIN HEADING */}
           <div className="space-y-5">
             <h1 className="font-headline text-5xl md:text-8xl font-[900] tracking-tighter uppercase leading-[0.95] text-white">
               Unlock <span className="bg-gradient-to-r from-[#FA4616] to-[#0095FF] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(250,70,22,0.2)]">Premium</span> <br />
@@ -110,7 +182,6 @@ export function Hero() {
               Complete simple steps and unlock real gift cards instantly.
             </p>
 
-            {/* ACTION BAR */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-10">
               <Button 
                 onClick={() => scrollTo('trending')}
@@ -127,17 +198,10 @@ export function Hero() {
               </button>
             </div>
 
-            {/* TRUST INDICATORS */}
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pt-16 mt-12 border-t border-white/5">
-              <div className="flex items-center gap-2 opacity-70">
-                🔒 Verified Secure
-              </div>
-              <div className="flex items-center gap-2 opacity-70">
-                ⚡ Instant Delivery
-              </div>
-              <div className="flex items-center gap-2 opacity-70">
-                🌍 Global Access
-              </div>
+              <div className="flex items-center gap-2">🔒 Verified Secure</div>
+              <div className="flex items-center gap-2">⚡ Instant Delivery</div>
+              <div className="flex items-center gap-2">🌍 Global Access</div>
             </div>
           </div>
         </motion.div>
@@ -146,9 +210,6 @@ export function Hero() {
   );
 }
 
-/**
- * Individual Parallax Icon Component for Side Floating Elements
- */
 function ParallaxIcon({ icon, mouseX, mouseY }: { icon: any, mouseX: any, mouseY: any }) {
   const x = useTransform(mouseX, [-1, 1], [icon.depth * -40, icon.depth * 40]);
   const y = useTransform(mouseY, [-1, 1], [icon.depth * -40, icon.depth * 40]);
@@ -164,7 +225,7 @@ function ParallaxIcon({ icon, mouseX, mouseY }: { icon: any, mouseX: any, mouseY
         zIndex: 10,
         opacity: icon.opacity
       }}
-      className={`absolute transform -translate-x-1/2 -translate-y-1/2 ${icon.blur ? 'blur-[3px]' : ''}`}
+      className={cn("absolute transform -translate-x-1/2 -translate-y-1/2", icon.blur ? 'blur-[3px]' : '')}
     >
       <motion.div
         animate={{ y: [0, -15, 0] }}
