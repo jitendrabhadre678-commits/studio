@@ -9,6 +9,7 @@ import { useFirestore } from '@/firebase';
 import { collection, query, limit, getDocs, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { giftCards } from '@/lib/gift-cards';
+import Image from 'next/image';
 
 /**
  * @fileOverview Advanced Real-time Search System.
@@ -47,7 +48,7 @@ export function AutoSuggestSearch() {
       category: c.category,
       type: 'Reward',
       href: `/product/${c.slug}`,
-      imageUrl: c.imageUrl || `https://picsum.photos/seed/${c.id}/100/100`,
+      imageUrl: c.logoUrl || c.imageUrl,
       priceHint: "Verified Reward"
     }));
     
@@ -248,12 +249,17 @@ export function AutoSuggestSearch() {
                         onMouseEnter={() => setActiveIndex(idx)}
                         className={cn(
                           "w-full flex items-center gap-3 p-2.5 rounded-lg transition-all text-left",
-                          activeIndex === idx ? "bg-white/10" : "hover:bg-white/5"
+                          activeIndex === idx ? "bg-white/10 border-l-2 border-primary" : "hover:bg-white/5"
                         )}
                       >
-                        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 shrink-0 overflow-hidden">
+                        <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 shrink-0 overflow-hidden relative backdrop-blur-md p-1.5">
                           {item.imageUrl ? (
-                            <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
+                            <Image 
+                              src={item.imageUrl} 
+                              alt="" 
+                              fill 
+                              className="object-contain p-1" 
+                            />
                           ) : (
                             <Gift className="w-4 h-4 text-white/20" />
                           )}
@@ -281,36 +287,44 @@ export function AutoSuggestSearch() {
                         onMouseEnter={() => setActiveIndex(idx)}
                         onClick={() => handleResultClick(result)}
                         className={cn(
-                          "w-full flex items-center justify-between p-2.5 rounded-lg transition-all text-left group/item",
-                          activeIndex === idx ? "bg-white/10" : "hover:bg-white/5"
+                          "w-full flex items-center justify-between p-3 rounded-lg transition-all text-left group/item",
+                          activeIndex === idx 
+                            ? "bg-white/10 border-l-2 border-primary scale-[1.02] shadow-xl" 
+                            : "hover:bg-white/5"
                         )}
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 shrink-0 overflow-hidden relative">
+                        <div className="flex items-center gap-4 min-w-0">
+                          {/* Premium Glass Icon Container */}
+                          <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 shrink-0 overflow-hidden relative backdrop-blur-lg p-2">
                             {result.imageUrl ? (
-                              <img src={result.imageUrl} alt="" className="w-full h-full object-cover" />
+                              <Image 
+                                src={result.imageUrl} 
+                                alt="" 
+                                fill 
+                                className="object-contain p-1.5 drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]" 
+                              />
                             ) : (
-                              <Gift className="w-4 h-4 text-white/20" />
+                              <Gift className="w-5 h-5 text-white/20" />
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-[12px] text-white/90 truncate uppercase tracking-tight">
+                            <p className="text-[13px] text-white/95 truncate uppercase tracking-tight">
                               {highlightMatch(result.title, searchQuery)}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[8px] font-black uppercase text-primary tracking-widest">
+                              <span className="text-[9px] font-black uppercase text-primary tracking-widest">
                                 {result.category}
                               </span>
                               <span className="w-1 h-1 bg-white/10 rounded-full" />
-                              <span className="text-[8px] font-bold text-white/30 uppercase">
+                              <span className="text-[9px] font-bold text-white/30 uppercase">
                                 {result.priceHint}
                               </span>
                             </div>
                           </div>
                         </div>
                         <ChevronRight className={cn(
-                          "w-3 h-3 transition-colors",
-                          activeIndex === idx ? "text-primary" : "text-white/10"
+                          "w-4 h-4 transition-all",
+                          activeIndex === idx ? "text-primary translate-x-1" : "text-white/10"
                         )} />
                       </button>
                     ))}
@@ -333,7 +347,7 @@ export function AutoSuggestSearch() {
             <div className="bg-white/[0.02] p-3 text-center border-t border-white/5">
               <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
                 <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
-                Live Network Active
+                Secure Reward Network Active
               </p>
             </div>
           </motion.div>
