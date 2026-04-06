@@ -82,17 +82,18 @@ export function FeaturedRewards() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}
                     onClick={() => handleCardClick(card.slug)}
+                    style={{ background: card.gradient }}
                     className="rounded-2xl border border-white/10 transition-all duration-300 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/20 hover:scale-[1.03] overflow-hidden cursor-pointer"
                   >
                     {/* Visual Container */}
                     <div className="relative aspect-[16/10] w-full flex items-center justify-center p-8 bg-white/[0.03] overflow-hidden backdrop-blur-xl">
                       {/* Brand-Specific Glow */}
                       <div 
-                        className="absolute inset-0 opacity-30 blur-2xl transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-110"
+                        className="absolute inset-0 opacity-30 blur-2xl transition-all duration-500 group-hover/card:opacity-60 group-hover/card:scale-125"
                         style={{ 
                           background: card.glowColor?.includes('gradient') 
                             ? card.glowColor 
-                            : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
+                            : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}cc, transparent 70%)` 
                         }}
                       />
 

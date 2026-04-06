@@ -53,8 +53,9 @@ export function TrendingRewards() {
           >
             <Card 
               onClick={() => handleCardClick(card.slug)}
+              style={{ background: card.gradient }}
               className={cn(
-                "relative h-full glass-card border-white/10 bg-white/[0.02] hover:bg-white/[0.05]",
+                "relative h-full glass-card border-white/10 hover:bg-white/[0.05]",
                 "hover:border-primary/40 hover:shadow-[0_10px_40px_rgba(250,70,22,0.15)]",
                 "transition-all duration-300 cursor-pointer rounded-2xl overflow-hidden flex flex-col group/card shadow-lg hover:scale-[1.03]"
               )}
@@ -65,11 +66,11 @@ export function TrendingRewards() {
               >
                 {/* Brand-Specific Glow */}
                 <div 
-                  className="absolute inset-0 opacity-30 blur-2xl transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-110"
+                  className="absolute inset-0 opacity-30 blur-2xl transition-all duration-500 group-hover/card:opacity-60 group-hover/card:scale-125"
                   style={{ 
                     background: card.glowColor?.includes('gradient') 
                       ? card.glowColor 
-                      : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
+                      : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}cc, transparent 70%)` 
                   }}
                 />
                 

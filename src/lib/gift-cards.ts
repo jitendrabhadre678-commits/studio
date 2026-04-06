@@ -31,7 +31,7 @@ export const giftCards: GiftCard[] = [
     glowColor: '#FF9900',
     trending: true, 
     featured: true,
-    gradient: 'linear-gradient(135deg, #131921 0%, #FF9900 100%)'
+    gradient: 'linear-gradient(135deg, rgba(255, 153, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'steam', 
@@ -45,7 +45,7 @@ export const giftCards: GiftCard[] = [
     glowColor: '#66C0F4',
     trending: true, 
     featured: true,
-    gradient: 'linear-gradient(135deg, #171A21 0%, #66C0F4 100%)'
+    gradient: 'linear-gradient(135deg, rgba(102, 192, 244, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'roblox', 
@@ -58,7 +58,7 @@ export const giftCards: GiftCard[] = [
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png',
     glowColor: '#E3191E',
     trending: true,
-    gradient: 'linear-gradient(135deg, #000000 0%, #E3191E 100%)'
+    gradient: 'linear-gradient(135deg, rgba(227, 25, 30, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'playstation', 
@@ -71,7 +71,7 @@ export const giftCards: GiftCard[] = [
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463534/2_20260406_134035_0001_sf7lub.png',
     glowColor: '#003087',
     featured: true,
-    gradient: 'linear-gradient(135deg, #003087 0%, #6A0DAD 100%)'
+    gradient: 'linear-gradient(135deg, rgba(0, 48, 135, 0.15) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'xbox', 
@@ -84,7 +84,7 @@ export const giftCards: GiftCard[] = [
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463539/1_20260406_134035_0000_i04tox.png',
     glowColor: '#107C10',
     featured: true,
-    gradient: 'linear-gradient(135deg, #107C10 0%, #054B05 100%)'
+    gradient: 'linear-gradient(135deg, rgba(16, 124, 16, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'google-play', 
@@ -98,7 +98,7 @@ export const giftCards: GiftCard[] = [
     glowColor: '#34A853',
     trending: true, 
     featured: true,
-    gradient: 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)'
+    gradient: 'linear-gradient(135deg, rgba(52, 168, 83, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'fortnite', 
@@ -110,7 +110,7 @@ export const giftCards: GiftCard[] = [
     image: 'fortnite', 
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463553/10_20260406_134035_0009_ouhe1e.png',
     glowColor: '#A855F7',
-    gradient: 'linear-gradient(135deg, #000000 0%, #A855F7 100%)'
+    gradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'nintendo', 
@@ -122,7 +122,7 @@ export const giftCards: GiftCard[] = [
     image: 'nintendo', 
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463546/4_20260406_134035_0003_jvi4ke.png',
     glowColor: '#E3191E',
-    gradient: 'linear-gradient(135deg, #E3191E 0%, #000000 100%)'
+    gradient: 'linear-gradient(135deg, rgba(227, 25, 30, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'walmart', 
@@ -134,7 +134,7 @@ export const giftCards: GiftCard[] = [
     image: 'walmart',
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463548/7_20260406_134035_0006_qkousw.png',
     glowColor: '#0071CE',
-    gradient: 'linear-gradient(135deg, #0071CE 0%, #FFC220 100%)'
+    gradient: 'linear-gradient(135deg, rgba(0, 113, 206, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'target', 
@@ -146,7 +146,7 @@ export const giftCards: GiftCard[] = [
     image: 'target',
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463547/9_20260406_134035_0008_nnznij.png',
     glowColor: '#CC0000',
-    gradient: 'linear-gradient(135deg, #CC0000 0%, #808080 100%)'
+    gradient: 'linear-gradient(135deg, rgba(204, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'best-buy', 
@@ -158,7 +158,7 @@ export const giftCards: GiftCard[] = [
     image: 'best-buy',
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463547/8_20260406_134035_0007_jumtpc.png',
     glowColor: '#EAB308',
-    gradient: 'linear-gradient(135deg, #0046BE 0%, #FFF200 100%)'
+    gradient: 'linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
   },
   { 
     id: 'ebay', 
@@ -167,9 +167,9 @@ export const giftCards: GiftCard[] = [
     category: 'Shopping', 
     description: 'Shop for unique items on the world auction house.', 
     values: ['$10', '$25', '$50'], 
-    image: 'ebay',
+    image: 'ebay', 
     logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463541/5_20260406_134035_0004_nikubw.png',
     glowColor: 'linear-gradient(to right, #E53238, #0064D2, #F5AF02, #86B817)',
-    gradient: 'linear-gradient(135deg, #E53238 0%, #0064D2 33%, #F5AF02 66%, #86B817 100%)'
+    gradient: 'linear-gradient(135deg, rgba(229, 50, 56, 0.05) 0%, rgba(0, 100, 210, 0.05) 33%, rgba(245, 175, 2, 0.05) 66%, rgba(134, 184, 23, 0.05) 100%)'
   },
 ];
