@@ -4,12 +4,13 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ShieldCheck, Sparkles, ChevronRight, Lock } from 'lucide-react';
+import { Zap, ShieldCheck, Sparkles, ChevronRight, MousePointerClick } from 'lucide-react';
 import Image from 'next/image';
 
 /**
  * @fileOverview Premium Cinematic Hero Section.
  * Features a high-conversion central glassmorphism hub with floating background elements.
+ * Updated with bold modern typography and smooth navigation.
  */
 
 const FLOATING_LOGOS = [
@@ -24,6 +25,13 @@ const FLOATING_LOGOS = [
 ];
 
 export function Hero() {
+  const scrollToRewards = () => {
+    const element = document.getElementById('trending');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section className="relative h-[95vh] md:h-screen flex items-center justify-center text-white overflow-hidden bg-[#000000]">
       
@@ -33,7 +41,7 @@ export function Hero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(250,70,22,0.08)_0%,transparent_70%)]" />
       </div>
 
-      {/* FLOATING LOGO CLOUD (Low Opacity for Depth) */}
+      {/* FLOATING LOGO CLOUD */}
       <div className="absolute inset-0 z-10 pointer-events-none">
         {FLOATING_LOGOS.map((logo) => (
           <div 
@@ -78,9 +86,9 @@ export function Hero() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="font-headline text-6xl md:text-9xl font-black mb-8 leading-[0.85] text-white uppercase tracking-tighter">
+            <h1 className="font-headline text-6xl md:text-9xl font-[900] mb-8 leading-[0.85] text-white uppercase tracking-tighter">
               Trending <br />
-              <span className="bg-gradient-to-r from-primary via-[#ff7a00] to-primary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,70,22,0.3)]">
+              <span className="bg-gradient-to-r from-primary to-red-600 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(250,70,22,0.3)]">
                 GIFT CARDS
               </span>
             </h1>
@@ -91,13 +99,21 @@ export function Hero() {
               Complete simple verified steps and claim your digital codes.
             </p>
 
-            {/* High-Contrast Button (Non-clickable as requested) */}
-            <div className="relative z-10 flex justify-center">
+            {/* Action Buttons */}
+            <div className="relative z-10 flex flex-col items-center gap-6">
               <Button 
                 className="h-20 px-16 bg-gradient-to-r from-primary to-[#ff7a00] text-white font-black uppercase tracking-[0.25em] text-xl rounded-full shadow-[0_15px_50px_rgba(250,70,22,0.4)] transition-all hover:scale-[1.05] cursor-default active:scale-100 group border-none"
               >
                 REVEAL REWARD CODE <Zap className="ml-3 w-6 h-6 fill-white group-hover:scale-125 transition-transform" />
               </Button>
+
+              <button 
+                onClick={scrollToRewards}
+                className="px-8 py-4 rounded-xl border border-white/20 bg-white/5 backdrop-blur-md text-[11px] font-black text-white/80 uppercase tracking-[0.3em] transition-all hover:bg-white/10 hover:border-white/40 hover:scale-105 active:scale-95 flex items-center gap-3 group"
+              >
+                <MousePointerClick className="w-4 h-4 text-primary" />
+                Explore Gift Cards
+              </button>
             </div>
 
             {/* Bottom Trust Line */}
