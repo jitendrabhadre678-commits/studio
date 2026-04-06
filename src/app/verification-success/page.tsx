@@ -7,30 +7,58 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { 
-  CheckCircle2, 
-  LayoutDashboard, 
   ArrowRight, 
-  Sparkles, 
   ShieldCheck, 
   Clock,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2,
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useUser, updateDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
 import { doc, getDoc, serverTimestamp, increment, collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Secure Reward Processing Page.
- * Handles the logic for adding CPA rewards to user accounts with abuse prevention.
+ * @fileOverview Premium Success Page.
+ * Features: Liquid glass UI, 3D icon orbiters, and high-conversion action hub.
  */
+
+const ICONS = {
+  security: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487684/Untitled_design_20260406_202944_0000_uw8yuv.png',
+  dollar: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487682/Untitled_design_20260406_202119_0000_zlzp6a.png',
+  gift: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487685/Untitled_design_20260406_202010_0000_m9gses.png',
+  timer: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775487688/Untitled_design_20260406_202607_0000_ekztnc.png',
+};
+
+function GlassNode({ url, className, delay = 0 }: { url: string, className?: string, delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay }}
+      className={cn(
+        "w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center",
+        "bg-white/5 bg-black/20 backdrop-blur-xl border border-white/10 shadow-lg",
+        "relative overflow-hidden group",
+        className
+      )}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+      <div className="relative z-10 w-6 h-6 md:w-8 md:h-8">
+        <Image src={url} alt="Success Node" fill className="object-contain drop-shadow-[0_5px_10px_rgba(0,0,0,0.3)]" />
+      </div>
+    </motion.div>
+  );
+}
 
 export default function VerificationSuccessPage() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'already_claimed' | 'error'>('verifying');
-  const [countdown, setCountdown] = useState(5);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -40,7 +68,6 @@ export default function VerificationSuccessPage() {
       return;
     }
 
-    // 1. Smooth Progress Bar Animation (3 seconds)
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -49,7 +76,7 @@ export default function VerificationSuccessPage() {
         }
         return prev + 1;
       });
-    }, 30);
+    }, 25);
 
     const processReward = async () => {
       try {
@@ -63,25 +90,22 @@ export default function VerificationSuccessPage() {
 
         const userData = userSnap.data();
         const now = Date.now();
-        const REWARD_COOLDOWN = 2 * 60 * 1000; // 2 Minutes in ms
+        const REWARD_COOLDOWN = 60 * 1000; // 1 Minute
 
-        // 2. Abuse Prevention Check
         if (userData.lastRewardTime) {
           const lastClaim = userData.lastRewardTime.toDate 
             ? userData.lastRewardTime.toDate().getTime() 
             : new Date(userData.lastRewardTime).getTime();
             
           if (now - lastClaim < REWARD_COOLDOWN) {
-            setTimeout(() => setStatus('already_claimed'), 3000);
+            setTimeout(() => setStatus('already_claimed'), 2500);
             return;
           }
         }
 
-        // 3. Wait for progress to finish before final UI update
         setTimeout(() => {
-          const rewardAmount = 0.10;
+          const rewardAmount = 10.00; // Premium success reward
           
-          // Atomic Updates
           updateDocumentNonBlocking(userRef, {
             availableBalance: increment(rewardAmount),
             lastRewardTime: serverTimestamp(),
@@ -91,7 +115,7 @@ export default function VerificationSuccessPage() {
           addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'rewards'), {
             userId: user.uid,
             amount: rewardAmount,
-            description: "CPA Reward Added",
+            description: "Premium Verification Reward",
             type: "taskCompletion",
             status: "completed",
             createdAt: serverTimestamp(),
@@ -99,10 +123,9 @@ export default function VerificationSuccessPage() {
           });
 
           setStatus('success');
-        }, 3000);
+        }, 2500);
 
       } catch (err) {
-        console.error("Reward Processing Error:", err);
         setStatus('error');
       }
     };
@@ -111,142 +134,133 @@ export default function VerificationSuccessPage() {
     return () => clearInterval(progressInterval);
   }, [user, isUserLoading, firestore]);
 
-  // Handle Countdown Redirect
-  useEffect(() => {
-    if (status === 'success' || status === 'already_claimed') {
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            router.push('/dashboard');
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [status, router]);
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#050505] via-[#0f0c29] to-[#050505] selection:bg-primary selection:text-white">
-      <head>
-        <meta name="robots" content="noindex, nofollow" />
-      </head>
-
+    <main className="min-h-screen bg-[#050b18] text-white selection:bg-primary overflow-hidden">
       <Header />
       
-      <div className="pt-32 pb-20 px-4 flex items-center justify-center min-h-[85vh]">
-        <div className="container mx-auto max-w-2xl">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="glass-card rounded-2xl p-8 md:p-16 border-white/10 shadow-2xl relative overflow-hidden text-center bg-white/[0.03] backdrop-blur-2xl"
-          >
-            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-[100px] pointer-events-none ${
-              status === 'success' ? 'bg-green-500/10' : 'bg-primary/10'
-            }`} />
+      {/* Background Cinematic Layer */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,150,255,0.15)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
 
-            <AnimatePresence mode="wait">
-              {status === 'verifying' && (
-                <motion.div key="verifying" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-10 py-10">
-                  <div className="relative w-24 h-24 mx-auto">
-                    <Loader2 className="w-full h-full text-primary animate-spin" strokeWidth={1.5} />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <ShieldCheck className="w-8 h-8 text-primary/40" />
-                    </div>
+      <div className="relative z-10 pt-32 pb-20 px-4 flex flex-col items-center justify-center min-h-[90vh]">
+        <div className="container max-w-2xl text-center">
+          
+          <AnimatePresence mode="wait">
+            {status === 'verifying' && (
+              <motion.div key="verifying" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-10 py-10">
+                <div className="relative w-24 h-24 mx-auto">
+                  <Loader2 className="w-full h-full text-primary animate-spin" strokeWidth={1.5} />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <ShieldCheck className="w-8 h-8 text-primary/40" />
                   </div>
+                </div>
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-black text-white uppercase tracking-tight">Authenticating Reward...</h2>
+                  <div className="max-w-xs mx-auto space-y-2">
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                      <motion.div className="h-full bg-primary shadow-[0_0_15px_rgba(0,150,255,0.5)]" animate={{ width: `${progress}%` }} />
+                    </div>
+                    <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.3em]">Validating Session Security</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {status === 'success' && (
+              <motion.div key="success" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
+                
+                {/* 1. TOP GIFT HUB */}
+                <div className="relative">
+                  <motion.div
+                    animate={{ y: [-10, 10, -10] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative w-32 h-32 md:w-40 md:h-40 mx-auto"
+                  >
+                    <div className="absolute inset-0 bg-primary/20 blur-[60px] rounded-full" />
+                    <div className="w-full h-full glass-card rounded-[2.5rem] border-white/20 flex items-center justify-center bg-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+                      <div className="relative w-20 h-20 md:w-24 md:h-24">
+                        <Image src={ICONS.gift} alt="Gift" fill className="object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* 2. SUCCESS MESSAGING */}
+                <div className="space-y-4">
+                  <h1 className="text-5xl md:text-7xl font-[900] text-white tracking-tighter uppercase leading-none">
+                    SUCCESS!
+                  </h1>
+                  <p className="text-white/60 font-bold uppercase tracking-[0.3em] text-[10px]">Your verification is complete</p>
                   
-                  <div className="space-y-4">
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tight">Verifying completion...</h2>
-                    <div className="max-w-xs mx-auto space-y-2">
-                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                        <motion.div 
-                          className="h-full bg-primary"
-                          animate={{ width: `${progress}%` }}
-                        />
-                      </div>
-                      <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.3em]">Validating Session Security</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {status === 'success' && (
-                <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8">
-                  <div className="relative w-24 h-24 md:w-32 md:h-32 mx-auto mb-8">
-                    <div className="absolute inset-0 bg-green-500/20 rounded-[2.5rem] blur-xl animate-pulse" />
-                    <div className="relative w-full h-full bg-gradient-to-br from-green-400 to-green-600 rounded-[2.5rem] flex items-center justify-center border-4 border-black shadow-2xl">
-                      <CheckCircle2 className="w-12 h-12 md:w-16 md:h-16 text-white" />
-                    </div>
-                    <motion.div initial={{ y: 0, opacity: 0 }} animate={{ y: -60, opacity: [0, 1, 0] }} transition={{ duration: 1.5 }} className="absolute inset-0 flex items-center justify-center font-black text-green-400 text-3xl">
-                      +$0.10
-                    </motion.div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h1 className="font-headline text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none">
-                      Reward <span className="text-green-500">Secured</span> ✅
-                    </h1>
-                    <p className="text-white/80 text-lg font-medium max-w-md mx-auto">
-                      Verification Successful! You earned <span className="text-white font-black">$0.10</span>.
-                    </p>
-                  </div>
-
-                  <div className="bg-black/40 border border-white/5 rounded-2xl p-6 text-left space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <ShieldCheck className="w-5 h-5 text-green-500" />
-                        <span className="text-xs font-black text-white uppercase">Reward Added Successfully</span>
-                      </div>
-                      <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">ID: OG-SECURE</span>
-                    </div>
-                    <div className="pt-2 border-t border-white/5 flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-primary" />
-                      <p className="text-[10px] text-white/40 font-medium leading-tight uppercase">
-                        Redirecting to dashboard in <span className="text-white font-black">{countdown}s</span>...
+                  <div className="relative inline-block mt-6">
+                    <div className="absolute inset-0 bg-primary/10 blur-[40px] rounded-full" />
+                    <div className="relative bg-black/40 backdrop-blur-xl border border-primary/30 rounded-2xl px-8 py-5">
+                      <p className="text-2xl md:text-3xl font-black text-[#00aaff] flex items-center gap-3">
+                        <Zap className="w-6 h-6 fill-primary" /> $10.00 Added to Dashboard
                       </p>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button asChild className="flex-1 h-16 bg-primary text-white font-black uppercase tracking-widest text-sm rounded-xl">
-                      <Link href="/dashboard"><LayoutDashboard className="mr-2 w-5 h-5" /> Dashboard</Link>
-                    </Button>
-                    <Button asChild variant="outline" className="flex-1 h-16 border-white/10 text-white font-black uppercase tracking-widest text-sm rounded-xl">
-                      <Link href="/#trending">Continue Earning</Link>
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
+                {/* 3. INFRASTRUCTURE ICONS ROW */}
+                <div className="flex items-center justify-center gap-4 md:gap-6 pt-4">
+                  <GlassNode url={ICONS.security} delay={0.1} />
+                  <GlassNode url={ICONS.timer} delay={0.2} />
+                  <GlassNode url={ICONS.dollar} delay={0.3} />
+                </div>
 
-              {status === 'already_claimed' && (
-                <motion.div key="already_claimed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                  <div className="w-20 h-20 bg-yellow-500/20 rounded-3xl flex items-center justify-center mx-auto border border-yellow-500/30">
-                    <Clock className="w-10 h-10 text-yellow-500" />
-                  </div>
+                {/* 4. ACTION HUB */}
+                <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto pt-6">
+                  <Button asChild className="flex-1 h-16 bg-gradient-to-r from-[#009dff] to-[#00e0ff] text-white font-black uppercase tracking-widest text-xs rounded-xl shadow-[0_0_30px_rgba(0,150,255,0.4)] hover:scale-[1.03] transition-all border-none">
+                    <Link href="/dashboard">Go to Dashboard <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                  </Button>
+                  <Button asChild variant="outline" className="flex-1 h-16 border-white/10 bg-white/5 backdrop-blur-xl text-white/60 font-black uppercase tracking-widest text-xs rounded-xl hover:bg-white/10 hover:text-white transition-all">
+                    <Link href="/#trending">Try Another Reward</Link>
+                  </Button>
+                </div>
+
+                <div className="flex items-center justify-center gap-6 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] pt-10 border-t border-white/5">
+                  <div className="flex items-center gap-2"><ShieldCheck className="w-3 h-3 text-primary" /> Encrypted Transaction</div>
+                  <div className="flex items-center gap-2"><Clock className="w-3 h-3 text-primary" /> Instant Credit</div>
+                </div>
+
+              </motion.div>
+            )}
+
+            {status === 'already_claimed' && (
+              <motion.div key="already_claimed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 py-10">
+                <div className="w-20 h-20 bg-yellow-500/10 rounded-3xl flex items-center justify-center mx-auto border border-yellow-500/20">
+                  <Clock className="w-10 h-10 text-yellow-500" />
+                </div>
+                <div className="space-y-2">
                   <h2 className="text-3xl font-black text-white uppercase tracking-tight">Reward on Cooldown</h2>
-                  <p className="text-muted-foreground max-w-sm mx-auto">To ensure fair distribution, rewards are limited to once every 2 minutes. Please try again shortly.</p>
-                  <div className="text-[10px] text-white/20 font-black uppercase tracking-widest">Returning to dashboard in {countdown}s...</div>
-                  <Button asChild className="w-full h-14 bg-white text-black font-black uppercase rounded-xl">
-                    <Link href="/dashboard">Return Now</Link>
-                  </Button>
-                </motion.div>
-              )}
+                  <p className="text-white/40 font-medium">To maintain network integrity, please wait 1 minute between reward claims.</p>
+                </div>
+                <Button asChild className="h-14 px-10 bg-white text-black font-black uppercase rounded-xl">
+                  <Link href="/dashboard">Return to Dashboard</Link>
+                </Button>
+              </motion.div>
+            )}
 
-              {status === 'error' && (
-                <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                  <div className="w-20 h-20 bg-red-500/20 rounded-3xl flex items-center justify-center mx-auto border border-red-500/30">
-                    <AlertCircle className="w-10 h-10 text-red-500" />
-                  </div>
+            {status === 'error' && (
+              <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 py-10">
+                <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto border border-red-500/20">
+                  <AlertCircle className="w-10 h-10 text-red-500" />
+                </div>
+                <div className="space-y-2">
                   <h2 className="text-3xl font-black text-white uppercase tracking-tight">System Error</h2>
-                  <p className="text-muted-foreground">We couldn't synchronize your reward. Ensure you are logged in and try again.</p>
-                  <Button asChild className="w-full h-14 bg-primary text-white font-black uppercase rounded-xl">
-                    <Link href="/">Back to Home</Link>
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                  <p className="text-white/40 font-medium">We couldn't synchronize your reward. Please ensure you are logged in correctly.</p>
+                </div>
+                <Button asChild className="h-14 px-10 bg-primary text-white font-black uppercase rounded-xl shadow-lg">
+                  <Link href="/">Back to Home</Link>
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </div>
       </div>
 
