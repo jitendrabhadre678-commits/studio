@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
@@ -13,8 +12,8 @@ import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
 import { FloatingShowcase } from '@/components/sections/FloatingShowcase';
 
 /**
- * @fileOverview Refined Homepage with Sharper Glass Panels.
- * All sections now use rounded-2xl for a more professional SaaS aesthetic.
+ * @fileOverview Refined Homepage with Liquid Wave Transitions.
+ * All major content hubs now feature smooth SVG transitions for a premium SaaS feel.
  */
 
 export default function Home() {
@@ -22,16 +21,17 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-[#050505] via-[#0f0c29] to-[#050505] selection:bg-primary selection:text-white overflow-x-hidden">
       <Header />
       
-      {/* 1. Hero Section - Full Width Entry */}
+      {/* 1. Hero Section - Cinematic Entrance */}
       <div className="relative">
         <Hero />
       </div>
       
-      {/* 2. Trending Rewards Panel */}
+      {/* 2. Trending Rewards Panel - Liquid Entry & Exit */}
       <section className="container mx-auto px-4 mt-[-60px] relative z-20">
         <div className="glass-card rounded-2xl border-white/10 shadow-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+          <WaveDivider direction="up" className="opacity-40" />
           <TrendingRewards />
-          <WaveDivider direction="down" className="opacity-50" />
+          <WaveDivider direction="down" className="opacity-40" />
         </div>
       </section>
 
