@@ -13,7 +13,8 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
-  Zap
+  Zap,
+  LogIn
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -23,8 +24,8 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Premium Success Page.
- * Features: Liquid glass UI, 3D icon orbiters, and high-conversion action hub.
+ * @fileOverview Refined Verification Success Page.
+ * Prevents false errors by introducing a deliberate verification/sync phase.
  */
 
 const ICONS = {
@@ -58,27 +59,33 @@ function GlassNode({ url, className, delay = 0 }: { url: string, className?: str
 export default function VerificationSuccessPage() {
   const { user, isUserLoading, firestore } = useUser();
   const router = useRouter();
-  const [status, setStatus] = useState<'verifying' | 'success' | 'already_claimed' | 'error'>('verifying');
+  const [status, setStatus] = useState<'verifying' | 'success' | 'already_claimed' | 'error' | 'no_auth'>('verifying');
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (isUserLoading) return;
-    if (!user || !firestore) {
-      setStatus('error');
-      return;
-    }
-
+    // 1. Visual Progress Bar Management
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
+        if (prev >= 95 && status === 'verifying') return prev; // Hold near end until logic completes
         if (prev >= 100) {
           clearInterval(progressInterval);
           return 100;
         }
         return prev + 1;
       });
-    }, 25);
+    }, 30);
 
+    // 2. Reward Processing Logic
     const processReward = async () => {
+      // Wait for Auth to settle
+      if (isUserLoading) return;
+
+      // Handle Guest State
+      if (!user || !firestore) {
+        setTimeout(() => setStatus('no_auth'), 2000);
+        return;
+      }
+
       try {
         const userRef = doc(firestore, 'users', user.uid);
         const userSnap = await getDoc(userRef);
@@ -92,17 +99,22 @@ export default function VerificationSuccessPage() {
         const now = Date.now();
         const REWARD_COOLDOWN = 60 * 1000; // 1 Minute
 
+        // Prevent abuse via cooldown
         if (userData.lastRewardTime) {
           const lastClaim = userData.lastRewardTime.toDate 
             ? userData.lastRewardTime.toDate().getTime() 
             : new Date(userData.lastRewardTime).getTime();
             
           if (now - lastClaim < REWARD_COOLDOWN) {
-            setTimeout(() => setStatus('already_claimed'), 2500);
+            setTimeout(() => {
+              setProgress(100);
+              setStatus('already_claimed');
+            }, 2000);
             return;
           }
         }
 
+        // Deliberate "Processing" delay for UI trust
         setTimeout(() => {
           const rewardAmount = 10.00; // Premium success reward
           
@@ -122,10 +134,12 @@ export default function VerificationSuccessPage() {
             updatedAt: serverTimestamp()
           });
 
+          setProgress(100);
           setStatus('success');
-        }, 2500);
+        }, 3000);
 
       } catch (err) {
+        console.error("Verification Sync Error:", err);
         setStatus('error');
       }
     };
@@ -138,7 +152,7 @@ export default function VerificationSuccessPage() {
     <main className="min-h-screen bg-[#050b18] text-white selection:bg-primary overflow-hidden">
       <Header />
       
-      {/* Background Cinematic Layer */}
+      {/* Cinematic Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,150,255,0.15)_0%,transparent_70%)]" />
         <div className="absolute inset-0 bg-black/40" />
@@ -157,12 +171,12 @@ export default function VerificationSuccessPage() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <h2 className="text-2xl font-black text-white uppercase tracking-tight">Authenticating Reward...</h2>
+                  <h2 className="text-2xl font-black text-white uppercase tracking-tight">Synchronizing Reward...</h2>
                   <div className="max-w-xs mx-auto space-y-2">
                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                       <motion.div className="h-full bg-primary shadow-[0_0_15px_rgba(0,150,255,0.5)]" animate={{ width: `${progress}%` }} />
                     </div>
-                    <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.3em]">Validating Session Security</p>
+                    <p className="text-white/20 text-[9px] font-bold uppercase tracking-[0.3em]">Processing Secure Session</p>
                   </div>
                 </div>
               </motion.div>
@@ -170,8 +184,6 @@ export default function VerificationSuccessPage() {
 
             {status === 'success' && (
               <motion.div key="success" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
-                
-                {/* 1. TOP GIFT HUB */}
                 <div className="relative">
                   <motion.div
                     animate={{ y: [-10, 10, -10] }}
@@ -188,7 +200,6 @@ export default function VerificationSuccessPage() {
                   </motion.div>
                 </div>
 
-                {/* 2. SUCCESS MESSAGING */}
                 <div className="space-y-4">
                   <h1 className="text-5xl md:text-7xl font-[900] text-white tracking-tighter uppercase leading-none">
                     SUCCESS!
@@ -205,14 +216,12 @@ export default function VerificationSuccessPage() {
                   </div>
                 </div>
 
-                {/* 3. INFRASTRUCTURE ICONS ROW */}
                 <div className="flex items-center justify-center gap-4 md:gap-6 pt-4">
                   <GlassNode url={ICONS.security} delay={0.1} />
                   <GlassNode url={ICONS.timer} delay={0.2} />
                   <GlassNode url={ICONS.dollar} delay={0.3} />
                 </div>
 
-                {/* 4. ACTION HUB */}
                 <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto pt-6">
                   <Button asChild className="flex-1 h-16 bg-gradient-to-r from-[#009dff] to-[#00e0ff] text-white font-black uppercase tracking-widest text-xs rounded-xl shadow-[0_0_30px_rgba(0,150,255,0.4)] hover:scale-[1.03] transition-all border-none">
                     <Link href="/dashboard">Go to Dashboard <ArrowRight className="ml-2 w-4 h-4" /></Link>
@@ -226,7 +235,21 @@ export default function VerificationSuccessPage() {
                   <div className="flex items-center gap-2"><ShieldCheck className="w-3 h-3 text-primary" /> Encrypted Transaction</div>
                   <div className="flex items-center gap-2"><Clock className="w-3 h-3 text-primary" /> Instant Credit</div>
                 </div>
+              </motion.div>
+            )}
 
+            {status === 'no_auth' && (
+              <motion.div key="no_auth" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 py-10">
+                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto border border-primary/20">
+                  <LogIn className="w-10 h-10 text-primary" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-black text-white uppercase tracking-tight">Login Required</h2>
+                  <p className="text-white/40 font-medium max-w-xs mx-auto">Please sign in to your account so we can add the reward to your dashboard.</p>
+                </div>
+                <Button onClick={() => router.push('/')} className="h-16 px-12 bg-primary text-white font-black uppercase rounded-xl shadow-lg">
+                  Sign In to Claim
+                </Button>
               </motion.div>
             )}
 
@@ -236,26 +259,26 @@ export default function VerificationSuccessPage() {
                   <Clock className="w-10 h-10 text-yellow-500" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-black text-white uppercase tracking-tight">Reward on Cooldown</h2>
-                  <p className="text-white/40 font-medium">To maintain network integrity, please wait 1 minute between reward claims.</p>
+                  <h2 className="text-3xl font-black text-white uppercase tracking-tight">Reward Handled</h2>
+                  <p className="text-white/40 font-medium">This reward has already been processed or is on a brief cooldown.</p>
                 </div>
                 <Button asChild className="h-14 px-10 bg-white text-black font-black uppercase rounded-xl">
-                  <Link href="/dashboard">Return to Dashboard</Link>
+                  <Link href="/dashboard">Check Balance</Link>
                 </Button>
               </motion.div>
             )}
 
             {status === 'error' && (
               <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 py-10">
-                <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto border border-red-500/20">
-                  <AlertCircle className="w-10 h-10 text-red-500" />
+                <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto border border-white/10">
+                  <Loader2 className="w-10 h-10 text-white/40 animate-spin" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-black text-white uppercase tracking-tight">System Error</h2>
-                  <p className="text-white/40 font-medium">We couldn't synchronize your reward. Please ensure you are logged in correctly.</p>
+                  <h2 className="text-3xl font-black text-white uppercase tracking-tight">Syncing Wallet...</h2>
+                  <p className="text-white/40 font-medium">We're having trouble connecting to your profile. Please check your dashboard in a moment.</p>
                 </div>
                 <Button asChild className="h-14 px-10 bg-primary text-white font-black uppercase rounded-xl shadow-lg">
-                  <Link href="/">Back to Home</Link>
+                  <Link href="/dashboard">View Dashboard</Link>
                 </Button>
               </motion.div>
             )}
