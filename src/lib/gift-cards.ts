@@ -7,6 +7,8 @@ export type GiftCard = {
   values: string[];
   image: string;
   imageUrl?: string;
+  logoUrl?: string;
+  glowColor?: string;
   trending?: boolean;
   featured?: boolean;
   gradient: string; // CSS linear-gradient string
@@ -15,6 +17,8 @@ export type GiftCard = {
 export const categories = [
   "Shopping", "Gaming", "Digital", "Entertainment", "Food", "Transport", "Payments"
 ];
+
+const DEFAULT_LOGO = 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775460293/IMG_20260406_124849_dgnvdv.png';
 
 export const giftCards: GiftCard[] = [
   // Shopping
@@ -26,6 +30,8 @@ export const giftCards: GiftCard[] = [
     description: 'Unlock millions of items with an Amazon reward.', 
     values: ['$10', '$25', '$50', '$100'], 
     image: 'amazon', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#FF9900',
     trending: true, 
     featured: true,
     gradient: 'linear-gradient(135deg, #131921 0%, #FF9900 100%)'
@@ -38,6 +44,8 @@ export const giftCards: GiftCard[] = [
     description: 'Get everything you need from the world\'s largest retailer.', 
     values: ['$25', '$50', '$100'], 
     image: 'walmart',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#0071CE',
     gradient: 'linear-gradient(135deg, #0071CE 0%, #FFC220 100%)'
   },
   { 
@@ -48,6 +56,8 @@ export const giftCards: GiftCard[] = [
     description: 'Style, home, and more with Target rewards.', 
     values: ['$15', '$25', '$50'], 
     image: 'target',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#CC0000',
     gradient: 'linear-gradient(135deg, #CC0000 0%, #808080 100%)'
   },
   { 
@@ -58,6 +68,8 @@ export const giftCards: GiftCard[] = [
     description: 'Upgrade your tech with Best Buy credit.', 
     values: ['$25', '$50', '$100'], 
     image: 'best-buy',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#0046BE',
     gradient: 'linear-gradient(135deg, #0046BE 0%, #FFF200 100%)'
   },
   { 
@@ -68,6 +80,8 @@ export const giftCards: GiftCard[] = [
     description: 'Bid and buy unique items globally.', 
     values: ['$10', '$25', '$50'], 
     image: 'ebay',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#e53238',
     gradient: 'linear-gradient(135deg, #e53238 0%, #0064d2 33%, #f5af02 66%, #86b817 100%)'
   },
   
@@ -80,6 +94,8 @@ export const giftCards: GiftCard[] = [
     description: 'Access thousands of PC games instantly.', 
     values: ['$10', '$25', '$50', '$100'], 
     image: 'steam', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#66C0F4',
     trending: true, 
     featured: true,
     gradient: 'linear-gradient(135deg, #171A21 0%, #66C0F4 100%)'
@@ -92,6 +108,8 @@ export const giftCards: GiftCard[] = [
     description: 'Get Robux to upgrade your avatar and experiences.', 
     values: ['$10', '$25', '$50'], 
     image: 'roblox', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#E3191E',
     trending: true,
     gradient: 'linear-gradient(135deg, #000000 0%, #E3191E 100%)'
   },
@@ -103,6 +121,8 @@ export const giftCards: GiftCard[] = [
     description: 'Download the latest PS5 and PS4 titles.', 
     values: ['$10', '$25', '$50', '$100'], 
     image: 'playstation', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#003087',
     featured: true,
     gradient: 'linear-gradient(135deg, #003087 0%, #6A0DAD 100%)'
   },
@@ -114,6 +134,8 @@ export const giftCards: GiftCard[] = [
     description: 'Play hundreds of high-quality games on console.', 
     values: ['$10', '$25', '$50', '$100'], 
     image: 'xbox', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#107C10',
     featured: true,
     gradient: 'linear-gradient(135deg, #107C10 0%, #054B05 100%)'
   },
@@ -125,6 +147,8 @@ export const giftCards: GiftCard[] = [
     description: 'Games for Switch, 3DS, and Wii U.', 
     values: ['$10', '$20', '$50'], 
     image: 'nintendo',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#E60012',
     gradient: 'linear-gradient(135deg, #E60012 0%, #FFFFFF 100%)'
   },
   { 
@@ -135,6 +159,8 @@ export const giftCards: GiftCard[] = [
     description: 'V-Bucks for new skins and battle passes.', 
     values: ['$10', '$25', '$50'], 
     image: 'fortnite',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#9D4EDD',
     gradient: 'linear-gradient(135deg, #9D4EDD 0%, #0077B6 100%)'
   },
 
@@ -147,6 +173,8 @@ export const giftCards: GiftCard[] = [
     description: 'Apps, games, and more on the Android store.', 
     values: ['$10', '$25', '$50'], 
     image: 'google-play', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#34A853',
     trending: true, 
     featured: true,
     gradient: 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)'
@@ -159,6 +187,8 @@ export const giftCards: GiftCard[] = [
     description: 'Millions of apps on the iOS App Store.', 
     values: ['$10', '$25', '$50', '$100'], 
     image: 'apple',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#A2AAAD',
     gradient: 'linear-gradient(135deg, #000000 0%, #A2AAAD 100%)'
   },
   { 
@@ -169,6 +199,8 @@ export const giftCards: GiftCard[] = [
     description: 'Music, movies, and TV shows on Apple devices.', 
     values: ['$10', '$15', '$25'], 
     image: 'itunes',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#FF00FF',
     gradient: 'linear-gradient(135deg, #FF00FF 0%, #00FFFF 100%)'
   },
 
@@ -181,6 +213,8 @@ export const giftCards: GiftCard[] = [
     description: 'Stream your favorite movies and shows.', 
     values: ['$15', '$25', '$50'], 
     image: 'netflix', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#E50914',
     trending: true,
     gradient: 'linear-gradient(135deg, #000000 0%, #E50914 100%)'
   },
@@ -192,6 +226,8 @@ export const giftCards: GiftCard[] = [
     description: 'Premium music streaming without ads.', 
     values: ['$10', '$30', '$60'], 
     image: 'spotify',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#1DB954',
     gradient: 'linear-gradient(135deg, #1DB954 0%, #191414 100%)'
   },
   { 
@@ -202,6 +238,8 @@ export const giftCards: GiftCard[] = [
     description: 'The best of Disney, Pixar, Marvel, and more.', 
     values: ['$15', '$25', '$50'], 
     image: 'disney',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#113CCF',
     gradient: 'linear-gradient(135deg, #113CCF 0%, #200444 100%)'
   },
 
@@ -214,6 +252,8 @@ export const giftCards: GiftCard[] = [
     description: 'Treat yourself to premium coffee and snacks.', 
     values: ['$10', '$25', '$50'], 
     image: 'starbucks', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#00704A',
     featured: true,
     gradient: 'linear-gradient(135deg, #00704A 0%, #D4E9E2 100%)'
   },
@@ -225,6 +265,8 @@ export const giftCards: GiftCard[] = [
     description: 'Enjoy your favorite fast food rewards.', 
     values: ['$10', '$25', '$50'], 
     image: 'mcdonalds',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#DA291C',
     gradient: 'linear-gradient(135deg, #DA291C 0%, #FFC72C 100%)'
   },
   { 
@@ -235,6 +277,8 @@ export const giftCards: GiftCard[] = [
     description: 'Delicious meals delivered to your door.', 
     values: ['$25', '$50', '$100'], 
     image: 'doordash',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#FF3008',
     gradient: 'linear-gradient(135deg, #FF3008 0%, #FF6B00 100%)'
   },
 
@@ -247,6 +291,8 @@ export const giftCards: GiftCard[] = [
     description: 'Rides and meals with Uber and Uber Eats.', 
     values: ['$25', '$50', '$100'], 
     image: 'uber',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#555555',
     gradient: 'linear-gradient(135deg, #000000 0%, #555555 100%)'
   },
 
@@ -259,6 +305,8 @@ export const giftCards: GiftCard[] = [
     description: 'Get cash rewards directly to your PayPal account.', 
     values: ['$10', '$25', '$50', '$100'], 
     image: 'paypal', 
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#003087',
     trending: true,
     gradient: 'linear-gradient(135deg, #003087 0%, #009CDE 100%)'
   },
@@ -270,6 +318,8 @@ export const giftCards: GiftCard[] = [
     description: 'Spend anywhere Visa is accepted worldwide.', 
     values: ['$25', '$50', '$100'], 
     image: 'visa',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#1A1F71',
     gradient: 'linear-gradient(135deg, #1A1F71 0%, #F7B600 100%)'
   },
   { 
@@ -280,6 +330,8 @@ export const giftCards: GiftCard[] = [
     description: 'Flexible digital reward for all your online needs.', 
     values: ['$25', '$50', '$100'], 
     image: 'vanilla',
+    logoUrl: DEFAULT_LOGO,
+    glowColor: '#7b2cbf',
     gradient: 'linear-gradient(135deg, #7b2cbf 0%, #ff4d6d 100%)'
   },
 ];

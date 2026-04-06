@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/carousel";
 import { giftCards } from "@/lib/gift-cards";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function FeaturedRewards() {
   const [api, setApi] = useState<CarouselApi>();
@@ -93,15 +93,35 @@ export function FeaturedRewards() {
                       background: 'linear-gradient(145deg, rgba(26,26,26,0.8), rgba(17,17,17,0.9))'
                     }}
                   >
-                    {/* Unique Gradient Background Banner */}
+                    {/* Unique Gradient Background Banner with Logo */}
                     <div 
                       className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-6 shadow-xl border border-white/5 flex items-center justify-center p-4 transition-transform duration-700 group-hover/card:scale-[1.05]"
                       style={{ background: card.gradient }}
                     >
                       <div className="absolute inset-0 bg-black/10 group-hover/card:bg-transparent transition-colors duration-700" />
-                      <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_25px_rgba(255,255,255,0.5)] px-4 leading-none select-none">
-                        {card.brand}
-                      </span>
+                      
+                      {/* Brand-Specific Glow */}
+                      <div 
+                        className="absolute inset-0 opacity-20 blur-xl"
+                        style={{ background: `radial-gradient(circle, ${card.glowColor || '#ffffff'}44, transparent 70%)` }}
+                      />
+
+                      {card.logoUrl ? (
+                        <div className="relative z-10 w-20 h-20">
+                          <Image 
+                            src={card.logoUrl}
+                            alt={card.brand}
+                            fill
+                            className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                            data-ai-hint="reward logo"
+                          />
+                        </div>
+                      ) : (
+                        <span className="relative z-10 font-headline font-black text-white text-2xl md:text-3xl uppercase tracking-tighter text-center [text-shadow:0_0_25px_rgba(255,255,255,0.5)] px-4 leading-none select-none">
+                          {card.brand}
+                        </span>
+                      )}
+
                       <div className="absolute bottom-3 left-3 flex gap-1 z-10">
                         {flags.slice(0, 4).map((f, i) => (
                           <span key={i} className="text-sm drop-shadow-md">{f}</span>

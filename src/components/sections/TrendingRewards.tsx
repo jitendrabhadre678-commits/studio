@@ -6,10 +6,11 @@ import { Zap, Star, ArrowUpRight, ShieldCheck, Flame } from 'lucide-react';
 import { giftCards } from '@/lib/gift-cards';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 /**
  * @fileOverview Trending Rewards Section.
- * Features sharper rounded-xl cards with animated glass reflections.
+ * Features sharper rounded-xl cards with animated glass reflections and brand logos.
  */
 
 export function TrendingRewards() {
@@ -63,15 +64,33 @@ export function TrendingRewards() {
                 <span className="text-[8px] font-black text-white uppercase tracking-widest">FREE</span>
               </div>
 
-              {/* Card Visual / Gradient */}
+              {/* Card Visual / Logo Container */}
               <div 
-                className="relative aspect-[16/10] w-full flex items-center justify-center p-6 overflow-hidden"
+                className="relative aspect-[16/10] w-full flex items-center justify-center p-6 overflow-hidden bg-white/[0.03] backdrop-blur-xl"
                 style={{ background: card.gradient }}
               >
-                <div className="absolute inset-0 bg-black/20 group-hover/card:bg-transparent transition-colors duration-700" />
-                <span className="relative z-10 font-headline font-black text-white text-lg md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.3)] select-none">
-                  {card.brand}
-                </span>
+                {/* Brand-Specific Glow */}
+                <div 
+                  className="absolute inset-0 opacity-30 blur-2xl transition-opacity group-hover/card:opacity-50"
+                  style={{ background: `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}44, transparent 70%)` }}
+                />
+                
+                {/* Logo Image */}
+                {card.logoUrl ? (
+                  <div className="relative z-10 w-16 md:w-24 h-16 md:h-24 transition-transform duration-500 group-hover/card:scale-110">
+                    <Image 
+                      src={card.logoUrl}
+                      alt={card.brand}
+                      fill
+                      className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                      data-ai-hint="brand logo"
+                    />
+                  </div>
+                ) : (
+                  <span className="relative z-10 font-headline font-black text-white text-lg md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.3)] select-none">
+                    {card.brand}
+                  </span>
+                )}
                 
                 <div className="absolute -bottom-4 -right-4 opacity-10 group-hover/card:rotate-12 transition-transform duration-700">
                   <Zap className="w-24 h-24 text-white" />
