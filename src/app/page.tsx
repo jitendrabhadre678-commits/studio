@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
 import { TrendingRewards } from '@/components/sections/TrendingRewards';
@@ -13,8 +12,8 @@ import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
 import { GlassDivider } from '@/components/ui/GlassDivider';
 
 /**
- * @fileOverview Redesigned Homepage Layout with Orchestrated Dividers.
- * Visual Rhythm: Hero -> Wave -> Trending -> Radial Glow -> Trust -> Wave (Up) -> How it Works -> Radial Glow -> Reviews -> Wave -> Community -> FAQ -> Footer.
+ * @fileOverview Redesigned Homepage Layout with Orchestrated Minimal Dividers.
+ * Visual Rhythm: Hero -> Wave -> Trending -> Radial Glow -> Trust -> Wave (Up) -> How it Works -> Radial Glow -> Reviews -> Wave -> Community -> Minimal Line -> FAQ -> Footer.
  */
 
 export default function Home() {
@@ -30,42 +29,44 @@ export default function Home() {
       <WaveDivider direction="down" className="relative z-20" />
 
       {/* 2. Trending Gift Cards */}
-      <div className="relative z-10 bg-black/5">
+      <div className="relative z-10 bg-[#050505]">
         <TrendingRewards />
       </div>
 
       {/* Cinematic Transition: Trending -> Trust */}
-      <RadialGlowDivider intensity="high" className="z-20 -mt-20" />
+      <RadialGlowDivider intensity="high" className="z-20 -mt-10" />
 
       {/* 3. Trust & Credibility */}
-      <div className="relative z-10 bg-black/10">
+      <div className="relative z-10 bg-[#050505]">
         <TrustBadges />
       </div>
       
       <WaveDivider direction="up" className="relative z-20" />
 
       {/* 4. Education (Horizontal Wire Flow) */}
-      <div className="relative z-10">
+      <div className="relative z-10 bg-transparent">
         <HowItWorks />
       </div>
 
       {/* Cinematic Transition: How it Works -> Reviews */}
-      <RadialGlowDivider intensity="medium" className="z-20 -mt-10" />
+      <RadialGlowDivider intensity="medium" className="z-20" />
 
       {/* 5. Social Proof */}
-      <div className="relative z-10 bg-black/5">
+      <div className="relative z-10 bg-[#050505]">
         <ReviewsSection />
       </div>
 
       <WaveDivider direction="down" className="relative z-20" />
 
       {/* 6. Community Engagement */}
-      <div className="relative z-10">
+      <div className="relative z-10 bg-[#050505]">
         <CommunityHub />
       </div>
 
-      {/* 7. Logic Break: Glass Separator */}
-      <GlassDivider className="z-20" />
+      {/* 7. Logic Break: Minimal Separator */}
+      <div className="py-10">
+        <GlassDivider className="z-20" />
+      </div>
 
       {/* 8. Support & Closure */}
       <div className="relative z-10 bg-black/20">

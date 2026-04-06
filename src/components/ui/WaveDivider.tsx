@@ -1,12 +1,11 @@
-
 'use client';
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 /**
- * Premium Liquid Glass Wave Divider (Seamless Version).
- * Features organic SVG wave geometry, deep backdrop blur, and slow liquid movement.
+ * Clean Liquid Wave Divider.
+ * Removed all glassmorphism blurs and overlays for a minimal, geometric transition.
  */
 
 interface WaveDividerProps {
@@ -19,18 +18,17 @@ export function WaveDivider({ direction = 'down', className }: WaveDividerProps)
 
   return (
     <div className={cn(
-      "relative w-full h-[80px] md:h-[120px] overflow-hidden z-20 pointer-events-none select-none block",
-      isUp ? "-mt-[40px] md:-mt-[60px]" : "-mb-[40px] md:-mb-[60px]",
+      "relative w-full h-[60px] md:h-[100px] overflow-hidden z-20 pointer-events-none select-none block",
+      isUp ? "-mt-[30px] md:-mt-[50px]" : "-mb-[30px] md:-mb-[50px]",
       className
     )}>
-      {/* Liquid Animation Layer */}
+      {/* Wave Animation Layer */}
       <motion.div
         animate={{
           x: ["-1%", "1%", "-1%"],
-          scaleY: [1, 1.02, 1],
         }}
         transition={{
-          duration: 12,
+          duration: 15,
           repeat: Infinity,
           ease: "easeInOut"
         }}
@@ -39,36 +37,27 @@ export function WaveDivider({ direction = 'down', className }: WaveDividerProps)
         <svg
           viewBox="0 0 1440 120"
           className={cn(
-            "w-full h-full transition-transform duration-1000 block",
+            "w-full h-full block transition-transform duration-1000",
             isUp ? "rotate-180" : ""
           )}
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Main Glass Path - Fills to the bottom to cover seams */}
+          {/* Minimal Solid Path - Syncs with deep background #050505 */}
           <path
             d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64L1440,120L0,120Z"
-            className="fill-white/[0.04] backdrop-blur-3xl"
+            fill="#050505"
           />
           
-          {/* Border Highlight Path - Adds the 'glass edge' look */}
+          {/* Sublte top edge line for depth */}
           <path
             d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64"
             fill="none"
-            stroke="rgba(255,255,255,0.12)"
-            strokeWidth="2"
-            strokeLinecap="round"
+            stroke="rgba(255,255,255,0.05)"
+            strokeWidth="1"
           />
         </svg>
       </motion.div>
-
-      {/* Luxury Gradient Glows */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-primary/10 opacity-30 mix-blend-overlay pointer-events-none" />
-      
-      {/* Light Sweep Effect */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 bottom-0 w-[40%] bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -skew-x-[35deg] animate-shine" />
-      </div>
     </div>
   );
 }
