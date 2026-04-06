@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Video } from 'lucide-react';
 import { Logo } from '@/components/brand/Logo';
 import { cn } from '@/lib/utils';
+import { FooterWave } from '@/components/ui/FooterWave';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -53,9 +54,12 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-transparent pt-16 pb-10 px-4">
-      <div className="container mx-auto">
-        <div className="bg-black/80 backdrop-blur-2xl border border-white/5 rounded-[32px] overflow-hidden p-8 md:p-16">
+    <footer className="relative bg-[#050505] pt-0 pb-10">
+      {/* Premium Wave Transition */}
+      <FooterWave className="absolute top-0 left-0 w-full -translate-y-[99%]" />
+
+      <div className="container mx-auto px-4">
+        <div className="bg-black/40 backdrop-blur-2xl border border-white/5 rounded-[32px] overflow-hidden p-8 md:p-16 shadow-2xl">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-16 mb-16">
             <div className="max-w-sm">
               <Link href="/" className="inline-block mb-8 group">
