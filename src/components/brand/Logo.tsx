@@ -3,25 +3,17 @@
 import { cn } from "@/lib/utils";
 
 /**
- * GameFlashX Coupon Logo Component
- * 
- * Features:
- * - Stylized coupon/ticket icon with side cutouts.
- * - Integrated lightning bolt symbol representing rewards & speed.
- * - Responsive scaling that inherits height from the parent.
+ * GameFlashX Blue Premium Logo
  */
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2 select-none group h-full", className)}>
-      {/* Coupon Icon Badge */}
       <div className="relative h-[80%] aspect-square flex items-center justify-center shrink-0">
-        <div className="absolute inset-0 bg-primary rounded-[20%] shadow-[0_0_10px_rgba(250,70,22,0.4)] transition-all group-hover:shadow-[0_0_20px_rgba(250,70,22,0.6)]" />
+        <div className="absolute inset-0 bg-primary rounded-[20%] shadow-[0_0_10px_rgba(0,157,255,0.4)] transition-all group-hover:shadow-[0_0_20px_rgba(0,157,255,0.6)]" />
         
-        {/* Ticket Side Cutouts */}
-        <div className="absolute -left-[8%] top-1/2 -translate-y-1/2 w-[16%] h-[16%] bg-black rounded-full" />
-        <div className="absolute -right-[8%] top-1/2 -translate-y-1/2 w-[16%] h-[16%] bg-black rounded-full" />
+        <div className="absolute -left-[8%] top-1/2 -translate-y-1/2 w-[16%] h-[16%] bg-[#050b18] rounded-full" />
+        <div className="absolute -right-[8%] top-1/2 -translate-y-1/2 w-[16%] h-[16%] bg-[#050b18] rounded-full" />
         
-        {/* Lightning Bolt Symbol */}
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -35,7 +27,6 @@ export function Logo({ className }: { className?: string }) {
         </svg>
       </div>
 
-      {/* Brand Text */}
       <span className={cn(
         "font-headline font-[900] tracking-tighter uppercase leading-none text-white flex items-center",
         "drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] text-sm md:text-lg"

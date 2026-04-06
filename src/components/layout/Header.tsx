@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -48,17 +47,14 @@ export function Header() {
         "h-14 md:h-[72px] flex items-center px-4 md:px-8"
       )}>
         <div className="w-full flex items-center justify-between max-w-[1400px] mx-auto gap-3 md:gap-8">
-          {/* Left: Logo */}
           <Link href="/" className="flex items-center group shrink-0 h-7 md:h-10">
             <Logo className="h-full" />
           </Link>
 
-          {/* Center: Search Bar (Visible Mobile & Desktop) */}
           <div className="flex-1 max-w-sm">
             <AutoSuggestSearch />
           </div>
 
-          {/* Right: Actions & Menu */}
           <div className="flex items-center gap-2 md:gap-10">
             <nav className="hidden lg:flex items-center gap-10">
               {navLinks.map((link) => (
@@ -85,7 +81,7 @@ export function Header() {
                         Login
                       </Button>
                       <Button 
-                        className="bg-primary hover:bg-primary/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(250,70,22,0.3)] h-10 border-none"
+                        className="bg-primary hover:bg-primary/90 text-white font-black px-6 rounded-xl shadow-[0_0_20px_rgba(0,157,255,0.3)] h-10 border-none"
                         onClick={() => setAuthModal({ open: true, tab: 'signup' })}
                       >
                         Sign Up

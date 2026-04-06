@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Video } from 'lucide-react';
 import { Logo } from '@/components/brand/Logo';
@@ -28,35 +27,14 @@ const DiscordIcon = ({ className }: { className?: string }) => (
 
 export function Footer() {
   const socials = [
-    { 
-      icon: <InstagramIcon className="w-5 h-5" />, 
-      href: "https://www.instagram.com/gameflashx",
-      glow: "hover:shadow-[0_0_15px_rgba(220,39,67,0.5)]",
-      hoverColor: "hover:text-[#dc2743]"
-    },
-    { 
-      icon: <YoutubeIcon className="w-5 h-5" />, 
-      href: "https://youtube.com/@gameflashx",
-      glow: "hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]",
-      hoverColor: "hover:text-[#FF0000]"
-    },
-    { 
-      icon: <DiscordIcon className="w-5 h-5" />, 
-      href: "https://discord.gg/mBjte9tthg",
-      glow: "hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]",
-      hoverColor: "hover:text-[#5865F2]"
-    },
-    { 
-      icon: <Video className="w-5 h-5" />, 
-      href: "https://whop.com/gameflashx",
-      glow: "hover:shadow-[0_0_15px_rgba(0,163,255,0.5)]",
-      hoverColor: "hover:text-[#00A3FF]"
-    },
+    { icon: <InstagramIcon className="w-5 h-5" />, href: "https://www.instagram.com/gameflashx", glow: "hover:shadow-[0_0_15px_rgba(0,157,255,0.5)]" },
+    { icon: <YoutubeIcon className="w-5 h-5" />, href: "https://youtube.com/@gameflashx", glow: "hover:shadow-[0_0_15px_rgba(0,157,255,0.5)]" },
+    { icon: <DiscordIcon className="w-5 h-5" />, href: "https://discord.gg/mBjte9tthg", glow: "hover:shadow-[0_0_15px_rgba(0,157,255,0.5)]" },
+    { icon: <Video className="w-5 h-5" />, href: "https://whop.com/gameflashx", glow: "hover:shadow-[0_0_15px_rgba(0,157,255,0.5)]" },
   ];
 
   return (
-    <footer className="relative bg-[#050505] pt-0 pb-10">
-      {/* Premium Wave Transition */}
+    <footer className="relative bg-[#050b18] pt-0 pb-10">
       <FooterWave className="absolute top-0 left-0 w-full -translate-y-[99%]" />
 
       <div className="container mx-auto px-4">
@@ -67,22 +45,11 @@ export function Footer() {
                 <Logo className="h-8 md:h-10" />
               </Link>
               <p className="text-muted-foreground mb-10 text-base leading-relaxed font-medium">
-                The premier destination for gamers to earn premium digital rewards through simple activities. Secure, fast, and globally accessible.
+                The premier secure network for unlocking premium digital rewards through verified session validation.
               </p>
               <div className="flex flex-wrap gap-4">
                 {socials.map((social, idx) => (
-                  <a 
-                    key={idx} 
-                    href={social.href} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className={cn(
-                      "w-12 h-12 glass-card rounded-2xl flex items-center justify-center text-white/60 transition-all duration-300",
-                      "hover:scale-110 hover:border-white/20 hover:bg-white/5",
-                      social.glow,
-                      social.hoverColor
-                    )}
-                  >
+                  <a key={idx} href={social.href} target="_blank" rel="noopener noreferrer" className={cn("w-12 h-12 glass-card rounded-2xl flex items-center justify-center text-white/60 transition-all duration-300 hover:scale-110 hover:border-primary/20 hover:text-primary", social.glow)}>
                     {social.icon}
                   </a>
                 ))}
@@ -95,14 +62,12 @@ export function Footer() {
                 <Link href="/privacy-policy" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Privacy</Link>
                 <Link href="/terms-of-service" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Terms</Link>
                 <Link href="/cookie-policy" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Cookies</Link>
-                <Link href="/disclaimer" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Disclaimer</Link>
               </div>
               <div className="space-y-4">
                 <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] mb-6">Community</h4>
                 <Link href="/blog" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Blog</Link>
                 <Link href="/reviews" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Reviews</Link>
                 <Link href="/leaderboard" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Winners</Link>
-                <Link href="/#faq" className="block text-sm text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest">Support</Link>
               </div>
             </div>
           </div>
@@ -112,7 +77,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
             <p>© 2026 GAMEFLASHX. ALL RIGHTS RESERVED.</p>
             <div className="flex items-center gap-6">
-              <span className="text-primary/60 border border-primary/20 px-3 py-1 rounded-full bg-primary/5">Global Reward Network</span>
+              <span className="text-primary/60 border border-primary/20 px-3 py-1 rounded-full bg-primary/5">Azure Secure Network</span>
             </div>
           </div>
         </div>
