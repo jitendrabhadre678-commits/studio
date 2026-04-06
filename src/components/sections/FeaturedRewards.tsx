@@ -82,30 +82,30 @@ export function FeaturedRewards() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}
                     onClick={() => handleCardClick(card.slug)}
-                    className="rounded-2xl border border-white/10 transition-all duration-500 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/20 hover:scale-[1.03] overflow-hidden cursor-pointer"
+                    className="rounded-2xl border border-white/10 transition-all duration-300 flex flex-col h-full group/card relative glass-card shadow-lg hover:shadow-primary/20 hover:scale-[1.03] overflow-hidden cursor-pointer"
                   >
                     {/* Visual Container */}
-                    <div className="relative aspect-[16/10] w-full flex items-center justify-center p-8 bg-white/[0.03] overflow-hidden">
+                    <div className="relative aspect-[16/10] w-full flex items-center justify-center p-8 bg-white/[0.03] overflow-hidden backdrop-blur-xl">
                       {/* Brand-Specific Glow */}
                       <div 
-                        className="absolute inset-0 opacity-30 blur-2xl transition-opacity group-hover/card:opacity-50"
-                        style={{ background: `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` }}
+                        className="absolute inset-0 opacity-30 blur-2xl transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-110"
+                        style={{ 
+                          background: card.glowColor?.includes('gradient') 
+                            ? card.glowColor 
+                            : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
+                        }}
                       />
 
-                      {card.logoUrl ? (
-                        <div className="relative z-10 w-24 h-24 transition-transform duration-700 group-hover/card:scale-110">
+                      {card.logoUrl && (
+                        <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 transition-transform duration-700 group-hover/card:scale-110">
                           <Image 
                             src={card.logoUrl}
                             alt={card.brand}
                             fill
-                            className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                            className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]"
                             data-ai-hint="reward logo"
                           />
                         </div>
-                      ) : (
-                        <span className="relative z-10 font-headline font-black text-white text-3xl uppercase tracking-tighter text-center select-none">
-                          {card.brand}
-                        </span>
                       )}
                     </div>
 
@@ -113,7 +113,7 @@ export function FeaturedRewards() {
                       <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary mb-2">
                         {card.category} Reward
                       </p>
-                      <h3 className="text-2xl font-black text-white mb-6 group-hover/card:text-primary transition-colors truncate">
+                      <h3 className="text-lg md:text-2xl font-black text-white group-hover/card:text-primary transition-colors truncate">
                         {card.brand}
                       </h3>
 

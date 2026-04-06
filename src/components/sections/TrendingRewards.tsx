@@ -40,8 +40,8 @@ export function TrendingRewards() {
         </p>
       </div>
 
-      {/* Rewards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+      {/* Rewards Grid: 2 columns mobile, 4 columns desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
         {giftCards.slice(0, 12).map((card, idx) => (
           <motion.div
             key={card.id}
@@ -56,7 +56,7 @@ export function TrendingRewards() {
               className={cn(
                 "relative h-full glass-card border-white/10 bg-white/[0.02] hover:bg-white/[0.05]",
                 "hover:border-primary/40 hover:shadow-[0_10px_40px_rgba(250,70,22,0.15)]",
-                "transition-all duration-500 cursor-pointer rounded-2xl overflow-hidden flex flex-col group/card shadow-lg"
+                "transition-all duration-300 cursor-pointer rounded-2xl overflow-hidden flex flex-col group/card shadow-lg hover:scale-[1.03]"
               )}
             >
               {/* Card Visual / Logo Container */}
@@ -65,25 +65,25 @@ export function TrendingRewards() {
               >
                 {/* Brand-Specific Glow */}
                 <div 
-                  className="absolute inset-0 opacity-20 blur-2xl transition-opacity group-hover/card:opacity-40"
-                  style={{ background: `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` }}
+                  className="absolute inset-0 opacity-30 blur-2xl transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-110"
+                  style={{ 
+                    background: card.glowColor?.includes('gradient') 
+                      ? card.glowColor 
+                      : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
+                  }}
                 />
                 
-                {/* Logo Image */}
-                {card.logoUrl ? (
-                  <div className="relative z-10 w-16 md:w-24 h-16 md:h-24 transition-transform duration-500 group-hover/card:scale-110">
+                {/* Logo Image: w-16 mobile, w-20 desktop */}
+                {card.logoUrl && (
+                  <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 transition-transform duration-500 group-hover/card:scale-110">
                     <Image 
                       src={card.logoUrl}
                       alt={card.brand}
                       fill
-                      className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                      className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]"
                       data-ai-hint="reward logo"
                     />
                   </div>
-                ) : (
-                  <span className="relative z-10 font-headline font-black text-white text-lg md:text-2xl uppercase tracking-tighter text-center [text-shadow:0_0_20px_rgba(255,255,255,0.3)] select-none">
-                    {card.brand}
-                  </span>
                 )}
                 
                 <div className="absolute -bottom-4 -right-4 opacity-5 group-hover/card:rotate-12 transition-transform duration-700">
@@ -93,7 +93,7 @@ export function TrendingRewards() {
 
               <CardContent className="p-6 md:p-8 flex flex-col flex-grow bg-[#0a0a0a]/40 backdrop-blur-sm border-t border-white/5">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-base md:text-xl font-black text-white group-hover/card:text-primary transition-colors leading-tight truncate">
+                  <h3 className="text-sm md:text-lg font-black text-white group-hover/card:text-primary transition-colors leading-tight truncate">
                     {card.brand} {card.values[0]}
                   </h3>
                   <ArrowUpRight className="w-4 h-4 text-white/20 group-hover/card:text-primary group-hover/card:translate-x-1 group-hover/card:-translate-y-1 transition-all" />

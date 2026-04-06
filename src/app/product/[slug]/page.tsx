@@ -64,16 +64,20 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <div className="relative animate-fade-in-up">
               <div 
                 className="absolute inset-0 blur-[120px] rounded-full opacity-30" 
-                style={{ background: card.glowColor || '#FA4616' }}
+                style={{ background: card.glowColor?.includes('gradient') ? '#FA4616' : card.glowColor || '#FA4616' }}
               />
               
               {/* Premium Logo Visual Container */}
               <div 
-                className="relative glass-card aspect-[16/10] rounded-2xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group bg-[#0a0a0a]"
+                className="relative glass-card aspect-[16/10] rounded-2xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group bg-[#0a0a0a] backdrop-blur-xl"
               >
                 <div 
-                  className="absolute inset-0 opacity-20 blur-3xl"
-                  style={{ background: `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` }}
+                  className="absolute inset-0 opacity-30 blur-3xl transition-all duration-700"
+                  style={{ 
+                    background: card.glowColor?.includes('gradient') 
+                      ? card.glowColor 
+                      : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
+                  }}
                 />
                 
                 {card.logoUrl ? (
@@ -82,7 +86,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                       src={card.logoUrl}
                       alt={card.brand}
                       fill
-                      className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                      className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.25)]"
                       priority
                     />
                   </div>
@@ -100,12 +104,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-8">
-                <div className="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-white/5">
+                <div className="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-white/5 backdrop-blur-xl">
                   <ShieldCheck className="text-primary w-8 h-8 mb-3" />
                   <span className="text-sm font-bold text-white mb-1 uppercase tracking-tight">Secured</span>
                   <span className="text-[10px] text-muted-foreground uppercase tracking-widest">SSL Encrypted</span>
                 </div>
-                <div className="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-white/5">
+                <div className="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-white/5 backdrop-blur-xl">
                   <Clock className="text-primary w-8 h-8 mb-3" />
                   <span className="text-sm font-bold text-white mb-1 uppercase tracking-tight">Instant</span>
                   <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Global Delivery</span>
@@ -132,7 +136,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 Unlock Your <br /><span className="text-primary text-glow">{card.brand}</span> Code
               </h1>
               
-              <div className="glass-card p-8 rounded-2xl mb-10 border-white/10 relative overflow-hidden group">
+              <div className="glass-card p-8 rounded-2xl mb-10 border-white/10 relative overflow-hidden group backdrop-blur-xl">
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                    <Zap className="w-32 h-32" />
                 </div>
@@ -176,7 +180,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               ))}
             </div>
 
-            <div className="mt-24 p-12 glass-card rounded-[3rem] text-center border-white/5 relative overflow-hidden group">
+            <div className="mt-24 p-12 glass-card rounded-[3rem] text-center border-white/5 relative overflow-hidden group backdrop-blur-xl">
               <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                 <Globe className="w-48 h-48 text-primary" />
               </div>
