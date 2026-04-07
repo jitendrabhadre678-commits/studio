@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, ShieldCheck, Loader2, Info, Gamepad2, Download } from 'lucide-react';
+import { X, Lock, ShieldCheck, Loader2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 /**
  * @fileOverview Professional Verification Portal.
  * Features: Adaptive full-screen mobile view, centered desktop modal, 
- * professional trust-based copy, iframe integration, and a premium promo section.
+ * professional trust-based copy, iframe integration, and a native-style promo section.
  */
 
 interface RewardVerificationModalProps {
@@ -111,43 +110,45 @@ export function RewardVerificationModal({
               />
             </div>
 
-            {/* 3. PREMIUM PROMO SECTION */}
+            {/* 3. NATIVE OFFER-STYLE PROMO SECTION */}
             <div className="px-5 pb-8 md:px-8 md:pb-10 mt-4">
-              <div className="bg-white/5 backdrop-blur-[20px] rounded-2xl border border-white/10 p-4 md:p-5 flex flex-col sm:flex-row items-center gap-5 group/promo relative overflow-hidden">
-                {/* Visual Accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] pointer-events-none" />
-                
-                {/* Left: Product Image */}
-                <div className="relative w-[70px] h-[70px] shrink-0 rounded-xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(0,157,255,0.2)]">
-                  <Image 
-                    src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775485427/b45e6a18d5c4edf0f2803f39b65c6881_cobc8c.jpg"
-                    alt="Distortion Game"
-                    fill
-                    className="object-cover group-hover/promo:scale-110 transition-transform duration-700"
-                  />
-                </div>
-
-                {/* Right: Text + Button Content */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 flex-1 w-full text-center sm:text-left">
-                  <div className="min-w-0">
-                    <h4 className="text-sm md:text-base font-bold text-white tracking-tight flex items-center justify-center sm:justify-start gap-2 mb-1">
-                      🇺🇸 Start Playing Distortion Now!
-                    </h4>
-                    <p className="text-[11px] md:text-[12px] text-white/60 font-medium">
-                      Download and install to begin your experience instantly.
-                    </p>
+              <a 
+                href="https://playabledownloads.com/show.php?l=0&u=1149831&id=74581" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-white rounded-[14px] p-[10px] flex items-center justify-between group/offer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.2)] cursor-pointer"
+              >
+                {/* Left: Image + Text Content */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative w-[52px] h-[52px] shrink-0 rounded-[10px] overflow-hidden shadow-[0_0_10px_rgba(0,157,255,0.1)] border border-black/5">
+                    <Image 
+                      src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775581463/1775581364370_qtkuql.png"
+                      alt="Distortion"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover/offer:scale-110"
+                    />
                   </div>
 
-                  <Button 
-                    asChild
-                    className="shrink-0 h-11 px-6 rounded-xl bg-gradient-to-r from-[#009dff] to-[#00e0ff] text-white font-black uppercase tracking-widest text-[11px] border-none shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-                  >
-                    <a href="https://playabledownloads.com/show.php?l=0&u=1149831&id=74581" target="_blank" rel="noopener noreferrer">
-                      Download & Play <Download className="ml-2 w-3.5 h-3.5" />
-                    </a>
-                  </Button>
+                  <div className="min-w-0">
+                    <h4 className="text-[14px] font-semibold text-black leading-tight truncate">
+                      🇺🇸 Start Playing Distortion Now!
+                    </h4>
+                    <p className="text-[12px] text-[#444] mt-0.5 truncate font-medium">
+                      Download and install to begin instantly.
+                    </p>
+                  </div>
                 </div>
-              </div>
+
+                {/* Right: Badges */}
+                <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+                  <div className="bg-gradient-to-r from-[#009dff] to-[#00e0ff] text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                    Free
+                  </div>
+                  <span className="text-[10px] font-bold text-[#009dff] whitespace-nowrap">
+                    Featured for you
+                  </span>
+                </div>
+              </a>
             </div>
           </div>
 
