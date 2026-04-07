@@ -1,23 +1,38 @@
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Zap } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+
+/**
+ * @fileOverview Optimized Live Activity Notification System.
+ * Features: Compact 260px design, 7s cycling, and homepage-only visibility.
+ */
 
 const names = ["Emma", "Noah", "Olivia", "James", "Sophia", "Liam", "Ava", "William", "Isabella", "Benjamin"];
-const locations = ["USA", "UK", "Canada", "Australia", "Germany", "France"];
-const values = ["$10", "$25", "$50", "$100"];
-const brands = ["Amazon", "Steam", "Roblox", "Netflix", "PayPal", "Fortnite"];
+const locations = ["USA", "UK", "Canada", "AUS", "Germany", "France"];
+const values = ["$10", "$25", "$50"];
+const brands = ["Amazon", "Steam", "Roblox", "Netflix", "PayPal"];
 
 export function LiveActivity() {
   const [notification, setNotification] = useState<any>(null);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
   const isMounted = useRef(true);
 
+  // Rule: Only show on homepage
+  const isHomepage = pathname === '/';
+
   useEffect(() => {
+    if (!isHomepage) {
+      setNotification(null);
+      return;
+    }
+
     isMounted.current = true;
     
     const showNotification = () => {
-      if (!isMounted.current) return;
+      if (!isMounted.current || !isHomepage) return;
 
       const data = {
         name: names[Math.floor(Math.random() * names.length)],
@@ -29,43 +44,57 @@ export function LiveActivity() {
       
       setNotification(data);
       
-      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
-      
-      hideTimeoutRef.current = setTimeout(() => {
+      // Keep visible for 4 seconds, then 3 seconds gap (Total 7s)
+      setTimeout(() => {
         if (isMounted.current) setNotification(null);
-      }, 5000);
+      }, 4000);
     };
 
-    const initialTimer = setTimeout(showNotification, 3000);
-    const interval = setInterval(showNotification, 15000);
+    const interval = setInterval(showNotification, 7000);
+    // Initial delay
+    const initial = setTimeout(showNotification, 2000);
 
     return () => {
       isMounted.current = false;
-      clearTimeout(initialTimer);
       clearInterval(interval);
-      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+      clearTimeout(initial);
     };
-  }, []);
+  }, [isHomepage]);
 
-  if (!notification) return null;
+  if (!isHomepage) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-[100] animate-in slide-in-from-left-full duration-500">
-      <div className="glass-card p-4 rounded-2xl flex items-center gap-4 shadow-2xl border-primary/30 min-w-[300px]">
-        <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0 animate-pulse-glow">
-          <Zap className="text-white fill-white w-6 h-6" />
-        </div>
-        <div className="flex-grow">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-bold text-primary uppercase tracking-widest">Recent Reward</span>
-            <span className="text-[10px] text-muted-foreground">Just now</span>
-          </div>
-          <p className="text-sm text-white font-medium">
-            <span className="font-bold">{notification.name}</span> from <span className="text-white/80">{notification.location}</span><br />
-            unlocked <span className="text-primary font-bold">{notification.value} {notification.brand}</span> reward.
-          </p>
-        </div>
-      </div>
+    <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[100] pointer-events-none">
+      <AnimatePresence mode="wait">
+        {notification && (
+          <motion.div
+            key={notification.id}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+            className="glass-card w-[260px] p-2.5 rounded-2xl flex items-center gap-3 shadow-2xl border-primary/20 bg-black/60 backdrop-blur-xl pointer-events-auto"
+          >
+            <div className="w-9 h-9 bg-primary/20 rounded-xl flex items-center justify-center shrink-0 border border-primary/20">
+              <Zap className="text-primary fill-primary w-4 h-4 animate-pulse" />
+            </div>
+            
+            <div className="min-w-0">
+              <p className="text-[11px] text-white/90 leading-tight">
+                <span className="font-black uppercase tracking-tight">{notification.name}</span> 
+                <span className="text-white/40 mx-1">from</span>
+                <span className="font-bold text-white/60">{notification.location}</span>
+              </p>
+              <p className="text-[10px] text-white/50 mt-0.5 truncate">
+                Unlocked <span className="text-primary font-black">{notification.value} {notification.brand}</span>
+              </p>
+            </div>
+
+            <div className="ml-auto pr-1">
+              <div className="w-1 h-1 rounded-full bg-green-500 animate-ping" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
