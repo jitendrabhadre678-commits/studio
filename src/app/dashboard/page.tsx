@@ -23,6 +23,7 @@ import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { TaskHistory } from '@/components/dashboard/TaskHistory';
 import { motion } from 'framer-motion';
@@ -224,7 +225,66 @@ export default function Dashboard() {
             </div>
           </header>
 
-          {/* --- NEW INVITE & EARN SECTION --- */}
+          {/* --- NEW PREMIUM OFFERS SECTION --- */}
+          <section className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-8 w-1.5 bg-primary rounded-full shadow-[0_0_15px_rgba(0,157,255,0.5)]" />
+              <h2 className="text-2xl font-black uppercase tracking-tight">Premium Offers 🔥</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <a 
+                href="https://playabledownloads.com/show.php?l=0&u=1149831&id=74581" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="glass-card bg-white/[0.06] backdrop-blur-[20px] border border-white/10 p-3 rounded-[14px] flex items-center justify-between group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,157,255,0.15)] hover:border-primary/30"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative w-[56px] h-[52px] shrink-0 rounded-[10px] overflow-hidden border border-white/5 shadow-2xl">
+                    <Image 
+                      src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775581463/1775581364370_qtkuql.png"
+                      alt="App Testing"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-base font-black text-white uppercase tracking-tight leading-tight">App Testing</h4>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-0.5">Download & test to earn rewards</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end pl-4">
+                  <div className="bg-primary/20 border border-primary/30 px-3 py-1 rounded-full mb-1">
+                    <span className="text-primary font-black text-sm">$5.00</span>
+                  </div>
+                  <p className="text-[8px] font-black text-white/20 uppercase tracking-widest">Instant Payout</p>
+                </div>
+              </a>
+
+              <Link
+                href="/offer/277ood"
+                className="glass-card bg-white/[0.06] backdrop-blur-[20px] border border-white/10 p-3 rounded-[14px] flex items-center justify-between group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,157,255,0.15)] hover:border-primary/30"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-[56px] h-[52px] bg-primary/10 rounded-[10px] flex items-center justify-center shrink-0 border border-primary/20">
+                    <Zap className="w-6 h-6 text-primary fill-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-base font-black text-white uppercase tracking-tight leading-tight">Reward Node</h4>
+                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-0.5">Connect to claim $1.00 bonus</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end pl-4">
+                  <div className="bg-green-500/20 border border-green-500/30 px-3 py-1 rounded-full mb-1">
+                    <span className="text-green-500 font-black text-sm">$1.00</span>
+                  </div>
+                  <p className="text-[8px] font-black text-white/20 uppercase tracking-widest">Verified Link</p>
+                </div>
+              </Link>
+            </div>
+          </section>
+
+          {/* --- INVITE & EARN SECTION --- */}
           <section className="mb-12">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-8 w-1.5 bg-primary rounded-full shadow-[0_0_15px_rgba(0,157,255,0.5)]" />
