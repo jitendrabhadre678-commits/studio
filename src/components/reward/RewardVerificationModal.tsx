@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, ShieldCheck, Loader2, Info } from 'lucide-react';
+import { X, Lock, ShieldCheck, Loader2, Info, Gamepad2, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 /**
  * @fileOverview Professional Verification Portal.
  * Features: Adaptive full-screen mobile view, centered desktop modal, 
- * professional trust-based copy, and iframe integration.
+ * professional trust-based copy, iframe integration, and a premium promo section.
  */
 
 interface RewardVerificationModalProps {
@@ -56,7 +58,7 @@ export function RewardVerificationModal({
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className={cn(
             "relative flex flex-col overflow-hidden bg-[#050b18] border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)]",
-            "w-full h-full md:h-[85vh] md:max-w-[900px] md:rounded-[2rem] md:border"
+            "w-full h-full md:h-[90vh] md:max-w-[900px] md:rounded-[2rem] md:border"
           )}
         >
           {/* 1. PROFESSIONAL HEADER */}
@@ -85,29 +87,71 @@ export function RewardVerificationModal({
             </div>
           </header>
 
-          {/* 2. IFRAME VIEWPORT */}
-          <div className="relative flex-1 bg-black/20">
-            {!iframeLoaded && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-0">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] animate-pulse">
-                  Loading Secure Verification...
-                </span>
-              </div>
-            )}
-            
-            <iframe
-              src="https://gameflashx.space/cl/i/277ood"
-              className={cn(
-                "w-full h-full border-none transition-opacity duration-700",
-                iframeLoaded ? "opacity-100" : "opacity-0"
+          {/* 2. SCROLLABLE VIEWPORT (IFRAME + PROMO) */}
+          <div className="flex-1 overflow-y-auto bg-black/20 custom-scrollbar flex flex-col">
+            {/* IFRAME SECTION */}
+            <div className="relative w-full h-[500px] md:h-[600px] shrink-0">
+              {!iframeLoaded && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-0">
+                  <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                  <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] animate-pulse">
+                    Loading Secure Verification...
+                  </span>
+                </div>
               )}
-              onLoad={() => setIframeLoaded(true)}
-              title="Reward Verification"
-            />
+              
+              <iframe
+                src="https://gameflashx.space/cl/i/277ood"
+                className={cn(
+                  "w-full h-full border-none transition-opacity duration-700",
+                  iframeLoaded ? "opacity-100" : "opacity-0"
+                )}
+                onLoad={() => setIframeLoaded(true)}
+                title="Reward Verification"
+              />
+            </div>
+
+            {/* 3. PREMIUM PROMO SECTION */}
+            <div className="px-5 pb-8 md:px-8 md:pb-10 mt-4">
+              <div className="bg-white/5 backdrop-blur-[20px] rounded-2xl border border-white/10 p-4 md:p-5 flex flex-col sm:flex-row items-center gap-5 group/promo relative overflow-hidden">
+                {/* Visual Accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] pointer-events-none" />
+                
+                {/* Left: Product Image */}
+                <div className="relative w-[70px] h-[70px] shrink-0 rounded-xl overflow-hidden border border-white/10 shadow-[0_0_20px_rgba(0,157,255,0.2)]">
+                  <Image 
+                    src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775485427/b45e6a18d5c4edf0f2803f39b65c6881_cobc8c.jpg"
+                    alt="Distortion Game"
+                    fill
+                    className="object-cover group-hover/promo:scale-110 transition-transform duration-700"
+                  />
+                </div>
+
+                {/* Right: Text + Button Content */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 flex-1 w-full text-center sm:text-left">
+                  <div className="min-w-0">
+                    <h4 className="text-sm md:text-base font-bold text-white tracking-tight flex items-center justify-center sm:justify-start gap-2 mb-1">
+                      🇺🇸 Start Playing Distortion Now!
+                    </h4>
+                    <p className="text-[11px] md:text-[12px] text-white/60 font-medium">
+                      Download and install to begin your experience instantly.
+                    </p>
+                  </div>
+
+                  <Button 
+                    asChild
+                    className="shrink-0 h-11 px-6 rounded-xl bg-gradient-to-r from-[#009dff] to-[#00e0ff] text-white font-black uppercase tracking-widest text-[11px] border-none shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <a href="https://playabledownloads.com/show.php?l=0&u=1149831&id=74581" target="_blank" rel="noopener noreferrer">
+                      Download & Play <Download className="ml-2 w-3.5 h-3.5" />
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* 3. SECURITY FOOTER */}
+          {/* 4. SECURITY FOOTER */}
           <footer className="bg-black/40 border-t border-white/5 p-4 md:px-8 flex items-center justify-between gap-4 shrink-0">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-primary" />
