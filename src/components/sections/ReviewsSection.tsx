@@ -1,22 +1,31 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { reviews } from '@/lib/reviews';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, Star, ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
+import { Star, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Refined Reviews Section.
- * Features a strict 10-item limit, 2-column mobile grid, and specular glass cards.
+ * @fileOverview Optimized Reviews Section.
+ * Features: 10-item limit, randomization on refresh, 2-column mobile grid,
+ * and zero navigational distractions for maximum trust.
  */
 
 export function ReviewsSection() {
-  // Limit to exactly 10 reviews as per prompt
-  const displayReviews = reviews.slice(0, 10);
+  const [displayReviews, setDisplayReviews] = useState<typeof reviews>([]);
+
+  useEffect(() => {
+    // Randomize and slice to 10 on the client to avoid hydration mismatch
+    const shuffled = [...reviews]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 10);
+    setDisplayReviews(shuffled);
+  }, []);
+
+  if (displayReviews.length === 0) return null;
 
   return (
     <div className="py-20 px-4 relative">
@@ -34,27 +43,27 @@ export function ReviewsSection() {
             User <span className="text-primary text-glow">Reviews</span>
           </h2>
           <p className="text-muted-foreground text-sm md:text-lg max-w-xl mx-auto mt-4 font-medium">
-            Join thousands of real players already unlocking rewards.
+            Authentic success stories from our global community.
           </p>
         </div>
 
-        {/* Responsive Grid: Exactly 2 columns on mobile, 3 on lg+ */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+        {/* Responsive Grid: Strictly 2 columns on mobile, 3 on lg+ */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {displayReviews.map((review, idx) => {
-            // Consistent 4 or 5 star rating as per prompt
-            const rating = (idx % 3 === 0) ? 4 : 5;
+            // Consistent 4 or 5 star rating logic
+            const rating = (parseInt(review.id) % 3 === 0) ? 4 : 5;
             
             return (
               <motion.div
-                key={review.id}
+                key={`${review.id}-${idx}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 className="h-full"
               >
-                <Card className="bg-white/5 backdrop-blur-xl border border-white/10 h-full transition-all duration-300 shadow-xl rounded-xl overflow-hidden group">
+                <Card className="bg-white/5 backdrop-blur-xl border border-white/10 h-full transition-all duration-300 shadow-xl rounded-2xl overflow-hidden group">
                   <CardContent className="p-4 md:p-8 flex flex-col h-full relative">
                     {/* Top: Username (Bold) */}
                     <div className="mb-4">
@@ -69,14 +78,14 @@ export function ReviewsSection() {
                       </div>
                     </div>
 
-                    {/* Middle: Review Text (2-3 lines max) */}
+                    {/* Middle: Review Text (Truncated for grid symmetry) */}
                     <div className="flex-grow mb-6">
                       <p className="text-[9px] md:text-sm text-white/70 leading-relaxed italic line-clamp-3">
                         "{review.text}"
                       </p>
                     </div>
 
-                    {/* Bottom: Star Rating (4 or 5 only) */}
+                    {/* Bottom: Star Rating & Trust Signal */}
                     <div className="pt-4 border-t border-white/5 flex items-center justify-between">
                       <div className="flex gap-0.5 md:gap-1">
                         {[...Array(5)].map((_, i) => (
@@ -90,8 +99,9 @@ export function ReviewsSection() {
                         ))}
                       </div>
                       
-                      <div className="hidden md:flex items-center gap-1 text-[8px] font-black text-white/20 uppercase tracking-widest">
-                        <ShieldCheck className="w-3 h-3 text-primary" /> Safe
+                      <div className="flex items-center gap-1 text-[8px] font-black text-white/20 uppercase tracking-widest">
+                        <ShieldCheck className="w-3 h-3 text-primary opacity-50" />
+                        <span className="hidden sm:inline">Safe</span>
                       </div>
                     </div>
                   </CardContent>
@@ -99,14 +109,6 @@ export function ReviewsSection() {
               </motion.div>
             );
           })}
-        </div>
-
-        <div className="text-center">
-          <Button asChild variant="outline" className="h-14 px-10 rounded-xl border-white/10 text-white font-black uppercase tracking-widest hover:bg-white/5 shadow-2xl transition-all text-[10px] md:text-xs">
-            <Link href="/reviews">
-              View All Testimonials <ChevronRight className="ml-2 w-4 h-4" />
-            </Link>
-          </Button>
         </div>
       </div>
     </div>
