@@ -6,7 +6,6 @@ import {AuthRedirectListener} from '@/components/auth/AuthRedirectListener';
 import {ReferralTracker} from '@/components/referral/ReferralTracker';
 import {SupportChat} from '@/components/support/SupportChat';
 import {LiveActivity} from '@/components/sections/LiveActivity';
-import {ScrollTriggerPopup} from '@/components/modals/ScrollTriggerPopup';
 import {GlobalFloatingBackground} from '@/components/layout/GlobalFloatingBackground';
 
 export const metadata: Metadata = {
@@ -64,7 +63,6 @@ export default function RootLayout({
           </div>
           
           <LiveActivity />
-          <ScrollTriggerPopup />
           <SupportChat />
           <Toaster />
         </FirebaseClientProvider>
