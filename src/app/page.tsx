@@ -10,10 +10,10 @@ import { TrustBadges } from '@/components/sections/TrustBadges';
 import { WaveDivider } from '@/components/ui/WaveDivider';
 import { RadialGlowDivider } from '@/components/ui/RadialGlowDivider';
 import { FloatingShowcase } from '@/components/sections/FloatingShowcase';
+import { ScrollTriggerPopup } from '@/components/modals/ScrollTriggerPopup';
 
 /**
- * @fileOverview Refined Homepage with Liquid Transitions.
- * Restored the rewards catalog hub to maintain the primary conversion loop.
+ * @fileOverview Refined Homepage with Liquid Transitions and Compliant Popups.
  */
 
 export default function Home() {
@@ -21,6 +21,9 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-[#050505] via-[#0f0c29] to-[#050505] selection:bg-primary selection:text-white overflow-x-hidden">
       <Header />
       
+      {/* Scroll Intent Marketing Popup */}
+      <ScrollTriggerPopup />
+
       {/* 1. Hero Section - Cinematic Entrance */}
       <div className="relative">
         <Hero />
