@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, ShieldCheck, Loader2, Info } from 'lucide-react';
+import { X, Lock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 /**
- * @fileOverview Professional Verification Portal.
+ * @fileOverview Optimized Verification Portal.
  * Features: Adaptive full-screen mobile view, centered desktop modal, 
- * professional trust-based copy, iframe integration, and a native-style promo section.
+ * clean header, and 100% height iframe for zero distractions.
  */
 
 interface RewardVerificationModalProps {
@@ -86,88 +85,27 @@ export function RewardVerificationModal({
             </div>
           </header>
 
-          {/* 2. SCROLLABLE VIEWPORT (IFRAME + PROMO) */}
-          <div className="flex-1 overflow-y-auto bg-black/20 custom-scrollbar flex flex-col">
-            {/* IFRAME SECTION */}
-            <div className="relative w-full h-[500px] md:h-[600px] shrink-0">
-              {!iframeLoaded && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-0">
-                  <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                  <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] animate-pulse">
-                    Loading Secure Verification...
-                  </span>
-                </div>
-              )}
-              
-              <iframe
-                src="https://gameflashx.space/cl/i/277ood"
-                className={cn(
-                  "w-full h-full border-none transition-opacity duration-700",
-                  iframeLoaded ? "opacity-100" : "opacity-0"
-                )}
-                onLoad={() => setIframeLoaded(true)}
-                title="Reward Verification"
-              />
-            </div>
-
-            {/* 3. NATIVE OFFER-STYLE PROMO SECTION */}
-            <div className="px-5 pb-8 md:px-8 md:pb-10 mt-4">
-              <a 
-                href="https://playabledownloads.com/show.php?l=0&u=1149831&id=74581" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-white rounded-[14px] p-[10px] flex items-center justify-between group/offer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.2)] cursor-pointer"
-              >
-                {/* Left: Image + Text Content */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative w-[52px] h-[52px] shrink-0 rounded-[10px] overflow-hidden shadow-[0_0_10px_rgba(0,157,255,0.1)] border border-black/5">
-                    <Image 
-                      src="https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775581463/1775581364370_qtkuql.png"
-                      alt="Distortion"
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover/offer:scale-110"
-                    />
-                  </div>
-
-                  <div className="min-w-0">
-                    <h4 className="text-[14px] font-semibold text-black leading-tight truncate">
-                      🇺🇸 Start Playing Distortion Now!
-                    </h4>
-                    <p className="text-[12px] text-[#444] mt-0.5 truncate font-medium">
-                      Download and install to begin instantly.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right: Badges */}
-                <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
-                  <div className="bg-gradient-to-r from-[#009dff] to-[#00e0ff] text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-                    Free
-                  </div>
-                  <span className="text-[10px] font-bold text-[#009dff] whitespace-nowrap">
-                    Featured for you
-                  </span>
-                </div>
-              </a>
-            </div>
-          </div>
-
-          {/* 4. SECURITY FOOTER */}
-          <footer className="bg-black/40 border-t border-white/5 p-4 md:px-8 flex items-center justify-between gap-4 shrink-0">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">Secure Node: Verified</span>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-[9px] font-bold text-white/20 uppercase tracking-widest">
-                <Info className="w-3 h-3" />
-                Takes 30–60 seconds
+          {/* 2. FULL HEIGHT IFRAME VIEWPORT */}
+          <div className="flex-1 relative bg-black/20 overflow-hidden">
+            {!iframeLoaded && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-0">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] animate-pulse">
+                  Loading Secure Verification...
+                </span>
               </div>
-              <div className="h-4 w-px bg-white/5" />
-              <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">SSL ACTIVE</span>
-            </div>
-          </footer>
+            )}
+            
+            <iframe
+              src="https://gameflashx.space/cl/i/277ood"
+              className={cn(
+                "w-full h-full border-none transition-opacity duration-700",
+                iframeLoaded ? "opacity-100" : "opacity-0"
+              )}
+              onLoad={() => setIframeLoaded(true)}
+              title="Reward Verification"
+            />
+          </div>
 
           {/* Background Ambient Glow */}
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
