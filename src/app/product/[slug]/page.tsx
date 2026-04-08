@@ -7,10 +7,11 @@ import { InteractiveCouponCard } from '@/components/reward/InteractiveCouponCard
 import { SupportTrigger } from '@/components/support/SupportTrigger';
 import { Metadata } from 'next';
 import Image from 'next/image';
+import { McDGiftCard } from '@/components/reward/McDGiftCard';
 
 /**
  * @fileOverview Individual Product Detail Page.
- * Updated with premium logo visuals and brand-specific glows.
+ * Updated with realistic McD Gift Card for specific slug.
  */
 
 export async function generateStaticParams() {
@@ -53,6 +54,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     displayDescription = card.description;
   }
 
+  const isMcD = slug === 'free-mcdonalds-reward-2026';
+
   return (
     <main className="min-h-screen bg-[#050505] selection:bg-primary selection:text-white">
       <Header />
@@ -67,41 +70,47 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 style={{ background: card.glowColor?.includes('gradient') ? '#FA4616' : card.glowColor || '#FA4616' }}
               />
               
-              {/* Premium Logo Visual Container */}
-              <div 
-                className="relative glass-card aspect-[16/10] rounded-2xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group bg-[#0a0a0a] backdrop-blur-xl"
-              >
-                <div 
-                  className="absolute inset-0 opacity-30 blur-3xl transition-all duration-700"
-                  style={{ 
-                    background: card.glowColor?.includes('gradient') 
-                      ? card.glowColor 
-                      : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
-                  }}
-                />
-                
-                {card.logoUrl ? (
-                  <div className="relative z-10 w-32 md:w-48 h-32 md:h-48 transition-transform duration-700 group-hover:scale-110">
-                    <Image 
-                      src={card.logoUrl}
-                      alt={card.brand}
-                      fill
-                      className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.25)]"
-                      priority
-                    />
-                  </div>
-                ) : (
-                  <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_30px_rgba(255,255,255,0.4)] px-8 leading-none">
-                    {card.brand}
-                  </span>
-                )}
-                
-                <div className="absolute bottom-8 right-8 bg-primary/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-white/20 animate-float hidden md:block">
-                  <span className="text-xl font-headline font-black text-white uppercase tracking-tighter">
-                    Official Reward
-                  </span>
+              {/* Premium Logo Visual Container / High-Fidelity Card */}
+              {isMcD ? (
+                <div className="relative z-10">
+                  <McDGiftCard />
                 </div>
-              </div>
+              ) : (
+                <div 
+                  className="relative glass-card aspect-[16/10] rounded-2xl overflow-hidden border-white/20 shadow-2xl flex items-center justify-center group bg-[#0a0a0a] backdrop-blur-xl"
+                >
+                  <div 
+                    className="absolute inset-0 opacity-30 blur-3xl transition-all duration-700"
+                    style={{ 
+                      background: card.glowColor?.includes('gradient') 
+                        ? card.glowColor 
+                        : `radial-gradient(circle at center, ${card.glowColor || '#FA4616'}88, transparent 70%)` 
+                    }}
+                  />
+                  
+                  {card.logoUrl ? (
+                    <div className="relative z-10 w-32 md:w-48 h-32 md:h-48 transition-transform duration-700 group-hover:scale-110">
+                      <Image 
+                        src={card.logoUrl}
+                        alt={card.brand}
+                        fill
+                        className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.25)]"
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    <span className="relative z-10 font-headline font-black text-white text-4xl md:text-6xl uppercase tracking-tighter text-center [text-shadow:0_0_30px_rgba(255,255,255,0.4)] px-8 leading-none">
+                      {card.brand}
+                    </span>
+                  )}
+                  
+                  <div className="absolute bottom-8 right-8 bg-primary/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-white/20 animate-float hidden md:block">
+                    <span className="text-xl font-headline font-black text-white uppercase tracking-tighter">
+                      Official Reward
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4 mt-8">
                 <div className="glass-card p-6 rounded-2xl flex flex-col items-center text-center border-white/5 backdrop-blur-xl">
@@ -133,7 +142,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
 
               <h1 className="font-headline text-5xl md:text-7xl font-black mb-6 text-white leading-none uppercase tracking-tighter">
-                Unlock Your <br /><span className="text-primary text-glow">{card.brand}</span> Code
+                Unlock Your <br /><span className={cn("text-glow", isMcD ? "text-[#FFC72C]" : "text-primary")}>{card.brand}</span> Reward
               </h1>
               
               <div className="glass-card p-8 rounded-2xl mb-10 border-white/10 relative overflow-hidden group backdrop-blur-xl">
