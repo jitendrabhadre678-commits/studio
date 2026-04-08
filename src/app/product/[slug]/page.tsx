@@ -8,6 +8,7 @@ import { SupportTrigger } from '@/components/support/SupportTrigger';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { McDGiftCard } from '@/components/reward/McDGiftCard';
+import { cn } from '@/lib/utils';
 
 /**
  * @fileOverview Individual Product Detail Page.
