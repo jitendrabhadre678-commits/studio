@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 /**
  * @fileOverview Optimized Redirect Flow Portal.
  * Features: Email lead capture followed by a high-trust redirect bridge.
- * Refined for compliance with clear process expectations.
+ * Refined for compliance with clear process expectations and premium UI.
  */
 
 interface RewardVerificationModalProps {
@@ -114,20 +114,24 @@ export function RewardVerificationModal({
               >
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
                 
-                <div className="relative z-10 w-full space-y-10 py-10">
-                  <header className="space-y-4">
-                    <div className="w-20 h-20 bg-primary/10 rounded-[2rem] border border-primary/20 flex items-center justify-center mx-auto mb-8 shadow-2xl">
-                      <Mail className="w-10 h-10 text-primary" />
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight leading-none">
-                      Enter Your Email to <br /><span className="text-primary">Proceed to Offers</span>
-                    </h2>
-                    <p className="text-white/40 text-sm font-medium uppercase tracking-widest leading-relaxed">
-                      Your reward code will be delivered to this email address after successful offer completion and verification
-                    </p>
-                  </header>
+                <div className="relative z-10 w-full py-6 flex flex-col items-center">
+                  <div className="w-20 h-20 bg-primary/10 rounded-[2rem] border border-primary/20 flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                    <Mail className="w-10 h-10 text-primary" />
+                  </div>
+                  
+                  <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight leading-none">
+                    Enter Your Email
+                  </h2>
+                  
+                  <p className="mt-3 text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
+                    Continue to Verification
+                  </p>
 
-                  <form onSubmit={handleEmailSubmit} className="space-y-6 max-w-sm mx-auto">
+                  <p className="mt-[10px] text-[13px] md:text-sm text-white/70 leading-relaxed max-w-[90%] mx-auto font-medium">
+                    Your reward will be delivered after completing partner offers and verification.
+                  </p>
+
+                  <form onSubmit={handleEmailSubmit} className="mt-4 w-full max-w-sm mx-auto space-y-4">
                     <div className="space-y-2">
                       <div className="relative group">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-primary transition-colors" />
@@ -140,7 +144,7 @@ export function RewardVerificationModal({
                           }}
                           placeholder="Enter your email address"
                           className={cn(
-                            "h-16 pl-12 bg-white/5 border-white/10 rounded-2xl text-lg font-bold text-white placeholder:text-white/20 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all",
+                            "h-14 pl-12 bg-white/5 border-white/20 rounded-2xl text-base font-medium text-white placeholder:text-white/20 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all",
                             emailError && "border-red-500/50 focus:border-red-500/50"
                           )}
                           required
@@ -155,15 +159,15 @@ export function RewardVerificationModal({
 
                     <Button 
                       type="submit"
-                      className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-[900] uppercase tracking-[0.2em] text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 border-none"
+                      className="w-full mt-[14px] h-14 bg-primary hover:bg-primary/90 text-white font-semibold text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 border-none"
                     >
-                      Continue to Verification <ArrowRight className="ml-2 w-6 h-6" />
+                      Continue <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </form>
 
-                  <footer className="pt-6 border-t border-white/5">
-                    <div className="flex items-center justify-center gap-3 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
-                      <ShieldCheck className="w-4 h-4 text-green-500" /> Secure Processing Active
+                  <footer className="mt-10 pt-6 border-t border-white/5 w-full">
+                    <div className="flex items-center justify-center gap-2 text-[10px] font-medium text-white/20 uppercase tracking-widest">
+                      <ShieldCheck className="w-3.5 h-3.5 text-green-500/50" /> Secure & Verified Process
                     </div>
                   </footer>
                 </div>
@@ -206,7 +210,7 @@ export function RewardVerificationModal({
 
                     <div className="pt-10 border-t border-white/5">
                       <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
-                        Secure • Fast • Verified Sessions
+                        Secure • Fast • Verified Users Only
                       </p>
                     </div>
                   </div>
