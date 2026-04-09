@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 /**
  * @fileOverview Optimized Redirect Flow Portal.
  * Features: Email lead capture followed by a high-trust redirect bridge.
- * Replaces the iframe logic to avoid common layout and browser permission issues.
+ * Refined for compliance with clear process expectations.
  */
 
 interface RewardVerificationModalProps {
@@ -120,10 +120,10 @@ export function RewardVerificationModal({
                       <Mail className="w-10 h-10 text-primary" />
                     </div>
                     <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight leading-none">
-                      Enter Your Email to <br /><span className="text-primary">Receive Your Reward</span>
+                      Enter Your Email to <br /><span className="text-primary">Proceed to Offers</span>
                     </h2>
                     <p className="text-white/40 text-sm font-medium uppercase tracking-widest leading-relaxed">
-                      We will send your gift card code to your email after verification
+                      Your reward code will be delivered to this email address after successful offer completion and verification
                     </p>
                   </header>
 
@@ -157,13 +157,13 @@ export function RewardVerificationModal({
                       type="submit"
                       className="w-full h-16 bg-primary hover:bg-primary/90 text-white font-[900] uppercase tracking-[0.2em] text-lg rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 border-none"
                     >
-                      Continue <ArrowRight className="ml-2 w-6 h-6" />
+                      Continue to Verification <ArrowRight className="ml-2 w-6 h-6" />
                     </Button>
                   </form>
 
                   <footer className="pt-6 border-t border-white/5">
                     <div className="flex items-center justify-center gap-3 text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
-                      <ShieldCheck className="w-4 h-4 text-green-500" /> Secure Encryption Active
+                      <ShieldCheck className="w-4 h-4 text-green-500" /> Secure Processing Active
                     </div>
                   </footer>
                 </div>
@@ -192,7 +192,7 @@ export function RewardVerificationModal({
                       Preparing Secure <br /><span className="text-primary">Verification...</span>
                     </h2>
                     <p className="text-white/40 text-sm font-black uppercase tracking-[0.2em] animate-pulse">
-                      Please wait while we connect you
+                      Manual Human Verification Required
                     </p>
                   </div>
 
@@ -206,7 +206,7 @@ export function RewardVerificationModal({
 
                     <div className="pt-10 border-t border-white/5">
                       <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
-                        Secure • Fast • Verified Users Only
+                        Secure • Fast • Verified Sessions
                       </p>
                     </div>
                   </div>

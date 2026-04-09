@@ -14,7 +14,7 @@ interface CouponCardProps {
 
 /**
  * @fileOverview High-Conversion Coupon Card variation.
- * Updated to trigger the professional verification portal modal.
+ * Updated with compliance timing and verification trigger.
  */
 
 export function CouponCard({ brand, value, description }: CouponCardProps) {

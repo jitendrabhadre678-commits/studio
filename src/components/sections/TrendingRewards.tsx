@@ -1,9 +1,8 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, ArrowUpRight, ShieldCheck, Flame } from 'lucide-react';
+import { Star, ArrowUpRight, ShieldCheck, Flame, AlertCircle } from 'lucide-react';
 import { giftCards } from '@/lib/gift-cards';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -11,7 +10,7 @@ import Image from 'next/image';
 
 /**
  * @fileOverview Premium Blue-Themed Trending Rewards.
- * Updated with transparent background, radial glows, and background iconography.
+ * Updated with mandatory CPA disclosures and transparency banners.
  */
 
 export function TrendingRewards() {
@@ -62,7 +61,7 @@ export function TrendingRewards() {
             className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full"
           >
             <Flame className="w-4 h-4 text-primary animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Vault</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Catalog</span>
           </motion.div>
           
           <h2 className="font-headline text-4xl md:text-6xl font-black text-white uppercase tracking-tight leading-none">
@@ -72,6 +71,14 @@ export function TrendingRewards() {
           <p className="text-white/40 text-sm md:text-lg max-w-xl mx-auto font-medium">
             Select a reward to view secure unlock steps and claim your digital code.
           </p>
+
+          {/* Mandatory CPA Disclosure */}
+          <div className="max-w-2xl mx-auto mt-8 p-4 bg-white/5 border border-white/10 rounded-2xl flex items-start gap-3 text-left">
+            <AlertCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <p className="text-[10px] md:text-xs text-white/60 font-medium leading-relaxed uppercase tracking-tight">
+              To access rewards, users must complete promotional offers from our partners. Some offers may require payment or subscription. Completion requirements may vary based on region and offer type.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">

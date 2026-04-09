@@ -4,10 +4,10 @@ import { ShieldCheck, Globe, Zap, Users } from "lucide-react";
 
 export function TrustBadges() {
   const badges = [
-    { icon: <ShieldCheck />, label: "Verified Platform", sub: "SSL Encrypted Security" },
+    { icon: <ShieldCheck />, label: "Verified Partner", sub: "Secure Partner Network" },
     { icon: <Globe />, label: "Global Rewards", sub: "Accessible Worldwide" },
-    { icon: <Zap />, label: "Instant Delivery", sub: "Digital Codes Released 24/7" },
-    { icon: <Users />, label: "12,847+ Users", sub: "Trusted by Global Gamers" },
+    { icon: <Zap />, label: "Reward Delivery", sub: "Issued after verification" },
+    { icon: <Users />, label: "Active Community", sub: "Join users earning rewards" },
   ];
 
   return (

@@ -12,24 +12,24 @@ import { SupportTrigger } from "@/components/support/SupportTrigger";
 export function FAQ() {
   const faqs = [
     {
-      q: "How do I unlock rewards?",
-      a: "Simply browse our Reward Gallery, select a gift card, and complete one quick advertiser activity. Once verified, your digital code will be instantly revealed in your Reward Vault."
+      q: "How do rewards work?",
+      a: "Users must complete partner offers to qualify for rewards. Completion and verification are required before rewards are issued. Once verified, your digital code will be revealed in your Reward Vault."
     },
     {
-      q: "Are the gift cards real?",
-      a: "Yes! All digital codes are sourced from official brand retailers and verified for validity. Thousands of users successfully redeem their rewards daily."
+      q: "How are the codes verified?",
+      a: "All digital codes are verified for validity before delivery. Thousands of users successfully engage with partner offers to claim their rewards daily."
     },
     {
       q: "How long does it take?",
-      a: "Most activities take less than 2 minutes to complete. Codes are delivered instantly upon successful verification."
+      a: "Most activities take less than 2 minutes to complete. Codes are delivered after successful advertiser completion and human session verification."
     },
     {
       q: "What is the minimum withdrawal?",
-      a: "The minimum withdrawal for cash earnings (PayPal) is $5.00. Gift cards can be claimed as soon as you complete a qualifying offer."
+      a: "The minimum withdrawal for cash earnings (PayPal) is $5.00. Gift cards can be claimed as soon as you complete a qualifying partner offer."
     },
     {
       q: "Why do I need to complete an offer?",
-      a: "Advertisers sponsor these rewards to reach users like you. Completing an offer proves you are a real user and generates the value needed to provide the reward for free."
+      a: "Advertisers sponsor these rewards to reach users like you. Completing an offer proves you are a real user and generates the value needed to provide the reward at no direct cost to you."
     }
   ];
 

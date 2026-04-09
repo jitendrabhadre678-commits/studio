@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Video } from 'lucide-react';
+import { Video, Info, ShieldAlert } from 'lucide-react';
 import { Logo } from '@/components/brand/Logo';
 import { cn } from '@/lib/utils';
 import { FooterWave } from '@/components/ui/FooterWave';
@@ -45,7 +45,7 @@ export function Footer() {
                 <Logo className="h-8 md:h-10" />
               </Link>
               <p className="text-muted-foreground mb-10 text-base leading-relaxed font-medium">
-                The premier secure network for unlocking premium digital rewards through verified session validation.
+                The premier secure network for unlocking premium digital rewards through verified session validation and partner engagement.
               </p>
               <div className="flex flex-wrap gap-4">
                 {socials.map((social, idx) => (
@@ -72,12 +72,23 @@ export function Footer() {
             </div>
           </div>
 
+          {/* Compliance Disclaimer Block */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-10">
+            <div className="flex items-center gap-2 mb-4">
+              <ShieldAlert className="w-4 h-4 text-primary" />
+              <h5 className="text-[10px] font-black text-white uppercase tracking-widest">Important Disclosures</h5>
+            </div>
+            <p className="text-[10px] text-white/40 font-medium leading-relaxed uppercase tracking-tight">
+              GameFlashX is not affiliated with or endorsed by any brands displayed. All trademarks belong to their respective owners. Rewards are earned by completing third-party promotional offers. Some offers may require payment or additional steps. Users must complete all requirements to qualify for rewards. Available for users 18+ in supported regions (primarily US).
+            </p>
+          </div>
+
           <div className="h-px bg-white/5 mb-10" />
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
             <p>© 2026 GAMEFLASHX. ALL RIGHTS RESERVED.</p>
             <div className="flex items-center gap-6">
-              <span className="text-primary/60 border border-primary/20 px-3 py-1 rounded-full bg-primary/5">Azure Secure Network</span>
+              <span className="text-primary/60 border border-primary/20 px-3 py-1 rounded-full bg-primary/5">Secure Partner Network</span>
             </div>
           </div>
         </div>

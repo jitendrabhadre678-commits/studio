@@ -7,15 +7,16 @@ import {ReferralTracker} from '@/components/referral/ReferralTracker';
 import {SupportChat} from '@/components/support/SupportChat';
 import {LiveActivity} from '@/components/sections/LiveActivity';
 import {GlobalFloatingBackground} from '@/components/layout/GlobalFloatingBackground';
+import {CookieBanner} from '@/components/layout/CookieBanner';
 
 export const metadata: Metadata = {
-  title: 'GameFlashX — Free Gift Cards & Gaming Rewards 2026',
-  description: 'Unlock free gift cards for Amazon, Steam, Roblox, Xbox, PlayStation and more. Complete simple offers and claim your reward instantly. Trusted by gamers worldwide.',
-  keywords: 'free gift cards 2026, free amazon gift card, free roblox gift card, free steam gift card, free xbox gift card, gaming rewards, unlock gift cards',
+  title: 'GameFlashX — Earn Gift Card Rewards Online',
+  description: 'Participate in partner offers to secure gift cards for Amazon, Steam, Roblox, Xbox, and more. Global reward network with verified session completion.',
+  keywords: 'gift card rewards, earn rewards online, partner offers, roblox rewards, amazon rewards, reward catalog',
   robots: 'index, follow',
   openGraph: {
-    title: 'GameFlashX — Free Gift Cards & Gaming Rewards 2026',
-    description: 'Unlock free Amazon, Steam, Roblox gift cards. Complete one offer and claim instantly.',
+    title: 'GameFlashX — Earn Gift Card Rewards Online',
+    description: 'Complete simple partner offers to unlock rewards. Verified reward opportunities for gamers and shoppers.',
     url: 'https://gameflashx.com',
     siteName: 'GameFlashX',
     locale: 'en_US',
@@ -25,14 +26,14 @@ export const metadata: Metadata = {
         url: 'https://gameflashx.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'GameFlashX — Free Gift Cards 2026',
+        alt: 'GameFlashX — Reward Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GameFlashX — Free Gift Cards 2026',
-    description: 'Unlock free Amazon, Steam, Roblox gift cards instantly.',
+    title: 'GameFlashX — Earn Gift Card Rewards Online',
+    description: 'Unlock gift card opportunities by engaging with partner offers.',
   },
   icons: {
     icon: '/favicon.png',
@@ -64,6 +65,7 @@ export default function RootLayout({
           
           <LiveActivity />
           <SupportChat />
+          <CookieBanner />
           <Toaster />
         </FirebaseClientProvider>
       </body>

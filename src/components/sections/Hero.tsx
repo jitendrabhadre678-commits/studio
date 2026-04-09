@@ -3,13 +3,13 @@
 import { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { ShieldCheck, Zap } from 'lucide-react';
+import { ShieldCheck, Zap, Info } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 /**
- * @fileOverview Premium Luxury Hero.
- * Updated with powerful McDonald's reward headline for high conversion.
+ * @fileOverview Refined Compliance-First Hero.
+ * Replaced misleading "Instant" claims with process-based transparency.
  */
 
 const ICONS = {
@@ -114,37 +114,37 @@ export function Hero() {
         >
           {/* Top Badge */}
           <div className="mb-8 inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
-            <ShieldCheck className="w-3 h-3 text-blue-400" />
-            <span className="text-[9px] font-black text-white/40 tracking-[0.2em] uppercase">Verified Reward System</span>
+            <Info className="w-3 h-3 text-primary" />
+            <span className="text-[9px] font-black text-white/40 tracking-[0.2em] uppercase">Partner Reward Network</span>
           </div>
 
-          {/* Powerful Headline for US McDonald's Offer */}
+          {/* Compliance Heading */}
           <h1 className="font-headline flex flex-col items-center justify-center text-4xl sm:text-5xl md:text-8xl font-[900] tracking-tighter uppercase leading-[1] text-white">
             <div className="flex items-center justify-center">
-              <span className="text-white/90">Craving</span>
+              <span className="text-white/90">Earn</span>
               <InlineIcon url={ICONS.security} />
             </div>
             
             <span 
-              className="relative z-10 my-2 md:my-4 text-[#FFC72C] drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]"
+              className="relative z-10 my-2 md:my-4 text-primary drop-shadow-[0_2px_10px_rgba(0,150,255,0.3)]"
               style={{
-                background: 'linear-gradient(120deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.2) 20%, transparent 45%), #FFC72C',
+                background: 'linear-gradient(120deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.2) 20%, transparent 45%), #009dff',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              $100 Reward?
+              Gift Card Rewards
             </span>
 
             <div className="flex items-center justify-center">
-              <span className="text-white/90">Claim Opportunity</span>
+              <span className="text-white/90">Online</span>
               <InlineIcon url={ICONS.timer} />
             </div>
           </h1>
 
           {/* Subtext */}
           <p className="text-white/70 text-xs sm:text-sm md:text-lg font-medium max-w-lg mx-auto leading-relaxed mt-8 px-4">
-            Join our verified community and discover the simplest way to potentially secure a $100 reward for your favorite McDonald's meals.
+            Complete simple partner offers to unlock rewards after verification. Join our community and discover opportunities to secure digital rewards.
           </p>
         </motion.div>
 
@@ -166,15 +166,15 @@ export function Hero() {
             onClick={() => scrollTo('trending')}
             className="w-full sm:w-auto h-14 md:h-16 px-10 rounded-xl border border-white/20 bg-white/5 backdrop-blur-xl text-[9px] md:text-[10px] font-black text-white/60 uppercase tracking-[0.2em] transition-all hover:bg-white/10 hover:border-white/30 active:scale-95"
           >
-            Explore More Rewards ↓
+            Explore Catalog ↓
           </button>
         </motion.div>
 
         {/* TRUST INDICATORS */}
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 text-[9px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mt-20 pt-10 border-t border-white/5">
           <div className="flex items-center gap-2">🔒 Secure Email Submit</div>
-          <div className="flex items-center gap-2">⚡ Instant Delivery Destination</div>
-          <div className="flex items-center gap-2">🌍 US Exclusive Opportunity</div>
+          <div className="flex items-center gap-2">⚡ Delivery After Verification</div>
+          <div className="flex items-center gap-2">🌍 Global Reward Opportunities</div>
         </div>
       </div>
     </section>

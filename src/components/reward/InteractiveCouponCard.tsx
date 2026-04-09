@@ -14,7 +14,7 @@ interface InteractiveCouponCardProps {
 
 /**
  * @fileOverview High-Conversion Interactive Coupon Card.
- * Updated to trigger the professional verification portal modal.
+ * Updated with compliance text and professional verification portal trigger.
  */
 
 export function InteractiveCouponCard({ brand, value, description }: InteractiveCouponCardProps) {
