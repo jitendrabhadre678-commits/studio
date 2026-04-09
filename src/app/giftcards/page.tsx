@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -41,6 +40,10 @@ interface RewardItem {
 }
 
 const REWARDS: RewardItem[] = [
+  // Food & Dining (Updated Visuals)
+  { id: '21', brand: 'Dining Reward', value: '$100', category: 'Food', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775751926/GAME_FLASH_20260409_215436_0000_abdqyr.png', color: '#FFC72C' },
+  { id: '22', brand: 'Dining Card', value: '$50', category: 'Food', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775751926/GAME_FLASH_20260409_215436_0000_abdqyr.png', color: '#FFC72C' },
+  
   // Gaming
   { id: '1', brand: 'Roblox', value: '$10', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', color: '#E3191E' },
   { id: '2', brand: 'Roblox', value: '$25', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', color: '#E3191E' },
@@ -50,58 +53,26 @@ const REWARDS: RewardItem[] = [
   { id: '6', brand: 'PlayStation', value: '$25', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463534/2_20260406_134035_0001_sf7lub.png', color: '#003087' },
   { id: '7', brand: 'Nintendo', value: '$20', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463546/4_20260406_134035_0003_jvi4ke.png', color: '#E60012' },
   { id: '8', brand: 'Fortnite', value: '$10', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463553/10_20260406_134035_0009_ouhe1e.png', color: '#A855F7' },
-  { id: '9', brand: 'Fortnite', value: '$25', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463553/10_20260406_134035_0009_ouhe1e.png', color: '#A855F7' },
   { id: '10', brand: 'Google Play', value: '$15', category: 'Gaming', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463606/12_20260406_134036_0011_pop4qs.png', color: '#34A853' },
   
   // Shopping
   { id: '11', brand: 'Amazon', value: '$10', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png', color: '#FF9900' },
   { id: '12', brand: 'Amazon', value: '$25', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png', color: '#FF9900' },
-  { id: '13', brand: 'Amazon', value: '$50', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463535/6_20260406_134035_0005_k7bzkc.png', color: '#FF9900' },
   { id: '14', brand: 'Walmart', value: '$25', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463548/7_20260406_134035_0006_qkousw.png', color: '#0071CE' },
   { id: '15', brand: 'Target', value: '$20', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463547/9_20260406_134035_0008_nnznij.png', color: '#CC0000' },
   { id: '16', brand: 'eBay', value: '$25', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463541/5_20260406_134035_0004_nikubw.png', color: '#E53238' },
   { id: '17', brand: 'Best Buy', value: '$50', category: 'Shopping', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463547/8_20260406_134035_0007_jumtpc.png', color: '#EAB308' },
-  { id: '18', brand: 'Sephora', value: '$25', category: 'Shopping', logo: 'https://picsum.photos/seed/sephora/200/200', color: '#000000' },
-  { id: '19', brand: 'Nike', value: '$50', category: 'Shopping', logo: 'https://picsum.photos/seed/nike/200/200', color: '#000000' },
-  { id: '20', brand: 'Adidas', value: '$50', category: 'Shopping', logo: 'https://picsum.photos/seed/adidas/200/200', color: '#000000' },
 
-  // Food
-  { id: '21', brand: "McDonald's", value: '$10', category: 'Food', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775581463/1775581364370_qtkuql.png', color: '#FFC72C' },
-  { id: '22', brand: "McDonald's", value: '$25', category: 'Food', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775581463/1775581364370_qtkuql.png', color: '#FFC72C' },
+  // Food Extras
   { id: '23', brand: 'Starbucks', value: '$15', category: 'Food', logo: 'https://picsum.photos/seed/starbucks/200/200', color: '#00704A' },
   { id: '24', brand: 'DoorDash', value: '$25', category: 'Food', logo: 'https://picsum.photos/seed/doordash/200/200', color: '#FF3008' },
   { id: '25', brand: 'Uber Eats', value: '$25', category: 'Food', logo: 'https://picsum.photos/seed/ubereats/200/200', color: '#06C167' },
-  { id: '26', brand: 'Burger King', value: '$15', category: 'Food', logo: 'https://picsum.photos/seed/bk/200/200', color: '#F5EBDC' },
-  { id: '27', brand: 'Chipotle', value: '$20', category: 'Food', logo: 'https://picsum.photos/seed/chipotle/200/200', color: '#A51619' },
-  { id: '28', brand: 'Domino\'s', value: '$25', category: 'Food', logo: 'https://picsum.photos/seed/dominos/200/200', color: '#006491' },
-  { id: '29', brand: 'Dunkin', value: '$10', category: 'Food', logo: 'https://picsum.photos/seed/dunkin/200/200', color: '#FF6719' },
-  { id: '30', brand: 'Taco Bell', value: '$15', category: 'Food', logo: 'https://picsum.photos/seed/tacobell/200/200', color: '#702082' },
 
   // Entertainment
   { id: '31', brand: 'Netflix', value: '$15', category: 'Entertainment', logo: 'https://picsum.photos/seed/netflix/200/200', color: '#E50914' },
-  { id: '32', brand: 'Netflix', value: '$30', category: 'Entertainment', logo: 'https://picsum.photos/seed/netflix/200/200', color: '#E50914' },
   { id: '33', brand: 'Spotify', value: '$10', category: 'Entertainment', logo: 'https://picsum.photos/seed/spotify/200/200', color: '#1DB954' },
-  { id: '34', brand: 'Spotify', value: '$30', category: 'Entertainment', logo: 'https://picsum.photos/seed/spotify/200/200', color: '#1DB954' },
   { id: '35', brand: 'Hulu', value: '$25', category: 'Entertainment', logo: 'https://picsum.photos/seed/hulu/200/200', color: '#1CE783' },
   { id: '36', brand: 'Disney+', value: '$20', category: 'Entertainment', logo: 'https://picsum.photos/seed/disney/200/200', color: '#113CCF' },
-  { id: '37', brand: 'YouTube Premium', value: '$15', category: 'Entertainment', logo: 'https://picsum.photos/seed/yt/200/200', color: '#FF0000' },
-  { id: '38', brand: 'Crunchyroll', value: '$10', category: 'Entertainment', logo: 'https://picsum.photos/seed/crunchy/200/200', color: '#F47521' },
-  { id: '39', brand: 'AMC Theatres', value: '$25', category: 'Entertainment', logo: 'https://picsum.photos/seed/amc/200/200', color: '#E21F26' },
-  { id: '40', brand: 'Roblox Premium', value: '$10', category: 'Entertainment', logo: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775463587/11_20260406_134035_0010_uks5bz.png', color: '#000000' },
-
-  // Miscellaneous / Multi-Category
-  { id: '41', brand: 'PayPal', value: '$25', category: 'Shopping', logo: 'https://picsum.photos/seed/paypal/200/200', color: '#003087' },
-  { id: '42', brand: 'PayPal', value: '$50', category: 'Shopping', logo: 'https://picsum.photos/seed/paypal/200/200', color: '#003087' },
-  { id: '43', brand: 'PayPal', value: '$100', category: 'Shopping', logo: 'https://picsum.photos/seed/paypal/200/200', color: '#003087' },
-  { id: '44', brand: 'Visa Prepaid', value: '$50', category: 'Shopping', logo: 'https://picsum.photos/seed/visa/200/200', color: '#1A1F71' },
-  { id: '45', brand: 'Visa Prepaid', value: '$100', category: 'Shopping', logo: 'https://picsum.photos/seed/visa/200/200', color: '#1A1F71' },
-  { id: '46', brand: 'Apple', value: '$15', category: 'Gaming', logo: 'https://picsum.photos/seed/apple/200/200', color: '#000000' },
-  { id: '47', brand: 'Apple', value: '$25', category: 'Gaming', logo: 'https://picsum.photos/seed/apple/200/200', color: '#000000' },
-  { id: '48', brand: 'Twitch', value: '$25', category: 'Gaming', logo: 'https://picsum.photos/seed/twitch/200/200', color: '#9146FF' },
-  { id: '49', brand: 'Discord Nitro', value: '$10', category: 'Gaming', logo: 'https://picsum.photos/seed/discord/200/200', color: '#5865F2' },
-  { id: '50', brand: 'Uber', value: '$50', category: 'Shopping', logo: 'https://picsum.photos/seed/uber/200/200', color: '#000000' },
-  { id: '51', brand: 'Airbnb', value: '$100', category: 'Shopping', logo: 'https://picsum.photos/seed/airbnb/200/200', color: '#FF5A5F' },
-  { id: '52', brand: 'Minecraft', value: '$25', category: 'Gaming', logo: 'https://picsum.photos/seed/mc/200/200', color: '#388E3C' }
 ];
 
 const REDIRECT_URL = "https://gameflashx.space/cl/i/277ood";
@@ -280,7 +251,7 @@ export default function GiftCardsPage() {
               </div>
               
               <p className="text-[11px] md:text-sm text-white/40 leading-relaxed font-medium uppercase tracking-tight max-w-2xl mx-auto">
-                Users must complete promotional offers to qualify for rewards. Some offers may require payment or additional steps. Completion and verification are required. Reward availability and specific requirements may vary based on region and offer provider.
+                Users must complete promotional offers to qualify for rewards. Brand names and images are used for illustrative purposes only and are not affiliated with or endorsed by respective companies. Available for users 18+ in supported regions.
               </p>
               
               <div className="flex items-center justify-center gap-6 text-[9px] font-black text-white/20 uppercase tracking-[0.3em] pt-6 border-t border-white/5">
@@ -288,10 +259,6 @@ export default function GiftCardsPage() {
                 <div className="flex items-center gap-2"><Globe className="w-3 h-3 text-primary" /> Global Coverage</div>
                 <div className="flex items-center gap-2"><Zap className="w-3 h-3 text-primary" /> Verified Users Only</div>
               </div>
-
-              <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
-                Available for users 18+ in supported regions.
-              </p>
             </div>
           </div>
         </div>

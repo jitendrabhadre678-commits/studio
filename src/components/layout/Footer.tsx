@@ -79,7 +79,7 @@ export function Footer() {
               <h5 className="text-[10px] font-black text-white uppercase tracking-widest">Important Disclosures</h5>
             </div>
             <p className="text-[10px] text-white/40 font-medium leading-relaxed uppercase tracking-tight">
-              GameFlashX is not affiliated with or endorsed by any brands displayed. All trademarks belong to their respective owners. Rewards are earned by completing third-party promotional offers. Some offers may require payment or additional steps. Users must complete all requirements to qualify for rewards. Available for users 18+ in supported regions (primarily US).
+              GameFlashX is not affiliated with or endorsed by any brands displayed. Brand names and images are used for illustrative purposes only. All trademarks belong to their respective owners. Rewards are earned by completing third-party promotional offers. Users must complete all requirements to qualify for rewards. Available for users 18+ in supported regions (primarily US).
             </p>
           </div>
 

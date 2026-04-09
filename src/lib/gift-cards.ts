@@ -21,13 +21,13 @@ export const categories = [
 export const giftCards: GiftCard[] = [
   { 
     id: 'mcdonalds-100', 
-    brand: "McDonald's", 
+    brand: "Dining Reward", 
     slug: 'free-mcdonalds-reward-2026', 
     category: 'Food', 
-    description: 'Claim your opportunity for a $100 McDonald’s dining reward.', 
+    description: 'Claim your opportunity for a $100 Dining Reward voucher.', 
     values: ['$100'], 
     image: 'mcdonalds', 
-    logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775581463/1775581364370_qtkuql.png', // Reusing high-quality asset
+    logoUrl: 'https://res.cloudinary.com/dmafb7518/image/upload/q_auto/f_auto/v1775751926/GAME_FLASH_20260409_215436_0000_abdqyr.png', 
     glowColor: '#FFC72C',
     trending: true, 
     featured: true,
