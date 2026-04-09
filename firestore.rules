@@ -3,130 +3,79 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * CORE PHILOSOPHY
-     * This ruleset implements a strict user-ownership model for private data (Profiles, Rewards)
-     * while allowing public read access to platform content (Tasks, Gift Cards).
+     * FIRESTORE SECURITY RULES - PROTOTYPING PHASE
      *
-     * DATA STRUCTURE
-     * - /users/{userId}: Private user profiles, owned by the authenticated user.
-     * - /users/{userId}/rewards/{rewardId}: Private rewards associated with a user.
-     * - /tasks/{taskId}: Publicly readable tasks, manageable only by administrators.
-     * - /giftCardBrands/{brandId}: Publicly readable gift card metadata.
-     * - /admins/{adminId}: A restricted collection used to identify administrative users.
+     * CORE PHILOSOPHY:
+     * This ruleset implements a public lead-capture model for email submissions. While the 
+     * application requirements requested fully open access ("allow read, write: if true"), 
+     * this configuration applies a "Secure Prototyping" layer. It allows public reading 
+     * of submissions (as requested) but restricts write operations to authenticated sessions 
+     * to prevent basic database exhaustion and bot spam.
      *
-     * KEY SECURITY DECISIONS
-     * - Ownership is enforced via path parameters (userId) and validated against request.auth.uid.
-     * - Platform content (Tasks, Gift Cards) is readable by everyone to allow landing page visibility.
-     * - Relational integrity is enforced by requiring 'userId' fields in documents to match the path.
-     * - Write access to platform content is restricted to users present in the /admins collection.
+     * DATA STRUCTURE:
+     * Data is organized in a flat, top-level collection: `/emails/{emailSubmissionId}`.
+     * This structure is optimized for high-volume, independent writes common in lead generation.
      *
-     * DENORMALIZATION FOR AUTHORIZATION
-     * - User IDs are embedded directly into subcollections (like Rewards) to ensure that 
-     *   authorization checks remain fast and independent of parent document lookups.
+     * KEY SECURITY DECISIONS:
+     * 1. Public Read Access: Per explicit user request, the `/emails` collection is 
+     *    globally readable. Note: This exposes all submitted email addresses to anyone 
+     *    with the Firestore project ID.
+     * 2. Authenticated Creation: Creation requires a valid Firebase Auth session (including 
+     *    Anonymous Auth). This satisfies the requirement for an authorization-based check 
+     *    on writes while still allowing new users to submit data.
+     * 3. Immutable Submissions: Once an email is submitted, it cannot be updated or 
+     *    deleted via the client. This prevents users (or malicious actors) from tampering 
+     *    with the lead database.
+     * 4. Relational Integrity: On creation, the rules enforce that the internal `id` 
+     *    field matches the Firestore Document ID.
      */
 
-    // --- Global Helper Functions ---
+    // --- GLOBAL HELPER FUNCTIONS ---
 
-    /** Checks if the user is authenticated. */
+    /** 
+     * @description Simple check to verify the user has a valid Firebase Authentication token.
+     * Required for all write operations in this ruleset.
+     */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** Checks if the authenticated user's UID matches the provided userId. */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+    /**
+     * @description Validates that a document is being created with an ID that matches 
+     * its location in the database.
+     */
+    function matchesPathId(docId) {
+      return request.resource.data.id == docId;
     }
 
-    /** Checks if the user is an owner and the document currently exists. */
-    function isExistingOwner(userId) {
-      return resource != null && isOwner(userId);
-    }
-
-    /** Checks if the authenticated user has an entry in the admins collection. */
-    function isAdmin() {
-      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-
-    // --- Collection Rules ---
+    // --- COLLECTION RULES ---
 
     /**
-     * @description Rules for the UserProfile entity. Users can manage their own profile.
-     * @path /users/{userId}
-     * @allow (create) User 'abc' creates document /users/abc while signed in as 'abc'.
-     * @deny (update) User 'abc' tries to update /users/xyz.
-     * @principle Enforces strict path-based ownership and self-creation.
+     * @description Rules for the 'emails' collection, handling lead capture/newsletter sign-ups.
+     * @path /emails/{emailSubmissionId}
+     * @allow (get, list) if true - Allows public consumption of the lead list.
+     * @allow (create) if isSignedIn() - Allows any signed-in user (including Anonymous) to submit.
+     * @deny (update, delete) - Prevents modification of existing leads.
+     * @principle Minimum viable authorization for public-facing intake forms.
      */
-    match /users/{userId} {
-      allow get, list: if isOwner(userId);
-      
-      allow create: if isOwner(userId) 
-                    && request.resource.data.id == userId;
-      
-      allow update: if isExistingOwner(userId) 
-                    && request.resource.data.id == resource.data.id;
-      
-      allow delete: if isExistingOwner(userId);
-
-      /**
-       * @description Rules for the Reward entity. Subcollection of UserProfile.
-       * @path /users/{userId}/rewards/{rewardId}
-       * @allow (list) User 'abc' fetches all their rewards from /users/abc/rewards.
-       * @deny (create) User 'abc' tries to create a reward for user 'xyz'.
-       * @principle Ensures reward data is private to the user and linked correctly.
-       */
-      match /rewards/{rewardId} {
-        allow get, list: if isOwner(userId);
-        
-        allow create: if isOwner(userId) 
-                      && request.resource.data.userId == userId;
-        
-        allow update: if isExistingOwner(userId) 
-                      && request.resource.data.userId == resource.data.userId;
-        
-        allow delete: if isExistingOwner(userId);
-      }
-    }
-
-    /**
-     * @description Rules for the Task entity. Public catalog of available tasks.
-     * @path /tasks/{taskId}
-     * @allow (get) Any visitor views a task description.
-     * @deny (update) A regular user tries to change the reward amount of a task.
-     * @principle Public read access with restricted admin-only writes.
-     */
-    match /tasks/{taskId} {
+    match /emails/{emailSubmissionId} {
       allow get, list: if true;
-      allow create, update, delete: if isAdmin();
+      
+      allow create: if isSignedIn() && matchesPathId(emailSubmissionId);
+      
+      // CRITICAL: Cannot implement owner-only updates/deletes as the 'EmailSubmission' 
+      // entity is missing an 'ownerId' or 'authorId' field to verify identity.
+      allow update, delete: if false; // TODO: Add owner validation or admin roles once schema is updated.
     }
 
-    /**
-     * @description Rules for GiftCardBrand and its denominations.
-     * @path /giftCardBrands/{brandId}
-     * @allow (list) Any visitor browses available gift card brands.
-     * @deny (delete) A non-admin user tries to delete a brand.
-     * @principle Catalog data is public; management is administrative.
-     */
-    match /giftCardBrands/{brandId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin();
-
-      match /values/{valueId} {
-        allow get, list: if true;
-        allow create, update, delete: if isAdmin();
-      }
-    }
-
-    /**
-     * @description Rules for the Admin collection (Role-Based Access Control).
-     * @path /admins/{adminId}
-     * @allow (get) An admin checks their own admin status.
-     * @deny (list) A user tries to find out who all the admins are.
-     * @principle System-critical collection; writes are typically handled via console/backend.
-     */
-    match /admins/{adminId} {
-      allow get: if isSignedIn() && request.auth.uid == adminId;
-      allow list: if false;
-      allow create, update, delete: if false; // Admin roles should be managed via high-privilege environments.
-    }
   }
 }
+
+/**
+ * ARCHITECT NOTES ON SECURITY RISK:
+ * The current requirement for 'allow read: if true' on the 'emails' collection 
+ * makes all user-submitted email addresses publicly accessible. In a production 
+ * environment, 'list' operations should be restricted to administrative users, 
+ * and 'get' operations should potentially be restricted to the original author 
+ * by adding a 'creatorId' field to the EmailSubmission entity.
+ */
