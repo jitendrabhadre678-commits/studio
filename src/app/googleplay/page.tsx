@@ -14,22 +14,31 @@ import {
   UserCheck, 
   Mail, 
   Monitor,
-  Zap
+  Zap,
+  Loader2
 } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 /**
  * @fileOverview Premium Google Play Reward Opportunity Page.
- * Engineered for high conversion with strict CPA Compliance protocols.
+ * Updated with professional redirect sequence and loading states.
  */
 
 export default function GooglePlayPage() {
-  // Placeholder CPA link - update with your actual affiliate link
-  const REDIRECT_URL = "https://gameflashx.space/cl/i/277ood";
+  const REDIRECT_URL = "https://www.af9m8trk.com/5EC115Y6/WE112MD7/";
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleContinue = () => {
-    window.location.href = REDIRECT_URL;
+    if (isRedirecting) return;
+    
+    setIsRedirecting(true);
+    
+    // Deliberate security delay for trust
+    setTimeout(() => {
+      window.location.href = REDIRECT_URL;
+    }, 1500);
   };
 
   return (
@@ -118,22 +127,48 @@ export default function GooglePlayPage() {
               <div className="space-y-6 pt-4">
                 <Button 
                   onClick={handleContinue}
-                  className="w-full h-16 md:h-20 bg-gradient-to-r from-[#00C878] to-[#00E6B4] hover:scale-[1.02] active:scale-[0.98] text-black font-black uppercase tracking-[0.2em] text-sm md:text-lg rounded-2xl transition-all shadow-[0_10px_40px_rgba(0,200,120,0.3)] border-none"
+                  disabled={isRedirecting}
+                  className="w-full h-16 md:h-20 bg-gradient-to-r from-[#00C878] to-[#00E6B4] hover:scale-[1.02] active:scale-[0.98] text-black font-black uppercase tracking-[0.2em] text-sm md:text-lg rounded-2xl transition-all shadow-[0_10px_40px_rgba(0,200,120,0.3)] border-none disabled:opacity-80"
                 >
-                  Continue <ArrowRight className="ml-2 w-6 h-6" />
+                  {isRedirecting ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" /> Processing...
+                    </div>
+                  ) : (
+                    <>Continue <ArrowRight className="ml-2 w-6 h-6" /></>
+                  )}
                 </Button>
 
-                {/* Trust Matrix */}
-                <div className="flex flex-wrap justify-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#00C878]/50" /> Secure Process
+                {isRedirecting && (
+                  <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-[10px] text-[#00C878] font-black uppercase tracking-widest animate-pulse"
+                  >
+                    Connecting you to secure partner...
+                  </motion.p>
+                )}
+
+                <div className="flex flex-col gap-4">
+                  {/* Trust Matrix */}
+                  <div className="flex flex-wrap justify-center gap-6 text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#00C878]/50" /> Secure Process
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="w-3.5 h-3.5 text-[#00C878]/50" /> Verification Required
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#00C878]/50" /> Eligibility Based
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <UserCheck className="w-3.5 h-3.5 text-[#00C878]/50" /> Verification Required
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#00C878]/50" /> Eligibility Based
-                  </div>
+
+                  <a 
+                    href={REDIRECT_URL}
+                    className="text-[9px] font-bold text-white/20 uppercase hover:text-[#00C878] transition-colors"
+                  >
+                    If you are not redirected, click here
+                  </a>
                 </div>
               </div>
 
